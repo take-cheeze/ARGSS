@@ -40,7 +40,6 @@
 class Window : public Drawable {
 public:
 	Window(unsigned long iid);
-	~Window();
 
 	static bool IsDisposed(unsigned long id);
 	static void New(unsigned long id);

@@ -34,7 +34,6 @@ class Tone {
 public:
 	Tone();
 	Tone(unsigned long tone);
-	~Tone();
 
 	void Set(unsigned long tone);
 

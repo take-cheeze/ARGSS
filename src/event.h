@@ -46,7 +46,6 @@ public:
 		param1 = 0;
 		param2 = 0;
 	};
-	~Event() {}
 
 	EventType type;
 
