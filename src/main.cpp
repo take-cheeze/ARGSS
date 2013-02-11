@@ -31,10 +31,10 @@
 #include "player.h"
 #include "config.h"
 #include "aruby.h"
-#include "audio/audio.h"
-#include "graphics/graphics.h"
-#include "input/input.h"
-#include "tools/filefinder.h"
+#include "audio.h"
+#include "graphics.h"
+#include "input.h"
+#include "filefinder.h"
 
 ///////////////////////////////////////////////////////////
 /// Main

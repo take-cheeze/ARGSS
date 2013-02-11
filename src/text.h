@@ -24,32 +24,25 @@
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef _PLAYER_H_
-#define _PLAYER_H_
+#ifndef _TEXT_H_
+#define _TEXT_H_
 
 ///////////////////////////////////////////////////////////
 // Headers
 ///////////////////////////////////////////////////////////
-#include "windowui.h"
+#include <string>
+
+class Color;
+class Bitmap;
+class Rect;
 
 ///////////////////////////////////////////////////////////
-/// Player namespace
+/// Text namespace
 ///////////////////////////////////////////////////////////
-namespace Player {
+namespace Text {
 	void Init();
-	void Update();
-	void Exit();
-
-	void ToggleFullscreen();
-	void ResizeWindow(long width, long height);
-	int GetWidth();
-	int GetHeight();
-
-	void SwapBuffers();
-
-	extern WindowUi* main_window;
-	extern bool focus;
-	extern bool alt_pressing;
-};
+	Bitmap* Draw(std::string const& text, std::string const& font, Color const& color, int size, bool bold, bool italic, bool shadow);
+	Rect RectSize(std::string const& text, std::string const& font, int size);
+}
 
 #endif

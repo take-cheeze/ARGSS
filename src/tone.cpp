@@ -24,32 +24,39 @@
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef _PLAYER_H_
-#define _PLAYER_H_
-
 ///////////////////////////////////////////////////////////
 // Headers
 ///////////////////////////////////////////////////////////
-#include "windowui.h"
+#include "tone.h"
+#include "aruby.h"
 
 ///////////////////////////////////////////////////////////
-/// Player namespace
+/// Constructor
 ///////////////////////////////////////////////////////////
-namespace Player {
-	void Init();
-	void Update();
-	void Exit();
+Tone::Tone() {
+	red = 0;
+	green = 0;
+	blue = 0;
+	gray = 0;
+}
+Tone::Tone(VALUE tone) {
+	red = NUM2DBL(rb_iv_get(tone, "@red"));
+	green = NUM2DBL(rb_iv_get(tone, "@green"));
+	blue = NUM2DBL(rb_iv_get(tone, "@blue"));
+	gray = NUM2DBL(rb_iv_get(tone, "@gray"));
+}
 
-	void ToggleFullscreen();
-	void ResizeWindow(long width, long height);
-	int GetWidth();
-	int GetHeight();
+///////////////////////////////////////////////////////////
+/// Destructor
+///////////////////////////////////////////////////////////
+Tone::~Tone() { }
 
-	void SwapBuffers();
-
-	extern WindowUi* main_window;
-	extern bool focus;
-	extern bool alt_pressing;
-};
-
-#endif
+///////////////////////////////////////////////////////////
+/// Set
+///////////////////////////////////////////////////////////
+void Tone::Set(VALUE tone) {
+	red = NUM2DBL(rb_iv_get(tone, "@red"));
+	green = NUM2DBL(rb_iv_get(tone, "@green"));
+	blue = NUM2DBL(rb_iv_get(tone, "@blue"));
+	gray = NUM2DBL(rb_iv_get(tone, "@gray"));
+}

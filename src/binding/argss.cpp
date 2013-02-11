@@ -24,32 +24,63 @@
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef _PLAYER_H_
-#define _PLAYER_H_
-
 ///////////////////////////////////////////////////////////
 // Headers
 ///////////////////////////////////////////////////////////
-#include "windowui.h"
+#include <string>
+
+extern "C" {
+	#include "ruby.h"
+}
+
+#include "binding/argss.h"
+#include "binding/abitmap.h"
+#include "binding/acolor.h"
+#include "binding/afont.h"
+#include "binding/aerror.h"
+#include "binding/aplane.h"
+#include "binding/arect.h"
+#include "binding/asprite.h"
+#include "binding/atable.h"
+#include "binding/atilemap.h"
+#include "binding/atone.h"
+#include "binding/aviewport.h"
+#include "binding/awindow.h"
+#include "binding/aaudio.h"
+#include "binding/agraphics.h"
+#include "binding/ainput.h"
+#include "binding/akeys.h"
+#include "binding/aoutput.h"
+#include "binding/rpg.h"
+#include "binding/rpg_cache.h"
+#include "binding/rpg_weather.h"
+#include "binding/rpg_sprite.h"
 
 ///////////////////////////////////////////////////////////
-/// Player namespace
+// Initialize
 ///////////////////////////////////////////////////////////
-namespace Player {
-	void Init();
-	void Update();
-	void Exit();
+void ARGSS::Init() {
+	ARGSS::ABitmap::Init();
+	ARGSS::AColor::Init();
+	ARGSS::AError::Init();
+	ARGSS::AFont::Init();
+	ARGSS::APlane::Init();
+	ARGSS::ARect::Init();
+	ARGSS::ASprite::Init();
+	ARGSS::ATable::Init();
+	ARGSS::ATilemap::Init();
+	ARGSS::ATone::Init();
+	ARGSS::AViewport::Init();
+	ARGSS::AWindow::Init();
 
-	void ToggleFullscreen();
-	void ResizeWindow(long width, long height);
-	int GetWidth();
-	int GetHeight();
+	ARGSS::AAudio::Init();
+	ARGSS::AGraphics::Init();
+	ARGSS::AInput::Init();
+	ARGSS::AKeys::Init();
+	ARGSS::AOutput::Init();
 
-	void SwapBuffers();
-
-	extern WindowUi* main_window;
-	extern bool focus;
-	extern bool alt_pressing;
-};
-
-#endif
+	ARGSS::ARPG::Init();
+	/*ARGSS::ARPG::ACache::Init();
+	ARGSS::ARPG::ASprite::Init();
+	ARGSS::ARPG::AWeather::Init();*/
+}

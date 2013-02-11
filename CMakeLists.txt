@@ -11,18 +11,16 @@ set(ARGSS_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
 set(MAIN_FILE "${ARGSS_SRC_DIR}/main.cpp")
 
-set(ARGSS_SUB_DIRS
-  argss argss/classes argss/modules argss/rpg
-  audio audio/sdl graphics input network tools)
+set(ARGSS_SUB_DIRS binding)
 
 if(APPLE)
   add_definitions(-D MACOSX=1)
-  list(APPEND ARGSS_SUB_DIRS tools/osx input/osx)
+  list(APPEND ARGSS_SUB_DIRS osx)
 endif()
 
 if(WIN32)
   add_definitions(-D WIN32=1)
-  list(APPEND ARGSS_SUB_DIRS tools/win32 input/win32)
+  list(APPEND ARGSS_SUB_DIRS win32)
 endif()
 
 if(UNIX)

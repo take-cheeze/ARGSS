@@ -24,32 +24,86 @@
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef _PLAYER_H_
-#define _PLAYER_H_
+#ifndef _VIEWPORT_H_
+#define _VIEWPORT_H_
 
 ///////////////////////////////////////////////////////////
 // Headers
 ///////////////////////////////////////////////////////////
-#include "windowui.h"
+#include <string>
+#include <list>
+#include "color.h"
+#include "rect.h"
+#include "tone.h"
+#include "drawable.h"
+#include "zobj.h"
+
+class Bitmap;
 
 ///////////////////////////////////////////////////////////
-/// Player namespace
+/// Viewport class
 ///////////////////////////////////////////////////////////
-namespace Player {
-	void Init();
+class Viewport : public Drawable {
+public:
+	Viewport(unsigned long iid);
+
+	static bool IsDisposed(unsigned long id);
+	static void New(unsigned long id);
+	static Viewport* Get(unsigned long id);
+	static void Dispose(unsigned long id);
+
+	void RefreshBitmaps();
+	void Draw(long z);
+	void Draw(long z, Bitmap* dst_bitmap);
+
+	void Flash(int duration);
+	void Flash(Color const& color, int duration);
 	void Update();
-	void Exit();
+	unsigned long GetRect();
+	void SetRect(unsigned long nrect);
+	bool GetVisible();
+	void SetVisible(bool nvisible);
+	int GetZ();
+	void SetZ(int nz);
+	int GetOx();
+	void SetOx(int nox);
+	int GetOy();
+	void SetOy(int noy);
+	unsigned long GetColor();
+	void SetColor(unsigned long ncolor);
+	unsigned long GetTone();
+	void SetTone(unsigned long ntone);
 
-	void ToggleFullscreen();
-	void ResizeWindow(long width, long height);
-	int GetWidth();
-	int GetHeight();
+	void RegisterZObj(long z, unsigned long id);
+	void RegisterZObj(long z, unsigned long id, bool multiz);
+	void RemoveZObj(unsigned long id);
+	void UpdateZObj(unsigned long id, long z);
 
-	void SwapBuffers();
+	Rect GetViewportRect();
 
-	extern WindowUi* main_window;
-	extern bool focus;
-	extern bool alt_pressing;
+private:
+	std::list<ZObj> zlist;
+	std::list<ZObj>::iterator it_zlist;
+
+	unsigned long id;
+	unsigned long rect;
+	bool visible;
+	int z;
+	int ox;
+	int oy;
+	unsigned long color;
+	unsigned long tone;
+
+	Color flash_color;
+	int flash_duration;
+	int flash_frame;
+	Color color_viewport;
+	Tone tone_viewport;
+	bool disposing;
+
+	Bitmap* viewport;
+
+	Rect dst_rect;
 };
 
 #endif

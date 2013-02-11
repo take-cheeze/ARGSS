@@ -24,32 +24,46 @@
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef _PLAYER_H_
-#define _PLAYER_H_
-
 ///////////////////////////////////////////////////////////
 // Headers
 ///////////////////////////////////////////////////////////
-#include "windowui.h"
+#include "binding/atilemapautotiles_xp.h"
+#include "binding/abitmap.h"
 
 ///////////////////////////////////////////////////////////
-/// Player namespace
+// Global Variables
 ///////////////////////////////////////////////////////////
-namespace Player {
-	void Init();
-	void Update();
-	void Exit();
+VALUE ARGSS::ATilemapAutotiles::id;
 
-	void ToggleFullscreen();
-	void ResizeWindow(long width, long height);
-	int GetWidth();
-	int GetHeight();
+///////////////////////////////////////////////////////////
+// ARGSS TilemapAutotiles instance methods
+///////////////////////////////////////////////////////////
+VALUE ARGSS::ATilemapAutotiles::rinitialize(VALUE self) {
+	rb_iv_set(self, "@autotiles", rb_ary_new2(8));
+	return self;
+}
+VALUE ARGSS::ATilemapAutotiles::raref(VALUE self, VALUE index) {
+	return rb_ary_entry(rb_iv_get(self, "@autotiles"), NUM2INT(index));
+}
+VALUE ARGSS::ATilemapAutotiles::raset(VALUE self, VALUE index, VALUE bitmap) {
+	Check_Classes_N(bitmap, ARGSS::ABitmap::id);
+	rb_ary_store(rb_iv_get(self, "@autotiles"), NUM2INT(index), bitmap);
+	return bitmap;
+}
 
-	void SwapBuffers();
+///////////////////////////////////////////////////////////
+// ARGSS TilemapAutotiles initialize
+///////////////////////////////////////////////////////////
+void ARGSS::ATilemapAutotiles::Init() {
+	id = rb_define_class("TilemapAutotiles", rb_cObject);
+	rb_define_method(id, "initialize", (rubyfunc)rinitialize, 0);
+	rb_define_method(id, "[]", (rubyfunc)raref, 1);
+	rb_define_method(id, "[]=", (rubyfunc)raset, 2);
+}
 
-	extern WindowUi* main_window;
-	extern bool focus;
-	extern bool alt_pressing;
-};
-
-#endif
+///////////////////////////////////////////////////////////
+// ARGSS TilemapAutotiles create instance
+///////////////////////////////////////////////////////////
+VALUE ARGSS::ATilemapAutotiles::New() {
+	return rb_class_new_instance(0, 0, id);
+}

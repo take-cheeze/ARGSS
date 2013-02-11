@@ -24,32 +24,49 @@
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef _PLAYER_H_
-#define _PLAYER_H_
-
 ///////////////////////////////////////////////////////////
 // Headers
 ///////////////////////////////////////////////////////////
-#include "windowui.h"
+#include "binding/aerror.h"
 
 ///////////////////////////////////////////////////////////
-/// Player namespace
+// Global Variables
 ///////////////////////////////////////////////////////////
-namespace Player {
-	void Init();
-	void Update();
-	void Exit();
+VALUE ARGSS::AError::id;
 
-	void ToggleFullscreen();
-	void ResizeWindow(long width, long height);
-	int GetWidth();
-	int GetHeight();
+///////////////////////////////////////////////////////////
+// ARGSS Error initialize
+///////////////////////////////////////////////////////////
+void ARGSS::AError::Init() {
+	id = rb_define_class("ARGSSError", rb_eStandardError);
+}
 
-	void SwapBuffers();
+///////////////////////////////////////////////////////////
+// FileNotFound
+///////////////////////////////////////////////////////////
+void ARGSS::AError::FileNotFound(std::string file) {
+	VALUE enoent = rb_const_get(rb_mErrno, rb_intern("ENOENT"));
+	rb_raise(enoent, "No such file or directory - %s", file.c_str());
+}
 
-	extern WindowUi* main_window;
-	extern bool focus;
-	extern bool alt_pressing;
-};
+///////////////////////////////////////////////////////////
+// AudioNotLoad
+///////////////////////////////////////////////////////////
+void ARGSS::AError::AudioNotLoad(std::string type, std::string file) {
+	rb_raise(ARGSS::AError::id, "couldn't load %s %s.\n", file.c_str(), type.c_str());
+}
 
-#endif
+void ARGSS::AError::AudioNotLoad(std::string type, std::string file, std::string description) {
+	rb_raise(ARGSS::AError::id, "couldn't load %s %s.\n%s\n", file.c_str(), type.c_str(), description.c_str());
+}
+
+///////////////////////////////////////////////////////////
+// AudioNotPlay
+///////////////////////////////////////////////////////////
+void ARGSS::AError::AudioNotPlay(std::string type, std::string file) {
+	rb_raise(ARGSS::AError::id, "couldn't play %s %s.\n", file.c_str(), type.c_str());
+}
+
+void ARGSS::AError::AudioNotPlay(std::string type, std::string file, std::string description) {
+	rb_raise(ARGSS::AError::id, "couldn't play %s %s.\n%s\n", file.c_str(), type.c_str(), description.c_str());
+}

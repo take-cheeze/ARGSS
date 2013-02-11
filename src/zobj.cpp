@@ -24,32 +24,32 @@
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef _PLAYER_H_
-#define _PLAYER_H_
-
 ///////////////////////////////////////////////////////////
 // Headers
 ///////////////////////////////////////////////////////////
-#include "windowui.h"
+#include "zobj.h"
 
 ///////////////////////////////////////////////////////////
-/// Player namespace
+/// Constructor
 ///////////////////////////////////////////////////////////
-namespace Player {
-	void Init();
-	void Update();
-	void Exit();
+ZObj::ZObj(long iz, unsigned long icreation, unsigned long iid) {
+	z = iz;
+	creation = icreation;
+	id = iid;
+}
 
-	void ToggleFullscreen();
-	void ResizeWindow(long width, long height);
-	int GetWidth();
-	int GetHeight();
-
-	void SwapBuffers();
-
-	extern WindowUi* main_window;
-	extern bool focus;
-	extern bool alt_pressing;
-};
-
-#endif
+///////////////////////////////////////////////////////////
+/// Properties
+///////////////////////////////////////////////////////////
+void ZObj::SetZ(long nz) {
+	z = nz;
+}
+long ZObj::GetZ() {
+	return z;
+}
+unsigned long ZObj::GetCreation(){
+	return creation;
+}
+unsigned long ZObj::GetId() {
+	return id;
+}

@@ -32,9 +32,9 @@
 #include "options.h"
 #include "output.h"
 #include "config.h"
-#include "audio/audio.h"
-#include "input/input.h"
-#include "graphics/graphics.h"
+#include "audio.h"
+#include "input.h"
+#include "graphics.h"
 
 
 ///////////////////////////////////////////////////////////
@@ -79,7 +79,7 @@ void Player::Update() {
 			if (evnt.param1 == Input::Keys::ALT) {
 				alt_pressing = false;
 			}
-		} 
+		}
 		#if (PAUSE_GAME_WHEN_FOCUS_LOST == YES)
 			else {
 				if (evnt.type == Event::GainFocus && !focus) {

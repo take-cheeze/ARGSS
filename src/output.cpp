@@ -38,9 +38,9 @@
 #include "options.h"
 #include "config.h"
 #include "player.h"
-#include "tools/console.h"
-#include "tools/msgbox.h"
-#include "graphics/graphics.h"
+#include "console.h"
+#include "msgbox.h"
+#include "graphics.h"
 
 ///////////////////////////////////////////////////////////
 // Global Variables

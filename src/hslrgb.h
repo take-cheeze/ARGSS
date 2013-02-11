@@ -24,32 +24,14 @@
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef _PLAYER_H_
-#define _PLAYER_H_
+#ifndef _HSLRGB_H_
+#define _HSLRGB_H_
 
 ///////////////////////////////////////////////////////////
 // Headers
 ///////////////////////////////////////////////////////////
-#include "windowui.h"
+class Color;
 
-///////////////////////////////////////////////////////////
-/// Player namespace
-///////////////////////////////////////////////////////////
-namespace Player {
-	void Init();
-	void Update();
-	void Exit();
-
-	void ToggleFullscreen();
-	void ResizeWindow(long width, long height);
-	int GetWidth();
-	int GetHeight();
-
-	void SwapBuffers();
-
-	extern WindowUi* main_window;
-	extern bool focus;
-	extern bool alt_pressing;
-};
+Color RGBAdjustHSL(Color const& col, double h, double s, double l);
 
 #endif

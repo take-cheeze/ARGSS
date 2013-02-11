@@ -24,32 +24,40 @@
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef _PLAYER_H_
-#define _PLAYER_H_
+#ifndef _INPUT_H_
+#define _INPUT_H_
 
 ///////////////////////////////////////////////////////////
 // Headers
 ///////////////////////////////////////////////////////////
-#include "windowui.h"
+#include <vector>
+#include "keys.h"
 
 ///////////////////////////////////////////////////////////
-/// Player namespace
+/// Input namespace
 ///////////////////////////////////////////////////////////
-namespace Player {
+namespace Input {
 	void Init();
 	void Update();
-	void Exit();
+	void ClearKeys();
+	bool IsPressed(unsigned long button);
+	bool IsTriggered(unsigned long button);
+	bool IsRepeated(unsigned long button);
+	bool IsReleased(unsigned long button);
+	unsigned long GetPressed();
+	unsigned long GetTriggered();
+	unsigned long GetRepeated();
+	unsigned long GetReleased();
 
-	void ToggleFullscreen();
-	void ResizeWindow(long width, long height);
-	int GetWidth();
-	int GetHeight();
-
-	void SwapBuffers();
-
-	extern WindowUi* main_window;
-	extern bool focus;
-	extern bool alt_pressing;
+	extern std::vector<int> press_time;
+	extern std::vector<bool> triggered;
+	extern std::vector<bool> repeated;
+	extern std::vector<bool> released;
+	extern int dir4;
+	extern int dir8;
+	extern int start_repeat_time;
+	extern int repeat_time;
+	extern std::vector< std::vector<int> > dirkeys;
 };
 
 #endif

@@ -24,32 +24,35 @@
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef _PLAYER_H_
-#define _PLAYER_H_
+#ifdef WIN32
 
 ///////////////////////////////////////////////////////////
 // Headers
 ///////////////////////////////////////////////////////////
-#include "windowui.h"
+#include <windows.h>
+#include "win32/time.h"
 
 ///////////////////////////////////////////////////////////
-/// Player namespace
+/// Get time
 ///////////////////////////////////////////////////////////
-namespace Player {
-	void Init();
-	void Update();
-	void Exit();
+long Time::GetTime() {
+	static LARGE_INTEGER frequency;
+	static BOOL htimer = QueryPerformanceFrequency(&frequency);
 
-	void ToggleFullscreen();
-	void ResizeWindow(long width, long height);
-	int GetWidth();
-	int GetHeight();
+	if (htimer) {
+		LARGE_INTEGER tick;
+		QueryPerformanceCounter(&tick);
 
-	void SwapBuffers();
+		return (long)(((double)tick.QuadPart * 1000.0) / (double)frequency.QuadPart);
+	}
+	return GetTickCount();
+}
 
-	extern WindowUi* main_window;
-	extern bool focus;
-	extern bool alt_pressing;
-};
+///////////////////////////////////////////////////////////
+/// Sleep
+///////////////////////////////////////////////////////////
+void Time::SleepMs(long ms) {
+	::Sleep(ms);
+}
 
 #endif

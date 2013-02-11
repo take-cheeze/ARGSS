@@ -24,32 +24,62 @@
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef _PLAYER_H_
-#define _PLAYER_H_
+#ifdef WIN32
 
 ///////////////////////////////////////////////////////////
 // Headers
 ///////////////////////////////////////////////////////////
-#include "windowui.h"
+#include <windows.h>
+#include "win32/msgbox.h"
+
+static std::wstring s2ws(const std::string& s) {
+	int len;
+	int slength = (int)s.length() + 1;
+	len = MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, 0, 0);
+	wchar_t* buf = new wchar_t[len];
+	MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, buf, len);
+	std::wstring r(buf);
+	delete[] buf;
+	return r;
+}
 
 ///////////////////////////////////////////////////////////
-/// Player namespace
+/// Default Message Box with OK button
 ///////////////////////////////////////////////////////////
-namespace Player {
-	void Init();
-	void Update();
-	void Exit();
+void MsgBox::OK(std::string msg, std::string title) {
+	if (msg.length() == 0) return;
+	if (msg.length() == 1 && (msg[0] == '\n' || msg[0] == '\r')) return;
+#ifdef UNICODE
+	MessageBox(0, s2ws(msg).c_str(), s2ws(title).c_str(), MB_OK);
+#else
+	MessageBox(0, msg.c_str(), title.c_str(), MB_OK);
+#endif
+}
 
-	void ToggleFullscreen();
-	void ResizeWindow(long width, long height);
-	int GetWidth();
-	int GetHeight();
+///////////////////////////////////////////////////////////
+/// Error Message Box
+///////////////////////////////////////////////////////////
+void MsgBox::Error(std::string msg, std::string title) {
+	if (msg.length() == 0) return;
+	if (msg.length() == 1 && (msg[0] == '\n' || msg[0] == '\r')) return;
+#ifdef UNICODE
+	MessageBox(0, s2ws(msg).c_str(), s2ws(title).c_str(), MB_OK | MB_ICONERROR);
+#else
+	MessageBox(0, msg.c_str(), title.c_str(), MB_OK | MB_ICONERROR);
+#endif
+}
 
-	void SwapBuffers();
-
-	extern WindowUi* main_window;
-	extern bool focus;
-	extern bool alt_pressing;
-};
+///////////////////////////////////////////////////////////
+/// Warning Message Box
+///////////////////////////////////////////////////////////
+void MsgBox::Warning(std::string msg, std::string title) {
+	if (msg.length() == 0) return;
+	if (msg.length() == 1 && (msg[0] == '\n' || msg[0] == '\r')) return;
+#ifdef UNICODE
+	MessageBox(0, s2ws(msg).c_str(), s2ws(title).c_str(), MB_OK | MB_ICONEXCLAMATION);
+#else
+	MessageBox(0, msg.c_str(), title.c_str(), MB_OK | MB_ICONEXCLAMATION);
+#endif
+}
 
 #endif

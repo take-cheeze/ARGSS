@@ -24,32 +24,19 @@
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef _PLAYER_H_
-#define _PLAYER_H_
+#ifndef _ARGSS_WINDOW_H_
+#define _ARGSS_WINDOW_H_
 
 ///////////////////////////////////////////////////////////
 // Headers
 ///////////////////////////////////////////////////////////
-#include "windowui.h"
+#include "options.h"
 
-///////////////////////////////////////////////////////////
-/// Player namespace
-///////////////////////////////////////////////////////////
-namespace Player {
-	void Init();
-	void Update();
-	void Exit();
-
-	void ToggleFullscreen();
-	void ResizeWindow(long width, long height);
-	int GetWidth();
-	int GetHeight();
-
-	void SwapBuffers();
-
-	extern WindowUi* main_window;
-	extern bool focus;
-	extern bool alt_pressing;
-};
+#if RPGMAKER == RPGXP
+	#include "binding/awindow_xp.h"
+#endif
+#if RPGMAKER == RPGVX
+	#include "binding/awindow_vx.h"
+#endif
 
 #endif

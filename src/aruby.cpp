@@ -36,7 +36,7 @@
 #include "player.h"
 #include "config.h"
 
-#include "argss/argss.h"
+#include "binding/argss.h"
 
 ///////////////////////////////////////////////////////////
 // Global Variables

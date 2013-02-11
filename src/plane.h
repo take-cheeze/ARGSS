@@ -24,32 +24,79 @@
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef _PLAYER_H_
-#define _PLAYER_H_
+#ifndef _PLANE_H_
+#define _PLANE_H_
 
 ///////////////////////////////////////////////////////////
 // Headers
 ///////////////////////////////////////////////////////////
-#include "windowui.h"
+#include <string>
+#include "tone.h"
+#include "drawable.h"
+
+class Bitmap;
 
 ///////////////////////////////////////////////////////////
-/// Player namespace
+/// Plane class
 ///////////////////////////////////////////////////////////
-namespace Player {
-	void Init();
-	void Update();
-	void Exit();
+class Plane : public Drawable {
+public:
+	Plane(unsigned long iid);
 
-	void ToggleFullscreen();
-	void ResizeWindow(long width, long height);
-	int GetWidth();
-	int GetHeight();
+	static bool IsDisposed(unsigned long id);
+	static void New(unsigned long id);
+	static Plane* Get(unsigned long id);
+	static void Dispose(unsigned long id);
 
-	void SwapBuffers();
+	void RefreshBitmaps();
+	void Draw(long z);
+	void Draw(long z, Bitmap* dst_bitmap);
 
-	extern WindowUi* main_window;
-	extern bool focus;
-	extern bool alt_pressing;
+	unsigned long GetViewport();
+	void SetViewport(unsigned long nviewport);
+	unsigned long GetBitmap();
+	void SetBitmap(unsigned long nbitmap);
+	bool GetVisible();
+	void SetVisible(bool nvisible);
+	int GetZ();
+	void SetZ(int nz);
+	int GetOx();
+	void SetOx(int nox);
+	int GetOy();
+	void SetOy(int noy);
+	float GetZoomX();
+	void SetZoomX(float nzoom_x);
+	float GetZoomY();
+	void SetZoomY(float nzoom_y);
+	int GetOpacity();
+	void SetOpacity(int nopacity);
+	int GetBlendType();
+	void SetBlendType(int nblend_type);
+	unsigned long GetColor();
+	void SetColor(unsigned long ncolor);
+	unsigned long GetTone();
+	void SetTone(unsigned long ntone);
+
+private:
+	void Refresh();
+	void ApplyTone();
+	void ApplyZoom();
+	bool needs_refresh;
+	Tone tone_last;
+
+	unsigned long id;
+	unsigned long viewport;
+	unsigned long bitmap;
+	bool visible;
+	int z;
+	int ox;
+	int oy;
+	float zoom_x;
+	float zoom_y;
+	int opacity;
+	int blend_type;
+	unsigned long color;
+	unsigned long tone;
 };
 
 #endif
