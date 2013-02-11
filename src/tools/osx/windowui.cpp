@@ -10,11 +10,12 @@
 ////////////////////////////////////////////////////////////
 /// Headers
 ////////////////////////////////////////////////////////////
-#include "windowui_osx.h"
+#include "tools/osx/windowui.h"
 #include "output.h"
 #include "options.h"
 #include "SDL.h"
-#include "argss.h"
+#include "argss/argss.h"
+#include "aruby.h"
 
 ////////////////////////////////////////////////////////////
 /// Definitions
@@ -49,19 +50,19 @@ WindowUi::WindowUi(long iwidth, long iheight, std::string title, bool center, bo
 	width = iwidth;
 	height = iheight;
 	fullscreen = fs_flag;
-	
+
 	// Init SDL; apparently this doesn't need to be done in WIN32
 	Uint8  video_bpp = 32;
 	Uint32 videoflags = SDL_SWSURFACE | SDL_RESIZABLE | SDL_OPENGL;
 	int done;
 	SDL_Event event;
-	
+
 	// Initialize the SDL library
 	if(SDL_Init(SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_VIDEO) < 0) {
 		Output::Error("Couldn't initialize SDL: %s", SDL_GetError());
 		exit(1);
 	}
-	
+
 	// Set resolution
 	screen = SDL_SetVideoMode(iwidth, iheight, video_bpp, videoflags);
 	if (screen == NULL) {
@@ -69,15 +70,15 @@ WindowUi::WindowUi(long iwidth, long iheight, std::string title, bool center, bo
 		SDL_Quit();
 		exit(2);
 	}
-	
+
 	if (fullscreen)	{
 		// Put into fullscreen
 		ToggleFullscreen();
 	}
-	
+
 	// Set the window name
 	SetTitle(GAME_TITLE);
-	
+
 	// Test code
 	done = 0;
 }
@@ -150,14 +151,14 @@ long WindowUi::GetHeight() {
 bool WindowUi::GetEvent(Event& evnt) {
 	SDL_Event evt;
 	int rc;
-	
+
 	// Get the event off of the queue
 	rc = SDL_PollEvent(&evt);
-	
+
 	if(rc == 0) {
 		return false;
 	}
-	
+
 	// Process the event
 	switch(evt.type) {
 		case SDL_ACTIVEEVENT: {
@@ -258,7 +259,7 @@ bool WindowUi::GetEvent(Event& evnt) {
 		case SDL_JOYBUTTONUP:
 			return true;
 		case SDL_QUIT:
-			ARGSS::Exit();
+			ARuby::Exit();
 			WindowUi::Dispose();
 			return true;
 		case SDL_SYSWMEVENT:
@@ -270,7 +271,7 @@ bool WindowUi::GetEvent(Event& evnt) {
 		case SDL_USEREVENT:
 			return true;
 	}
-	
+
 	return false;
 }
 
@@ -279,10 +280,10 @@ bool WindowUi::GetEvent(Event& evnt) {
 ////////////////////////////////////////////////////////////
 /*int WindowUi::ProccesEvents(SDL_Event* evt) {
 	Event event;
-	
+
 	// Handle event type and push it on the event list
-	
-	
+
+
 	return 1;
 }*/
 
@@ -313,7 +314,7 @@ Input::Keys::InputKey WindowUi::VK2IK(SDLKey key) {
 		/*case 1019 : return Input::Keys::SHIFT; // Apparently there's none it has to be R or L*/
 		case SDLK_LSHIFT : return Input::Keys::LSHIFT;
 		case SDLK_RSHIFT : return Input::Keys::RSHIFT;
-		/*case 1022 : return Input::Keys::CTRL; // Same problem as SHIFT */ 
+		/*case 1022 : return Input::Keys::CTRL; // Same problem as SHIFT */
 		case SDLK_LCTRL : return Input::Keys::LCTRL;
 		case SDLK_RCTRL : return Input::Keys::RCTRL;
 		/*case 1025 : return Input::Keys::ALT; // Same problem as SHIFT */
@@ -369,7 +370,7 @@ Input::Keys::InputKey WindowUi::VK2IK(SDLKey key) {
 		case SDLK_KP8 : return Input::Keys::KP8;
 		case SDLK_KP9 : return Input::Keys::KP9;
 		case SDLK_KP_MULTIPLY: case SDLK_ASTERISK: return Input::Keys::MULTIPLY;
-		case SDLK_KP_PLUS: case SDLK_PLUS: return Input::Keys::ADD; 
+		case SDLK_KP_PLUS: case SDLK_PLUS: return Input::Keys::ADD;
 		case SDLK_COMMA : return Input::Keys::SEPARATOR;
 		case SDLK_KP_MINUS: case SDLK_MINUS : return Input::Keys::SUBTRACT;
 		case SDLK_PERIOD : return Input::Keys::DECIMAL;
@@ -390,7 +391,7 @@ Input::Keys::InputKey WindowUi::VK2IK(SDLKey key) {
 		case SDLK_NUMLOCK : return Input::Keys::NUM_LOCK;
 		case SDLK_SCROLLOCK : return Input::Keys::SCROLL_LOCK;
 	}
-	
+
 	return Input::Keys::InputKey(0);
 }
 

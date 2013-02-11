@@ -31,17 +31,17 @@
 #include "SOIL.h"
 #include "graphics/text.h"
 #include "graphics/bitmap.h"
-#include "defines.h"
-#include "hslrgb.h"
 #include "graphics/graphics.h"
+#include "hslrgb.h"
 #include "config.h"
 #include "argss/classes/aerror.h"
 #include "tools/filefinder.h"
+#include "graphics/tone.h"
 
 ///////////////////////////////////////////////////////////
 /// Static Variables
 ///////////////////////////////////////////////////////////
-std::map<unsigned long, Bitmap*> Bitmap::bitmaps;
+std::map<VALUE, Bitmap*> Bitmap::bitmaps;
 
 ///////////////////////////////////////////////////////////
 /// Defines
@@ -59,7 +59,7 @@ Bitmap::Bitmap(int iwidth, int iheight) {
 	height = (long)iheight;
 	gl_bitmap = 0;
 }
-Bitmap::Bitmap(unsigned long iid, std::string filename) {
+Bitmap::Bitmap(VALUE iid, std::string const& filename) {
 	std::string path = FileFinder::FindImage(filename);
 	if (path == "") {
 		VALUE enoent = rb_const_get(rb_mErrno, rb_intern("ENOENT"));
@@ -83,7 +83,7 @@ Bitmap::Bitmap(unsigned long iid, std::string filename) {
 	height = (long)rheight;
 	gl_bitmap = 0;
 }
-Bitmap::Bitmap(unsigned long iid, int iwidth, int iheight) {
+Bitmap::Bitmap(VALUE iid, int iwidth, int iheight) {
 	if (iwidth <= 0 && iheight <= 0) {
 		rb_raise(ARGSS::AError::id, "cant't create %dx%d image.\nWidth and height must be bigger than 0.\n", iwidth, iheight);
 	}
@@ -93,7 +93,7 @@ Bitmap::Bitmap(unsigned long iid, int iwidth, int iheight) {
 	height = (long)iheight;
 	gl_bitmap = 0;
 }
-Bitmap::Bitmap(Bitmap* source, Rect src_rect) {
+Bitmap::Bitmap(Bitmap* source, Rect const& src_rect) {
 	if (src_rect.width <= 0 && src_rect.height <= 0) {
 		rb_raise(ARGSS::AError::id, "cant't create %dx%d image.\nWidth and height must be bigger than 0.\n", src_rect.width, src_rect.height);
 	}
@@ -117,33 +117,33 @@ Bitmap::~Bitmap() {
 ///////////////////////////////////////////////////////////
 /// Class Is Bitmap Disposed?
 ///////////////////////////////////////////////////////////
-bool Bitmap::IsDisposed(unsigned long id) {
+bool Bitmap::IsDisposed(VALUE id) {
 	return bitmaps.count(id) == 0;
 }
 
 ///////////////////////////////////////////////////////////
 /// Class New Bitmap
 ///////////////////////////////////////////////////////////
-void Bitmap::New(unsigned long id, std::string filename) {
+void Bitmap::New(VALUE id, std::string const& filename) {
 	bitmaps[id] = new Bitmap(id, filename);
 }
-void Bitmap::New(unsigned long id, int width, int height) {
+void Bitmap::New(VALUE id, int width, int height) {
 	bitmaps[id] = new Bitmap(id, width, height);
 }
 
 ///////////////////////////////////////////////////////////
 /// Class Get Bitmap
 ///////////////////////////////////////////////////////////
-Bitmap* Bitmap::Get(unsigned long id) {
+Bitmap* Bitmap::Get(VALUE id) {
 	return bitmaps[id];
 }
 
 ///////////////////////////////////////////////////////////
 /// Class Dispose Bitmap
 ///////////////////////////////////////////////////////////
-void Bitmap::Dispose(unsigned long id) {
+void Bitmap::Dispose(VALUE id) {
 	delete bitmaps[id];
-	std::map<unsigned long, Bitmap*>::iterator it = bitmaps.find(id);
+	std::map<VALUE, Bitmap*>::iterator it = bitmaps.find(id);
 	bitmaps.erase(it);
 }
 
@@ -151,7 +151,7 @@ void Bitmap::Dispose(unsigned long id) {
 /// Class Refresh Bitmaps
 ///////////////////////////////////////////////////////////
 void Bitmap::RefreshBitmaps() {
-	std::map<unsigned long, Bitmap*>::iterator it_bitmaps;
+	std::map<VALUE, Bitmap*>::iterator it_bitmaps;
 	for (it_bitmaps = bitmaps.begin(); it_bitmaps != bitmaps.end(); it_bitmaps++) {
 		it_bitmaps->second->Changed();
 	}
@@ -161,7 +161,7 @@ void Bitmap::RefreshBitmaps() {
 /// Class Dispose Bitmaps
 ///////////////////////////////////////////////////////////
 void Bitmap::DisposeBitmaps() {
-	std::map<unsigned long, Bitmap*>::iterator it_bitmaps;
+	std::map<VALUE, Bitmap*>::iterator it_bitmaps;
 	for (it_bitmaps = bitmaps.begin(); it_bitmaps != bitmaps.end(); it_bitmaps++) {
 		delete it_bitmaps->second;
 	}
@@ -217,30 +217,32 @@ void Bitmap::BindBitmap() {
 ///////////////////////////////////////////////////////////
 /// Get Pixels
 ///////////////////////////////////////////////////////////
-Uint32* Bitmap::GetPixels() {
+uint32_t* Bitmap::GetPixels() {
 	return &pixels[0];
 }
 
 ///////////////////////////////////////////////////////////
 /// Get width
 ///////////////////////////////////////////////////////////
-int Bitmap::GetWidth() {
+int Bitmap::GetWidth() const {
 	return width;
 }
 
 ///////////////////////////////////////////////////////////
 /// Get height
 ///////////////////////////////////////////////////////////
-int Bitmap::GetHeight() {
+int Bitmap::GetHeight() const {
 	return height;
 }
 
 ///////////////////////////////////////////////////////////
 /// Copy
 ///////////////////////////////////////////////////////////
-void Bitmap::Copy(int x, int y, Bitmap* src_bitmap, Rect src_rect) {
+void Bitmap::Copy(int x, int y, Bitmap* src_bitmap, Rect const& src_rect_) {
 	if (src_bitmap->GetWidth() == 0 || src_bitmap->GetHeight() == 0 || width == 0 || height == 0) return;
 	if (x >= width || y >= height) return;
+
+  Rect src_rect(src_rect_);
 
 	if (x < 0) {
 		src_rect.x -= x;
@@ -262,8 +264,8 @@ void Bitmap::Copy(int x, int y, Bitmap* src_bitmap, Rect src_rect) {
 
 	int src_pitch = src_width * 4;
 	int src_row = src_bitmap->GetWidth();
-	const Uint32* src_pixels = ((Uint32*)(&src_bitmap->pixels[0])) + src_rect.x + src_rect.y * src_bitmap->GetWidth();
-	Uint32* dst_pixels = ((Uint32*)(&pixels[0])) + x + y * width;
+	const uint32_t* src_pixels = ((uint32_t*)(&src_bitmap->pixels[0])) + src_rect.x + src_rect.y * src_bitmap->GetWidth();
+	uint32_t* dst_pixels = ((uint32_t*)(&pixels[0])) + x + y * width;
 
 	for (int i = 0; i < src_height; ++i) {
 		memcpy(dst_pixels, src_pixels, src_pitch);
@@ -277,10 +279,11 @@ void Bitmap::Copy(int x, int y, Bitmap* src_bitmap, Rect src_rect) {
 ///////////////////////////////////////////////////////////
 /// Blit
 ///////////////////////////////////////////////////////////
-void Bitmap::Blit(int x, int y, Bitmap* src_bitmap, Rect src_rect, int opacity) {
+void Bitmap::Blit(int x, int y, Bitmap* src_bitmap, Rect const& src_rect_, int opacity) {
 	if (src_bitmap->GetWidth() == 0 || src_bitmap->GetHeight() == 0 || width == 0 || height == 0) return;
 	if (x >= width || y >= height) return;
 
+  Rect src_rect(src_rect_);
 	if (x < 0) {
 		src_rect.x -= x;
 		x = 0;
@@ -301,17 +304,17 @@ void Bitmap::Blit(int x, int y, Bitmap* src_bitmap, Rect src_rect, int opacity) 
 
 	int src_row = src_bitmap->GetWidth() * 4;
 	int dst_row = width * 4;
-	const Uint8* src_pixels = ((Uint8*)(&src_bitmap->pixels[0])) + (src_rect.x + src_rect.y * src_bitmap->GetWidth()) * 4;
-	Uint8* dst_pixels = ((Uint8*)(&pixels[0])) + (x + y * width) * 4;
+	const uint8_t* src_pixels = ((uint8_t*)(&src_bitmap->pixels[0])) + (src_rect.x + src_rect.y * src_bitmap->GetWidth()) * 4;
+	uint8_t* dst_pixels = ((uint8_t*)(&pixels[0])) + (x + y * width) * 4;
 
 	if (opacity > 255) opacity = 255;
 	if (opacity > 0) {
 		for (int i = 0; i < src_height; ++i) {
 			for (int j = 0; j < src_width; ++j) {
-				const Uint8* src = src_pixels + j * 4;
-				Uint8* dst = dst_pixels + j * 4;
+				const uint8_t* src = src_pixels + j * 4;
+				uint8_t* dst = dst_pixels + j * 4;
 
-				Uint8 srca = (Uint8)(src[3] * opacity / 255);
+				uint8_t srca = (uint8_t)(src[3] * opacity / 255);
 				dst[0] = (dst[0] * (255 - srca) + src[0] * srca) / 255;
 				dst[1] = (dst[1] * (255 - srca) + src[1] * srca) / 255;
 				dst[2] = (dst[2] * (255 - srca) + src[2] * srca) / 255;
@@ -328,10 +331,11 @@ void Bitmap::Blit(int x, int y, Bitmap* src_bitmap, Rect src_rect, int opacity) 
 ///////////////////////////////////////////////////////////
 /// Stretch blit
 ///////////////////////////////////////////////////////////
-void Bitmap::StretchBlit(Rect dst_rect, Bitmap* src_bitmap, Rect src_rect, int opacity) {
-	if (src_rect.width == dst_rect.width && src_rect.height == dst_rect.height) {
-		Blit(dst_rect.x, dst_rect.y, src_bitmap, src_rect, opacity);
+void Bitmap::StretchBlit(Rect const& dst_rect, Bitmap* src_bitmap, Rect const& src_rect_, int opacity) {
+	if (src_rect_.width == dst_rect.width && src_rect_.height == dst_rect.height) {
+		Blit(dst_rect.x, dst_rect.y, src_bitmap, src_rect_, opacity);
 	} else {
+    Rect src_rect(src_rect_);
 		src_rect.Adjust(src_bitmap->GetWidth(), src_bitmap->GetHeight());
 		if (src_rect.IsOutOfBounds(src_bitmap->GetWidth(), src_bitmap->GetHeight())) return;
 
@@ -347,12 +351,14 @@ void Bitmap::StretchBlit(Rect dst_rect, Bitmap* src_bitmap, Rect src_rect, int o
 ///////////////////////////////////////////////////////////
 /// Fill rect
 ///////////////////////////////////////////////////////////
-void Bitmap::FillRect(Rect rect, Color color) {
+void Bitmap::FillRect(Rect const& rect_, Color const& color) {
+  Rect rect(rect_);
+
 	rect.Adjust(GetWidth(), GetHeight());
 	if (rect.IsOutOfBounds(GetWidth(), GetHeight())) return;
 
 	long dst = rect.x + rect.y * width;
-	Uint32 col = color.GetUint32();
+	uint32_t col = color.GetUint32();
 	for (int i = 0; i < rect.height; i++) {
 		fill_n(pixels.begin() + dst, rect.width, col);
 		dst += width;
@@ -369,7 +375,7 @@ void Bitmap::Clear() {
 
 	Changed();
 }
-void Bitmap::Clear(Color color) {
+void Bitmap::Clear(Color const& color) {
 	fill_n(pixels.begin(), width * height, color.GetUint32());
 
 	Changed();
@@ -378,7 +384,7 @@ void Bitmap::Clear(Color color) {
 ///////////////////////////////////////////////////////////
 /// Get pixel
 ///////////////////////////////////////////////////////////
-Color Bitmap::GetPixel(int x, int y) {
+Color Bitmap::GetPixel(int x, int y) const {
 	if (x < 0 || y < 0) return Color(0, 0, 0, 0);
 	if (x >= GetWidth() || y > GetHeight()) return Color(0, 0, 0, 0);
 	return Color::NewUint32(pixels[(y * width) + x]);
@@ -387,7 +393,7 @@ Color Bitmap::GetPixel(int x, int y) {
 ///////////////////////////////////////////////////////////
 /// Set pixel
 ///////////////////////////////////////////////////////////
-void Bitmap::SetPixel(int x, int y, Color color) {
+void Bitmap::SetPixel(int x, int y, Color const& color) {
 	if (x < 0 || y < 0) return;
 	if (x >= width || y > height) return;
 	pixels[(y * width) + x] = color.GetUint32();
@@ -450,7 +456,9 @@ void Bitmap::HSLChange(double h, double s, double l) {
 
 	Changed();
 }
-void Bitmap::HSLChange(double h, double s, double l, Rect rect) {
+void Bitmap::HSLChange(double h, double s, double l, Rect const& rect_) {
+  Rect rect(rect_);
+
 	rect.Adjust(GetWidth(), GetHeight());
 	if (rect.IsOutOfBounds(GetWidth(), GetHeight())) return;
 
@@ -467,7 +475,7 @@ void Bitmap::HSLChange(double h, double s, double l, Rect rect) {
 ///////////////////////////////////////////////////////////
 /// Draw text
 ///////////////////////////////////////////////////////////
-void Bitmap::TextDraw(Rect rect, std::string text, int align) {
+void Bitmap::TextDraw(Rect const& rect, std::string const& text, int align) {
 	if (text.length() == 0) return;
 	if (rect.IsOutOfBounds(GetWidth(), GetHeight())) return;
 
@@ -508,7 +516,7 @@ void Bitmap::TextDraw(Rect rect, std::string text, int align) {
 ///////////////////////////////////////////////////////////
 /// Get text size
 ///////////////////////////////////////////////////////////
-Rect Bitmap::GetTextSize(std::string text) {
+Rect Bitmap::GetTextSize(std::string const& text) {
 	VALUE font_id = rb_iv_get(id, "@font");
 	VALUE name_id = rb_iv_get(font_id, "@name");
 	int size = NUM2INT(rb_iv_get(font_id, "@size"));
@@ -518,14 +526,14 @@ Rect Bitmap::GetTextSize(std::string text) {
 ///////////////////////////////////////////////////////////
 /// Gradient fill rect
 ///////////////////////////////////////////////////////////
-void Bitmap::GradientFillRect(Rect rect, Color color1, Color color2, bool vertical) {
+void Bitmap::GradientFillRect(Rect const& rect, Color const& color1, Color const& color2, bool vertical) {
 	// TODO
 }
 
 ///////////////////////////////////////////////////////////
 /// Clear Rect
 ///////////////////////////////////////////////////////////
-void Bitmap::ClearRect(Rect rect) {
+void Bitmap::ClearRect(Rect const& rect) {
 	// TODO
 }
 
@@ -546,18 +554,18 @@ void Bitmap::RadialBlur(int angle, int division) {
 ///////////////////////////////////////////////////////////
 /// Tone change
 ///////////////////////////////////////////////////////////
-void Bitmap::ToneChange(Tone tone) {
+void Bitmap::ToneChange(Tone const& tone) {
 	if (tone.red == 0 && tone.green == 0 && tone.blue == 0 && tone.gray == 0) return;
 
-	Uint8* dst_pixels = (Uint8*)&pixels[0];
+	uint8_t* dst_pixels = (uint8_t*)&pixels[0];
 
 	if (tone.gray == 0) {
 		for (int i = 0; i < GetHeight(); i++) {
 			for (int j = 0; j < GetWidth(); j++) {
-				Uint8* pixel = dst_pixels;
-				pixel[0] = (Uint8)max(min(pixel[0] + tone.red, 255), 0);
-				pixel[1] = (Uint8)max(min(pixel[1] + tone.green, 255), 0);
-				pixel[2] = (Uint8)max(min(pixel[2] + tone.blue, 255), 0);
+				uint8_t* pixel = dst_pixels;
+				pixel[0] = (uint8_t)max(min(pixel[0] + tone.red, 255), 0);
+				pixel[1] = (uint8_t)max(min(pixel[1] + tone.green, 255), 0);
+				pixel[2] = (uint8_t)max(min(pixel[2] + tone.blue, 255), 0);
 				dst_pixels += 4;
 			}
 		}
@@ -566,12 +574,12 @@ void Bitmap::ToneChange(Tone tone) {
 		double gray;
 		for (int i = 0; i < GetHeight(); i++) {
 			for (int j = 0; j < GetWidth(); j++) {
-				Uint8* pixel = dst_pixels;
+				uint8_t* pixel = dst_pixels;
 
 				gray = pixel[0] * 0.299 + pixel[1] * 0.587 + pixel[2] * 0.114;
-				pixel[0] = (Uint8)max(min((pixel[0] - gray) * factor + gray + tone.red + 0.5, 255), 0);
-				pixel[1] = (Uint8)max(min((pixel[1] - gray) * factor + gray + tone.green + 0.5, 255), 0);
-				pixel[2] = (Uint8)max(min((pixel[2] - gray) * factor + gray + tone.blue + 0.5, 255), 0);
+				pixel[0] = (uint8_t)max(min((pixel[0] - gray) * factor + gray + tone.red + 0.5, 255), 0);
+				pixel[1] = (uint8_t)max(min((pixel[1] - gray) * factor + gray + tone.green + 0.5, 255), 0);
+				pixel[2] = (uint8_t)max(min((pixel[2] - gray) * factor + gray + tone.blue + 0.5, 255), 0);
 				dst_pixels += 4;
 			}
 		}
@@ -588,7 +596,7 @@ void Bitmap::OpacityChange(int opacity, int bush_depth) {
 
 	SDL_LockSurface(bitmap);
 
-	Uint8* pixels = (Uint8 *)bitmap->pixels;
+	uint8_t* pixels = (uint8_t *)bitmap->pixels;
 
 	int start_bush = max(GetHeight() - bush_depth, 0);
 
@@ -597,14 +605,14 @@ void Bitmap::OpacityChange(int opacity, int bush_depth) {
 	if (opacity < 255) {
 		for (int i = 0; i < start_bush; i++) {
 			for (int j = 0; j < GetWidth(); j++) {
-				Uint8* pixel = pixels;
+				uint8_t* pixel = pixels;
 				pixel[abyte] = pixel[abyte] * opacity / 255;
 				pixels += 4;
 			}
 		}
 		for (int i = start_bush; i< GetHeight(); i++) {
 			for (int j = 0; j < GetWidth(); j++) {
-				Uint8* pixel = pixels;
+				uint8_t* pixel = pixels;
 				pixel[abyte] = (pixel[abyte] / 2) * opacity / 255;
 				pixels += 4;
 			}
@@ -613,7 +621,7 @@ void Bitmap::OpacityChange(int opacity, int bush_depth) {
 		pixels += start_bush * GetWidth() * 4;
 		for (int i = start_bush; i < GetHeight(); i++) {
 			for (int j = 0; j < GetWidth(); j++) {
-				Uint8* pixel = pixels;
+				uint8_t* pixel = pixels;
 				pixel[abyte] = pixel[abyte] / 2;
 				pixels += 4;
 			}
@@ -637,8 +645,8 @@ void Bitmap::Flip(bool flipx, bool flipy) {
 
 	SDL_LockSurface(temp);
 
-	Uint32* srcpixels = (Uint32*)bitmap->pixels;
-	Uint32* dstpixels = (Uint32*)temp->pixels;
+	uint32_t* srcpixels = (uint32_t*)bitmap->pixels;
+	uint32_t* dstpixels = (uint32_t*)temp->pixels;
 
 	if (flipx && flipy) {
 		long srcpixel = 0;
@@ -701,8 +709,8 @@ void Bitmap::Zoom(double zoom_x, double zoom_y) {
 
 	SDL_LockSurface(surface);
 
-	Uint8* srcpixels = (Uint8*)bitmap->pixels;
-	Uint8* dstpixels = (Uint8*)surface->pixels;
+	uint8_t* srcpixels = (uint8_t*)bitmap->pixels;
+	uint8_t* dstpixels = (uint8_t*)surface->pixels;
 
 	int row = GetWidth() * 4;
 
@@ -738,8 +746,8 @@ Bitmap* Bitmap::Resample(int scalew, int scaleh, Rect src_rect) {
 
 	Bitmap* resampled = new Bitmap(scalew, scaleh);
 
-	Uint8* src_pixels = (Uint8*)&pixels[0];
-	Uint8* dst_pixels = (Uint8*)(&resampled->pixels[0]);
+	uint8_t* src_pixels = (uint8_t*)&pixels[0];
+	uint8_t* dst_pixels = (uint8_t*)(&resampled->pixels[0]);
 
 	int row = width * 4;
 
@@ -794,8 +802,8 @@ void Bitmap::Rotate(float angle) {
 
 	SDL_LockSurface(nbitmap);
 
-	Uint32* srcpixels = (Uint32*)bitmap->pixels;
-	Uint32* dstpixels = (Uint32*)nbitmap->pixels;
+	uint32_t* srcpixels = (uint32_t*)bitmap->pixels;
+	uint32_t* dstpixels = (uint32_t*)nbitmap->pixels;
 
 	for (int i = 0; i < nbitmap->h; i++) {
 		for (int j = 0; j < nbitmap->w; j++) {
@@ -821,7 +829,6 @@ void Bitmap::Rotate(float angle) {
 ///////////////////////////////////////////////////////////
 /// Get Rect
 ///////////////////////////////////////////////////////////
-Rect Bitmap::GetRect() {
+Rect Bitmap::GetRect() const {
 	return Rect(0, 0, GetWidth(), GetHeight());
 }
-

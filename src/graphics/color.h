@@ -27,10 +27,7 @@
 #ifndef _COLOR_H_
 #define _COLOR_H_
 
-///////////////////////////////////////////////////////////
-// Headers
-///////////////////////////////////////////////////////////
-#include "defines.h"
+#include <boost/cstdint.hpp>
 
 ///////////////////////////////////////////////////////////
 /// Color class
@@ -40,18 +37,17 @@ public:
 	Color();
 	Color(unsigned long color);
 	Color(int ired, int igreen, int iblue, int ialpha);
-	~Color();
 
 	void Set(unsigned long color);
-	unsigned long GetARGSS();
-	Uint32 GetUint32();
+	unsigned long GetARGSS() const;
+	uint32_t GetUint32() const;
 
 	float red;
 	float green;
 	float blue;
 	float alpha;
 
-	static Color NewUint32(Uint32 color);
+	static Color NewUint32(uint32_t color);
 };
 
 #endif

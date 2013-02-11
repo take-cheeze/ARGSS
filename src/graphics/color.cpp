@@ -53,11 +53,6 @@ Color::Color(int ired, int igreen, int iblue, int ialpha) {
 }
 
 ///////////////////////////////////////////////////////////
-/// Destructor
-///////////////////////////////////////////////////////////
-Color::~Color() { }
-
-///////////////////////////////////////////////////////////
 /// Set
 ///////////////////////////////////////////////////////////
 void Color::Set(VALUE color) {
@@ -70,22 +65,22 @@ void Color::Set(VALUE color) {
 ///////////////////////////////////////////////////////////
 /// Get ARGSS
 ///////////////////////////////////////////////////////////
-unsigned long Color::GetARGSS() {
+unsigned long Color::GetARGSS() const {
 	VALUE args[4] = {rb_float_new(red), rb_float_new(green), rb_float_new(blue), rb_float_new(alpha)};
 	return rb_class_new_instance(4, args, ARGSS::AColor::id);
 }
 
 ///////////////////////////////////////////////////////////
-/// Get Uint32
+/// Get uint32_t
 ///////////////////////////////////////////////////////////
-Uint32 Color::GetUint32() {
-	return ((Uint8)red) + (((Uint8)green) << 8) + (((Uint8)blue) << 16) + (((Uint8)alpha) << 24);
+uint32_t Color::GetUint32() const {
+	return ((uint8_t)red) + (((uint8_t)green) << 8) + (((uint8_t)blue) << 16) + (((uint8_t)alpha) << 24);
 }
 
 ///////////////////////////////////////////////////////////
-/// Static create Color from Uint32
+/// Static create Color from uint32_t
 ///////////////////////////////////////////////////////////
-Color Color::NewUint32(Uint32 color) {
+Color Color::NewUint32(uint32_t color) {
 	int r = (color & 0x000000ff);
 	int g = (color & 0x0000ff00) >> 8;
 	int b = (color & 0x00ff0000) >> 16;

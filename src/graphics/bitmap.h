@@ -33,16 +33,13 @@
 #include <map>
 #include <vector>
 #include <string>
-#include "defines.h"
 #include "aruby.h"
-#ifdef MACOSX
-#include "gl.h"
-#else
-#include "gl/gl.h"
-#endif
-#include "graphics/rect.h"
-#include "graphics/color.h"
-#include "graphics/tone.h"
+#include "opengl.h"
+#include <boost/cstdint.hpp>
+
+class Tone;
+class Color;
+class Rect;
 
 ///////////////////////////////////////////////////////////
 /// Bitmap class
@@ -51,66 +48,65 @@ class Bitmap {
 public:
 	Bitmap();
 	Bitmap(int iwidth, int iheight);
-	Bitmap(unsigned long iid, std::string filename);
-	Bitmap(unsigned long iid, int iwidth, int iheight);
-	Bitmap(Bitmap* source, Rect src_rect);
+	Bitmap(VALUE iid, std::string const& filename);
+	Bitmap(VALUE iid, int iwidth, int iheight);
+	Bitmap(Bitmap* source, Rect const& src_rect);
 	~Bitmap();
 
-	static bool IsDisposed(unsigned long id);
-	static void New(unsigned long id, std::string filename);
-	static void New(unsigned long id, int width, int height);
-	static Bitmap* Get(unsigned long id);
-	static void Dispose(unsigned long id);
+	static bool IsDisposed(VALUE id);
+	static void New(VALUE id, std::string const& filename);
+	static void New(VALUE id, int width, int height);
+	static Bitmap* Get(VALUE id);
+	static void Dispose(VALUE id);
 	static void RefreshBitmaps();
 	static void DisposeBitmaps();
 
-	int GetWidth();
-	int GetHeight();
-	void Copy(int x, int y, Bitmap* source, Rect src_rect);
-	void Blit(int x, int y, Bitmap* source, Rect src_rect, int opacity);
-	void StretchBlit(Rect dst_rect, Bitmap* src_bitmap, Rect src_rect, int opacity);
-	void FillRect(Rect rect, Color color);
+	int GetWidth() const;
+	int GetHeight() const;
+	Color GetPixel(int x, int y) const;
+	Rect GetRect() const;
+
+	void Copy(int x, int y, Bitmap* source, Rect const& src_rect);
+	void Blit(int x, int y, Bitmap* source, Rect const& src_rect, int opacity);
+	void StretchBlit(Rect const& dst_rect, Bitmap* src_bitmap, Rect const& src_rect, int opacity);
+	void FillRect(Rect const& rect, Color const& color);
 	void Clear();
-	void Clear(Color color);
-	Color GetPixel(int x, int y);
-	void SetPixel(int x, int y, Color color);
+	void Clear(Color const& color);
+	void SetPixel(int x, int y, Color const& color);
 	void HueChange(double hue);
 	void SatChange(double saturation);
 	void LumChange(double luminance);
 	void HSLChange(double h, double s, double l);
-	void HSLChange(double h, double s, double l, Rect rect);
-	void TextDraw(Rect rect, std::string text, int align);
-	Rect GetTextSize(std::string text);
-	void GradientFillRect(Rect rect, Color color1, Color color2, bool vertical);
-	void ClearRect(Rect rect);
+	void HSLChange(double h, double s, double l, Rect const& rect);
+	void TextDraw(Rect const& rect, std::string const& text, int align);
+	Rect GetTextSize(std::string const& text);
+	void GradientFillRect(Rect const& rect, Color const& color1, Color const& color2, bool vertical);
+	void ClearRect(Rect const& rect);
 	void Blur();
 	void RadialBlur(int angle, int division);
 
-	void ToneChange(Tone tone);
+	void ToneChange(Tone const& tone);
 	void OpacityChange(int opacity, int bush_depth = 0);
 	void Flip(bool flipx, bool flipy);
 	void Zoom(double zoom_x, double zoom_y);
 	Bitmap* Resample(int scalew, int scaleh, Rect src_rect);
 	void Rotate(float angle);
 
-	Rect GetRect();
-
 	void Changed();
 	void Refresh();
 	void BindBitmap();
-	Uint32* GetPixels();
+	uint32_t* GetPixels();
 
 protected:
-	unsigned long id;
+	VALUE id;
 
 	GLuint gl_bitmap;
-	long width;
-	long height;
+	int width, height;
 
-	std::vector<Uint32> pixels;
+	std::vector<uint32_t> pixels;
 
 private:
-	static std::map<unsigned long, Bitmap*> bitmaps;
+	static std::map<VALUE, Bitmap*> bitmaps;
 };
 
 #endif

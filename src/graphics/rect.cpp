@@ -51,10 +51,6 @@ Rect::Rect(int ix, int iy, int iwidth, int iheight) {
 	width = iwidth;
 	height = iheight;
 }
-///////////////////////////////////////////////////////////
-/// Destructor
-///////////////////////////////////////////////////////////
-Rect::~Rect() { }
 
 ///////////////////////////////////////////////////////////
 /// != operator
@@ -101,7 +97,7 @@ void Rect::Adjust(int awidth, int aheight) {
 ///////////////////////////////////////////////////////////
 /// Adjust Rect
 ///////////////////////////////////////////////////////////
-bool Rect::IsOutOfBounds(int awidth, int aheight) {
+bool Rect::IsOutOfBounds(int awidth, int aheight) const {
 	if (width <= 0 || height <= 0) return true;
 	if (x >= awidth || y >= aheight) return true;
 	if (x + width <= 0 || y + height <= 0) return true;

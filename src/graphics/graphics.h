@@ -33,9 +33,10 @@
 #include <string>
 #include <list>
 #include <map>
-#include "graphics/drawable.h"
-#include "graphics/zobj.h"
-#include "graphics/color.h"
+
+class Color;
+class ZObj;
+class Drawable;
 
 ///////////////////////////////////////////////////////////
 /// Graphics namespace
@@ -51,7 +52,7 @@ namespace Graphics {
 
 	void Update();
 	void Freeze();
-	void Transition(int duration, std::string filename, int vague);
+	void Transition(int duration, std::string const& filename, int vague);
 	void FrameReset();
 	void Wait(int duration);
 	void ResizeScreen(int width, int height);

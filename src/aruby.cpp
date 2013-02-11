@@ -30,7 +30,7 @@
 #include <string>
 #include <stdarg.h>
 #include "aruby.h"
-#include "rubylibs.h"
+// #include "rubylibs.h"
 #include "options.h"
 #include "output.h"
 #include "player.h"

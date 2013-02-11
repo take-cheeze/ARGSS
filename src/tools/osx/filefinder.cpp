@@ -14,10 +14,10 @@
 #include <fstream>
 #include <stdio.h>
 #include <stdlib.h>
-#include "filefinder_osx.h"
-#include "system.h"
+#include "tools/osx/filefinder.h"
 #include "options.h"
-#include "registry_osx.h"
+#include "system.h"
+#include "tools/osx/registry.h"
 
 ////////////////////////////////////////////////////////////
 /// Global Variables
@@ -147,11 +147,11 @@ std::string FileFinder::FindFont(std::string name) {
 	if (fexists(path)) return path;
 	path = name; path += ".ttf";
 	if (fexists(path)) return path;
-	
+
 	path = USER_FONTS_PATH; path += name;
 	if (fexists(path)) return path;
 	path = LOCAL_FONTS_PATH; path += name; path += ".ttf";
 	if (fexists(path)) return path;
-	
+
 	return "";
 }

@@ -10,9 +10,9 @@
 ////////////////////////////////////////////////////////////
 /// Headers
 ////////////////////////////////////////////////////////////
-#include "inputbuttons_osx.h"
-#include "inputkeys.h"
-#include "registry_osx.h"
+#include "input/buttons.h"
+#include "input/keys.h"
+#include "tools/osx/registry.h"
 #include "options.h"
 
 ////////////////////////////////////////////////////////////
@@ -25,7 +25,7 @@ std::map< int, std::vector<int> > Input::buttons;
 ////////////////////////////////////////////////////////////
 void Input::InitButtons() {
 	bool standard = true;
-	
+
 	if (READ_BUTTON_ASSIGMENT) {
 		std::string data = Registry::ReadStrValue(OSX_CONFIG_RGSS_SECTION_NAME, READ_BUTTON_ASSIGMENT_KEY, "");
 		if (data.size() > 0) {

@@ -115,7 +115,7 @@ Bitmap* Text::Draw(std::string text, std::string font, Color color, int size, bo
 	min_y = (int)(((float)min_y + 0.5f) / 2.0f);
 
 	Bitmap* text_bmp = new Bitmap(width, height);
-	Uint8* dst_pixels = (Uint8*)text_bmp->GetPixels();
+	uint8_t* dst_pixels = reinterpret_cast<uint8_t*>(text_bmp->GetPixels());
 	for (unsigned int i = 0; i < glyphs.size(); i++) {
 
 		long glyph_pixel = 0;
@@ -130,9 +130,9 @@ Bitmap* Text::Draw(std::string text, std::string font, Color color, int size, bo
 				if ((((left + x) + (top + y - min_y) * width) * 4) >= width * height * 4) continue;
 
 				long pixel = ((left + x) + (top + y - min_y) * width) * 4;
-				dst_pixels[pixel + 0] = (Uint8)color.red;
-				dst_pixels[pixel + 1] = (Uint8)color.green;
-				dst_pixels[pixel + 2] = (Uint8)color.blue;
+				dst_pixels[pixel + 0] = (uint8_t)color.red;
+				dst_pixels[pixel + 1] = (uint8_t)color.green;
+				dst_pixels[pixel + 2] = (uint8_t)color.blue;
 				dst_pixels[pixel + 3] = glyphs[i]->bitmap.buffer[x + y * glyphs[i]->bitmap.width];
 			}
 			glyph_pixel += glyphs[i]->bitmap.pitch;

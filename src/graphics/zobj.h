@@ -33,7 +33,6 @@
 class ZObj {
 public:
 	ZObj(long iz, unsigned long icreation, unsigned long iid);
-	~ZObj();
 
 	void SetZ(long n);
 	long GetZ();

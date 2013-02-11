@@ -39,7 +39,6 @@ public:
 	Rect();
 	Rect(unsigned long rect);
 	Rect(int ix, int iy, int iwidth, int iheight);
-	~Rect();
 
 	bool operator!=(const Rect& other) const;
 
@@ -47,7 +46,7 @@ public:
 
 	unsigned long GetARGSS();
 	void Adjust(int awidth, int aheight);
-	bool IsOutOfBounds(int awidth, int aheight);
+	bool IsOutOfBounds(int awidth, int aheight) const;
 
 	int x;
 	int y;

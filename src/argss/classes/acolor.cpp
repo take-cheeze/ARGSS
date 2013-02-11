@@ -29,6 +29,7 @@
 ///////////////////////////////////////////////////////////
 #include "argss/classes/acolor.h"
 #include "graphics/color.h"
+#include <algorithm>
 
 ///////////////////////////////////////////////////////////
 // Global Variables
@@ -39,7 +40,7 @@ VALUE ARGSS::AColor::id;
 // Limit color value between 0 and 255
 ///////////////////////////////////////////////////////////
 static double LimitColorValue(double v) {
-	return (v > 255) ? 255 : (v < 0) ? 0 : v;
+	return std::max(0.0, std::min(255.0, v));
 }
 
 ///////////////////////////////////////////////////////////
@@ -97,7 +98,7 @@ VALUE ARGSS::AColor::rinspect(VALUE self) {
 	char str[255];
 	long str_size = sprintf(
 		str,
-		"(%f, %f, %f, %f)", 
+		"(%f, %f, %f, %f)",
 		NUM2DBL(rb_iv_get(self, "@red")),
 		NUM2DBL(rb_iv_get(self, "@green")),
 		NUM2DBL(rb_iv_get(self, "@blue")),

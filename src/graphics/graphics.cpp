@@ -38,11 +38,8 @@
 #include "graphics/sprite.h"
 #include "graphics/tilemap.h"
 #include "graphics/text.h"
-#ifdef MACOSX
-#include "gl.h"
-#else
-#include "gl/gl.h"
-#endif
+#include "opengl.h"
+#include "zobj.h"
 
 ///////////////////////////////////////////////////////////
 // Global Variables
@@ -223,7 +220,7 @@ void Graphics::Freeze() {
 ///////////////////////////////////////////////////////////
 /// Transition effect
 ///////////////////////////////////////////////////////////
-void Graphics::Transition(int duration, std::string filename, int vague) {
+void Graphics::Transition(int duration, std::string const& filename, int vague) {
 	// TODO
 }
 

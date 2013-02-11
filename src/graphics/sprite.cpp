@@ -36,9 +36,9 @@
 #include "graphics/graphics.h"
 #include "config.h"
 #ifdef MACOSX
-#include "gl.h"
+#include "OpenGL/gl.h"
 #else
-#include "gl/gl.h"
+#include "GL/gl.h"
 #endif
 
 ///////////////////////////////////////////////////////////

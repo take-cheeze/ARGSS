@@ -16,8 +16,8 @@
 #include <string>
 #include <queue>
 #include "SDL.h"
-#include "event.h"
-#include "inputkeys.h"
+#include "tools/event.h"
+#include "input/keys.h"
 
 ////////////////////////////////////////////////////////////
 /// WindowUi class
@@ -26,7 +26,7 @@ class WindowUi {
 public:
 	WindowUi(long iwidth, long iheight, std::string title, bool center, bool fs_flag);
 	~WindowUi();
-	
+
 	void Dispose();
 	void SwapBuffers();
 	void Resize(long nwidth, long nheight);
@@ -34,7 +34,7 @@ public:
 	void ToggleFullscreen();
 	long GetWidth();
 	long GetHeight();
-	
+
 	bool IsFullscreen();
 	std::vector<bool> GetKeyStates();
 	bool GetMouseFocus();
@@ -42,12 +42,12 @@ public:
 	int GetMousePosX();
 	int GetMousePosY();
 	bool GetEvent(Event& evnt);
-	
+
 private:
 	Input::Keys::InputKey VK2IK(SDLKey key);
-	
+
 	SDL_Surface* screen;
-	
+
 	std::queue<Event> events;
 	std::vector<bool> keys;
 	bool mouse_focus;
