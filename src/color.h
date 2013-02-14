@@ -6,11 +6,11 @@
 // modification, are permitted provided that the following conditions
 // are met:
 //
-//	* Redistributions of source code must retain the above copyright notice,
-//	this list of conditions and the following disclaimer.
-//	* Redistributions in binary form must reproduce the above copyright
-//	notice, this list of conditions and the following disclaimer in the
-//	documentation and/or other materials provided with the distribution.
+//  * Redistributions of source code must retain the above copyright notice,
+//  this list of conditions and the following disclaimer.
+//  * Redistributions in binary form must reproduce the above copyright
+//  notice, this list of conditions and the following disclaimer in the
+//  documentation and/or other materials provided with the distribution.
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR
 // IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -34,20 +34,20 @@
 ///////////////////////////////////////////////////////////
 class Color {
 public:
-	Color();
-	Color(unsigned long color);
-	Color(int ired, int igreen, int iblue, int ialpha);
+  Color();
+  Color(unsigned long color);
+  Color(int ired, int igreen, int iblue, int ialpha);
 
-	void Set(unsigned long color);
-	unsigned long GetARGSS() const;
-	uint32_t GetUint32() const;
+  void Set(unsigned long color);
+  unsigned long GetARGSS() const;
+  uint32_t GetUint32() const;
 
-	float red;
-	float green;
-	float blue;
-	float alpha;
+  float red;
+  float green;
+  float blue;
+  float alpha;
 
-	static Color NewUint32(uint32_t color);
+  static Color NewUint32(uint32_t color);
 };
 
 #endif

@@ -25,12 +25,12 @@
 /// FileFinder namespace
 ////////////////////////////////////////////////////////////
 namespace FileFinder {
-	void Init();
-	std::string FindImage(std::string name);
-	std::string FindMusic(std::string name);
-	std::string FindFont(std::string name);
-	
-	extern std::string rtp_paths[3];
+  void Init();
+  std::string FindImage(std::string name);
+  std::string FindMusic(std::string name);
+  std::string FindFont(std::string name);
+  
+  extern std::string rtp_paths[3];
 };
 
 #endif

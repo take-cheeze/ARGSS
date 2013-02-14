@@ -6,11 +6,11 @@
 // modification, are permitted provided that the following conditions
 // are met:
 //
-//	* Redistributions of source code must retain the above copyright notice,
-//	this list of conditions and the following disclaimer.
-//	* Redistributions in binary form must reproduce the above copyright
-//	notice, this list of conditions and the following disclaimer in the
-//	documentation and/or other materials provided with the distribution.
+//  * Redistributions of source code must retain the above copyright notice,
+//  this list of conditions and the following disclaimer.
+//  * Redistributions in binary form must reproduce the above copyright
+//  notice, this list of conditions and the following disclaimer in the
+//  documentation and/or other materials provided with the distribution.
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR
 // IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -34,72 +34,72 @@
 /// Constructor
 ///////////////////////////////////////////////////////////
 Rect::Rect() {
-	x = 0;
-	y = 0;
-	width = 0;
-	height = 0;
+  x = 0;
+  y = 0;
+  width = 0;
+  height = 0;
 }
 Rect::Rect(VALUE rect) {
-	x = NUM2INT(rb_iv_get(rect, "@x"));
-	y = NUM2INT(rb_iv_get(rect, "@y"));
-	width = NUM2INT(rb_iv_get(rect, "@width"));
-	height = NUM2INT(rb_iv_get(rect, "@height"));
+  x = NUM2INT(rb_iv_get(rect, "@x"));
+  y = NUM2INT(rb_iv_get(rect, "@y"));
+  width = NUM2INT(rb_iv_get(rect, "@width"));
+  height = NUM2INT(rb_iv_get(rect, "@height"));
 }
 Rect::Rect(int ix, int iy, int iwidth, int iheight) {
-	x = ix;
-	y = iy;
-	width = iwidth;
-	height = iheight;
+  x = ix;
+  y = iy;
+  width = iwidth;
+  height = iheight;
 }
 
 ///////////////////////////////////////////////////////////
 /// != operator
 ///////////////////////////////////////////////////////////
 bool Rect::operator!=(const Rect &other) const {
-	return x != other.x || y != other.y || width != other.width || height != other.height;
+  return x != other.x || y != other.y || width != other.width || height != other.height;
 }
 
 ///////////////////////////////////////////////////////////
 /// Set rect values
 ///////////////////////////////////////////////////////////
 void Rect::Set(int nx, int ny, int nwidth, int nheight) {
-	x = nx;
-	y = ny;
-	width = nwidth;
-	height = nheight;
+  x = nx;
+  y = ny;
+  width = nwidth;
+  height = nheight;
 }
 
 ///////////////////////////////////////////////////////////
 /// Get ARGSS rect
 ///////////////////////////////////////////////////////////
 VALUE Rect::GetARGSS() {
-	VALUE args[4] = {INT2NUM(x), INT2NUM(y), INT2NUM(width), INT2NUM(height)};
-	return rb_class_new_instance(4, args, ARGSS::ARect::id);
+  VALUE args[4] = {INT2NUM(x), INT2NUM(y), INT2NUM(width), INT2NUM(height)};
+  return rb_class_new_instance(4, args, ARGSS::ARect::id);
 }
 ///////////////////////////////////////////////////////////
 /// Adjust Rect
 ///////////////////////////////////////////////////////////
 void Rect::Adjust(int awidth, int aheight) {
-	if (x < 0) {
-		width += x;
-		x = 0;
-	}
-	if (y < 0) {
-		height += y;
-		y = 0;
-	}
-	if (x < awidth && y < aheight) {
-		if (awidth < x + width) width = awidth - x;
-		if (aheight < y + height) height = aheight - y;
-	}
+  if (x < 0) {
+    width += x;
+    x = 0;
+  }
+  if (y < 0) {
+    height += y;
+    y = 0;
+  }
+  if (x < awidth && y < aheight) {
+    if (awidth < x + width) width = awidth - x;
+    if (aheight < y + height) height = aheight - y;
+  }
 }
 
 ///////////////////////////////////////////////////////////
 /// Adjust Rect
 ///////////////////////////////////////////////////////////
 bool Rect::IsOutOfBounds(int awidth, int aheight) const {
-	if (width <= 0 || height <= 0) return true;
-	if (x >= awidth || y >= aheight) return true;
-	if (x + width <= 0 || y + height <= 0) return true;
-	return false;
+  if (width <= 0 || height <= 0) return true;
+  if (x >= awidth || y >= aheight) return true;
+  if (x + width <= 0 || y + height <= 0) return true;
+  return false;
 }

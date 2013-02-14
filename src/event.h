@@ -6,11 +6,11 @@
 // modification, are permitted provided that the following conditions
 // are met:
 //
-//	* Redistributions of source code must retain the above copyright notice,
-//	this list of conditions and the following disclaimer.
-//	* Redistributions in binary form must reproduce the above copyright
-//	notice, this list of conditions and the following disclaimer in the
-//	documentation and/or other materials provided with the distribution.
+//  * Redistributions of source code must retain the above copyright notice,
+//  this list of conditions and the following disclaimer.
+//  * Redistributions in binary form must reproduce the above copyright
+//  notice, this list of conditions and the following disclaimer in the
+//  documentation and/or other materials provided with the distribution.
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR
 // IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -32,25 +32,25 @@
 ///////////////////////////////////////////////////////////
 class Event {
 public:
-	enum EventType {
-		None,
-		Quit,
-		LostFocus,
-		GainFocus,
-		KeyDown,
-		KeyUp
-	};
+  enum EventType {
+    None,
+    Quit,
+    LostFocus,
+    GainFocus,
+    KeyDown,
+    KeyUp
+  };
 
-	Event() {
-		type = None;
-		param1 = 0;
-		param2 = 0;
-	};
+  Event() {
+    type = None;
+    param1 = 0;
+    param2 = 0;
+  };
 
-	EventType type;
+  EventType type;
 
-	long param1;
-	long param2;
+  long param1;
+  long param2;
 };
 
 #endif

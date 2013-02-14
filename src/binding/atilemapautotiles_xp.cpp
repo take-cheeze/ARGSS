@@ -6,11 +6,11 @@
 // modification, are permitted provided that the following conditions
 // are met:
 //
-//	* Redistributions of source code must retain the above copyright notice,
-//	this list of conditions and the following disclaimer.
-//	* Redistributions in binary form must reproduce the above copyright
-//	notice, this list of conditions and the following disclaimer in the
-//	documentation and/or other materials provided with the distribution.
+//  * Redistributions of source code must retain the above copyright notice,
+//  this list of conditions and the following disclaimer.
+//  * Redistributions in binary form must reproduce the above copyright
+//  notice, this list of conditions and the following disclaimer in the
+//  documentation and/or other materials provided with the distribution.
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR
 // IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -39,31 +39,31 @@ VALUE ARGSS::ATilemapAutotiles::id;
 // ARGSS TilemapAutotiles instance methods
 ///////////////////////////////////////////////////////////
 VALUE ARGSS::ATilemapAutotiles::rinitialize(VALUE self) {
-	rb_iv_set(self, "@autotiles", rb_ary_new2(8));
-	return self;
+  rb_iv_set(self, "@autotiles", rb_ary_new2(8));
+  return self;
 }
 VALUE ARGSS::ATilemapAutotiles::raref(VALUE self, VALUE index) {
-	return rb_ary_entry(rb_iv_get(self, "@autotiles"), NUM2INT(index));
+  return rb_ary_entry(rb_iv_get(self, "@autotiles"), NUM2INT(index));
 }
 VALUE ARGSS::ATilemapAutotiles::raset(VALUE self, VALUE index, VALUE bitmap) {
-	Check_Classes_N(bitmap, ARGSS::ABitmap::id);
-	rb_ary_store(rb_iv_get(self, "@autotiles"), NUM2INT(index), bitmap);
-	return bitmap;
+  Check_Classes_N(bitmap, ARGSS::ABitmap::id);
+  rb_ary_store(rb_iv_get(self, "@autotiles"), NUM2INT(index), bitmap);
+  return bitmap;
 }
 
 ///////////////////////////////////////////////////////////
 // ARGSS TilemapAutotiles initialize
 ///////////////////////////////////////////////////////////
 void ARGSS::ATilemapAutotiles::Init() {
-	id = rb_define_class("TilemapAutotiles", rb_cObject);
-	rb_define_method(id, "initialize", (rubyfunc)rinitialize, 0);
-	rb_define_method(id, "[]", (rubyfunc)raref, 1);
-	rb_define_method(id, "[]=", (rubyfunc)raset, 2);
+  id = rb_define_class("TilemapAutotiles", rb_cObject);
+  rb_define_method(id, "initialize", (rubyfunc)rinitialize, 0);
+  rb_define_method(id, "[]", (rubyfunc)raref, 1);
+  rb_define_method(id, "[]=", (rubyfunc)raset, 2);
 }
 
 ///////////////////////////////////////////////////////////
 // ARGSS TilemapAutotiles create instance
 ///////////////////////////////////////////////////////////
 VALUE ARGSS::ATilemapAutotiles::New() {
-	return rb_class_new_instance(0, 0, id);
+  return rb_class_new_instance(0, 0, id);
 }

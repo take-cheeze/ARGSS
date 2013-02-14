@@ -6,11 +6,11 @@
 // modification, are permitted provided that the following conditions
 // are met:
 //
-//	* Redistributions of source code must retain the above copyright notice,
-//	this list of conditions and the following disclaimer.
-//	* Redistributions in binary form must reproduce the above copyright
-//	notice, this list of conditions and the following disclaimer in the
-//	documentation and/or other materials provided with the distribution.
+//  * Redistributions of source code must retain the above copyright notice,
+//  this list of conditions and the following disclaimer.
+//  * Redistributions in binary form must reproduce the above copyright
+//  notice, this list of conditions and the following disclaimer in the
+//  documentation and/or other materials provided with the distribution.
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR
 // IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -44,142 +44,142 @@ VALUE ARGSS::AViewport::id;
 // ARGSS Viewport instance methods
 ///////////////////////////////////////////////////////////
 VALUE ARGSS::AViewport::rinitialize(int argc, VALUE* argv, VALUE self) {
-	if (argc == 0) raise_argn(argc, 1);
-	else if (argc > 1 && argc < 4) raise_argn(argc, 4);
-	if (argc == 1) rb_iv_set(self, "@rect", argv[0]);
-	else rb_iv_set(self, "@rect", ARGSS::ARect::New(argv[0], argv[1], argv[2], argv[3]));
-	rb_iv_set(self, "@visible", Qtrue);
-	rb_iv_set(self, "@z", INT2NUM(0));
-	rb_iv_set(self, "@ox", INT2NUM(0));
-	rb_iv_set(self, "@oy", INT2NUM(0));
-	rb_iv_set(self, "@color", ARGSS::AColor::New(0, 0, 0, 0));
-	rb_iv_set(self, "@tone", ARGSS::ATone::New());
-	Viewport::New(self);
-	ARuby::AddObject(self);
-	return self;
+  if (argc == 0) raise_argn(argc, 1);
+  else if (argc > 1 && argc < 4) raise_argn(argc, 4);
+  if (argc == 1) rb_iv_set(self, "@rect", argv[0]);
+  else rb_iv_set(self, "@rect", ARGSS::ARect::New(argv[0], argv[1], argv[2], argv[3]));
+  rb_iv_set(self, "@visible", Qtrue);
+  rb_iv_set(self, "@z", INT2NUM(0));
+  rb_iv_set(self, "@ox", INT2NUM(0));
+  rb_iv_set(self, "@oy", INT2NUM(0));
+  rb_iv_set(self, "@color", ARGSS::AColor::New(0, 0, 0, 0));
+  rb_iv_set(self, "@tone", ARGSS::ATone::New());
+  Viewport::New(self);
+  ARuby::AddObject(self);
+  return self;
 }
 VALUE ARGSS::AViewport::rdispose(VALUE self) {
-	if (!Viewport::IsDisposed(self)) {
-		Viewport::Dispose(self);
-		ARuby::RemoveObject(self);
-	}
-	return self;
+  if (!Viewport::IsDisposed(self)) {
+    Viewport::Dispose(self);
+    ARuby::RemoveObject(self);
+  }
+  return self;
 }
 VALUE ARGSS::AViewport::rdisposedQ(VALUE self) {
-	return BOOL2NUM(Viewport::IsDisposed(self));
+  return BOOL2NUM(Viewport::IsDisposed(self));
 }
 VALUE ARGSS::AViewport::rflash(VALUE self, VALUE color, VALUE duration) {
-	ARGSS::AViewport::CheckDisposed(self);
-	if (color == Qnil) {
-		Viewport::Get(self)->Flash(NUM2INT(duration));
-	} else {
-		Viewport::Get(self)->Flash(Color(color), NUM2INT(duration));
-	}
-	return Qnil;
+  ARGSS::AViewport::CheckDisposed(self);
+  if (color == Qnil) {
+    Viewport::Get(self)->Flash(NUM2INT(duration));
+  } else {
+    Viewport::Get(self)->Flash(Color(color), NUM2INT(duration));
+  }
+  return Qnil;
 }
 VALUE ARGSS::AViewport::rupdate(VALUE self) {
-	ARGSS::AViewport::CheckDisposed(self);
-	Viewport::Get(self)->Update();
-	return Qnil;
+  ARGSS::AViewport::CheckDisposed(self);
+  Viewport::Get(self)->Update();
+  return Qnil;
 }
 VALUE ARGSS::AViewport::rrect(VALUE self) {
-	ARGSS::AViewport::CheckDisposed(self);
-	return rb_iv_get(self, "@rect");
+  ARGSS::AViewport::CheckDisposed(self);
+  return rb_iv_get(self, "@rect");
 }
 VALUE ARGSS::AViewport::rrectE(VALUE self, VALUE rect) {
-	ARGSS::AViewport::CheckDisposed(self);
-	Check_Class(rect, ARGSS::ARect::id);
-	Viewport::Get(self)->SetRect(rect);
-	return rb_iv_set(self, "@rect", rect);
+  ARGSS::AViewport::CheckDisposed(self);
+  Check_Class(rect, ARGSS::ARect::id);
+  Viewport::Get(self)->SetRect(rect);
+  return rb_iv_set(self, "@rect", rect);
 }
 VALUE ARGSS::AViewport::rvisible(VALUE self) {
-	ARGSS::AViewport::CheckDisposed(self);
-	return rb_iv_get(self, "@visible");
+  ARGSS::AViewport::CheckDisposed(self);
+  return rb_iv_get(self, "@visible");
 }
 VALUE ARGSS::AViewport::rvisibleE(VALUE self, VALUE visible) {
-	ARGSS::AViewport::CheckDisposed(self);
-	Viewport::Get(self)->SetVisible(NUM2BOOL(visible));
-	return rb_iv_set(self, "@visible", visible);
+  ARGSS::AViewport::CheckDisposed(self);
+  Viewport::Get(self)->SetVisible(NUM2BOOL(visible));
+  return rb_iv_set(self, "@visible", visible);
 }
 VALUE ARGSS::AViewport::rz(VALUE self) {
-	ARGSS::AViewport::CheckDisposed(self);
-	return rb_iv_get(self, "@z");
+  ARGSS::AViewport::CheckDisposed(self);
+  return rb_iv_get(self, "@z");
 }
 VALUE ARGSS::AViewport::rzE(VALUE self, VALUE z) {
-	ARGSS::AViewport::CheckDisposed(self);
-	Viewport::Get(self)->SetZ(NUM2INT(z));
-	return rb_iv_set(self, "@z", z);
+  ARGSS::AViewport::CheckDisposed(self);
+  Viewport::Get(self)->SetZ(NUM2INT(z));
+  return rb_iv_set(self, "@z", z);
 }
 VALUE ARGSS::AViewport::rox(VALUE self) {
-	ARGSS::AViewport::CheckDisposed(self);
-	return rb_iv_get(self, "@ox");
+  ARGSS::AViewport::CheckDisposed(self);
+  return rb_iv_get(self, "@ox");
 }
 VALUE ARGSS::AViewport::roxE(VALUE self, VALUE ox) {
-	ARGSS::AViewport::CheckDisposed(self);
-	Viewport::Get(self)->SetOx(NUM2INT(ox));
-	return rb_iv_set(self, "@ox", ox);
+  ARGSS::AViewport::CheckDisposed(self);
+  Viewport::Get(self)->SetOx(NUM2INT(ox));
+  return rb_iv_set(self, "@ox", ox);
 }
 VALUE ARGSS::AViewport::roy(VALUE self) {
-	ARGSS::AViewport::CheckDisposed(self);
-	return rb_iv_get(self, "@oy");
+  ARGSS::AViewport::CheckDisposed(self);
+  return rb_iv_get(self, "@oy");
 }
 VALUE ARGSS::AViewport::royE(VALUE self, VALUE oy) {
-	ARGSS::AViewport::CheckDisposed(self);
-	Viewport::Get(self)->SetOy(NUM2INT(oy));
-	return rb_iv_set(self, "@oy", oy);
+  ARGSS::AViewport::CheckDisposed(self);
+  Viewport::Get(self)->SetOy(NUM2INT(oy));
+  return rb_iv_set(self, "@oy", oy);
 }
 VALUE ARGSS::AViewport::rcolor(VALUE self) {
-	ARGSS::AViewport::CheckDisposed(self);
-	return rb_iv_get(self, "@color");
+  ARGSS::AViewport::CheckDisposed(self);
+  return rb_iv_get(self, "@color");
 }
 VALUE ARGSS::AViewport::rcolorE(VALUE self, VALUE color) {
-	ARGSS::AViewport::CheckDisposed(self);
-	Check_Class(color, ARGSS::AColor::id);
-	Viewport::Get(self)->SetColor(color);
-	return rb_iv_set(self, "@color", color);
+  ARGSS::AViewport::CheckDisposed(self);
+  Check_Class(color, ARGSS::AColor::id);
+  Viewport::Get(self)->SetColor(color);
+  return rb_iv_set(self, "@color", color);
 }
 VALUE ARGSS::AViewport::rtone(VALUE self) {
-	ARGSS::AViewport::CheckDisposed(self);
-	return rb_iv_get(self, "@tone");
+  ARGSS::AViewport::CheckDisposed(self);
+  return rb_iv_get(self, "@tone");
 }
 VALUE ARGSS::AViewport::rtoneE(VALUE self, VALUE tone) {
-	ARGSS::AViewport::CheckDisposed(self);
-	Check_Class(tone, ARGSS::ATone::id);
-	Viewport::Get(self)->SetTone(tone);
-	return rb_iv_set(self, "@tone", tone);
+  ARGSS::AViewport::CheckDisposed(self);
+  Check_Class(tone, ARGSS::ATone::id);
+  Viewport::Get(self)->SetTone(tone);
+  return rb_iv_set(self, "@tone", tone);
 }
 
 ///////////////////////////////////////////////////////////
 // ARGSS Viewport initialize
 ///////////////////////////////////////////////////////////
 void ARGSS::AViewport::Init() {
-	id = rb_define_class("Viewport", rb_cObject);
-	rb_define_method(id, "initialize", (rubyfunc)rinitialize, -1);
-	rb_define_method(id, "dispose", (rubyfunc)rdispose, 0);
-	rb_define_method(id, "disposed?", (rubyfunc)rdisposedQ, 0);
-	rb_define_method(id, "flash", (rubyfunc)rflash, 2);
-	rb_define_method(id, "update", (rubyfunc)rupdate, 0);
-	rb_define_method(id, "rect", (rubyfunc)rrect, 0);
-	rb_define_method(id, "rect=", (rubyfunc)rrectE, 1);
-	rb_define_method(id, "visible", (rubyfunc)rvisible, 0);
-	rb_define_method(id, "visible=", (rubyfunc)rvisibleE, 1);
-	rb_define_method(id, "z", (rubyfunc)rz, 0);
-	rb_define_method(id, "z=", (rubyfunc)rzE, 1);
-	rb_define_method(id, "ox", (rubyfunc)rox, 0);
-	rb_define_method(id, "ox=", (rubyfunc)roxE, 1);
-	rb_define_method(id, "oy", (rubyfunc)roy, 0);
-	rb_define_method(id, "oy=", (rubyfunc)royE, 1);
-	rb_define_method(id, "color", (rubyfunc)rcolor, 0);
-	rb_define_method(id, "color=", (rubyfunc)rcolorE, 1);
-	rb_define_method(id, "tone", (rubyfunc)rtone, 0);
-	rb_define_method(id, "tone=", (rubyfunc)rtoneE, 1);
+  id = rb_define_class("Viewport", rb_cObject);
+  rb_define_method(id, "initialize", (rubyfunc)rinitialize, -1);
+  rb_define_method(id, "dispose", (rubyfunc)rdispose, 0);
+  rb_define_method(id, "disposed?", (rubyfunc)rdisposedQ, 0);
+  rb_define_method(id, "flash", (rubyfunc)rflash, 2);
+  rb_define_method(id, "update", (rubyfunc)rupdate, 0);
+  rb_define_method(id, "rect", (rubyfunc)rrect, 0);
+  rb_define_method(id, "rect=", (rubyfunc)rrectE, 1);
+  rb_define_method(id, "visible", (rubyfunc)rvisible, 0);
+  rb_define_method(id, "visible=", (rubyfunc)rvisibleE, 1);
+  rb_define_method(id, "z", (rubyfunc)rz, 0);
+  rb_define_method(id, "z=", (rubyfunc)rzE, 1);
+  rb_define_method(id, "ox", (rubyfunc)rox, 0);
+  rb_define_method(id, "ox=", (rubyfunc)roxE, 1);
+  rb_define_method(id, "oy", (rubyfunc)roy, 0);
+  rb_define_method(id, "oy=", (rubyfunc)royE, 1);
+  rb_define_method(id, "color", (rubyfunc)rcolor, 0);
+  rb_define_method(id, "color=", (rubyfunc)rcolorE, 1);
+  rb_define_method(id, "tone", (rubyfunc)rtone, 0);
+  rb_define_method(id, "tone=", (rubyfunc)rtoneE, 1);
 }
 
 ///////////////////////////////////////////////////////////
 // CheckDisposed
 ///////////////////////////////////////////////////////////
 void ARGSS::AViewport::CheckDisposed(VALUE id) {
-	if (Viewport::IsDisposed(id)) {
-		rb_raise(ARGSS::AError::id, "disposed viewport <%i>", id);
-	}
+  if (Viewport::IsDisposed(id)) {
+    rb_raise(ARGSS::AError::id, "disposed viewport <%i>", id);
+  }
 }

@@ -6,11 +6,11 @@
 // modification, are permitted provided that the following conditions
 // are met:
 //
-//	* Redistributions of source code must retain the above copyright notice,
-//	this list of conditions and the following disclaimer.
-//	* Redistributions in binary form must reproduce the above copyright
-//	notice, this list of conditions and the following disclaimer in the
-//	documentation and/or other materials provided with the distribution.
+//  * Redistributions of source code must retain the above copyright notice,
+//  this list of conditions and the following disclaimer.
+//  * Redistributions in binary form must reproduce the above copyright
+//  notice, this list of conditions and the following disclaimer in the
+//  documentation and/or other materials provided with the distribution.
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR
 // IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -36,23 +36,23 @@
 /// Get time
 ///////////////////////////////////////////////////////////
 long Time::GetTime() {
-	static LARGE_INTEGER frequency;
-	static BOOL htimer = QueryPerformanceFrequency(&frequency);
+  static LARGE_INTEGER frequency;
+  static BOOL htimer = QueryPerformanceFrequency(&frequency);
 
-	if (htimer) {
-		LARGE_INTEGER tick;
-		QueryPerformanceCounter(&tick);
+  if (htimer) {
+    LARGE_INTEGER tick;
+    QueryPerformanceCounter(&tick);
 
-		return (long)(((double)tick.QuadPart * 1000.0) / (double)frequency.QuadPart);
-	}
-	return GetTickCount();
+    return (long)(((double)tick.QuadPart * 1000.0) / (double)frequency.QuadPart);
+  }
+  return GetTickCount();
 }
 
 ///////////////////////////////////////////////////////////
 /// Sleep
 ///////////////////////////////////////////////////////////
 void Time::SleepMs(long ms) {
-	::Sleep(ms);
+  ::Sleep(ms);
 }
 
 #endif

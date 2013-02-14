@@ -6,11 +6,11 @@
 // modification, are permitted provided that the following conditions
 // are met:
 //
-//	* Redistributions of source code must retain the above copyright notice,
-//	this list of conditions and the following disclaimer.
-//	* Redistributions in binary form must reproduce the above copyright
-//	notice, this list of conditions and the following disclaimer in the
-//	documentation and/or other materials provided with the distribution.
+//  * Redistributions of source code must retain the above copyright notice,
+//  this list of conditions and the following disclaimer.
+//  * Redistributions in binary form must reproduce the above copyright
+//  notice, this list of conditions and the following disclaimer in the
+//  documentation and/or other materials provided with the distribution.
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR
 // IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -37,27 +37,27 @@
 /// Input namespace
 ///////////////////////////////////////////////////////////
 namespace Input {
-	void Init();
-	void Update();
-	void ClearKeys();
-	bool IsPressed(unsigned long button);
-	bool IsTriggered(unsigned long button);
-	bool IsRepeated(unsigned long button);
-	bool IsReleased(unsigned long button);
-	unsigned long GetPressed();
-	unsigned long GetTriggered();
-	unsigned long GetRepeated();
-	unsigned long GetReleased();
+  void Init();
+  void Update();
+  void ClearKeys();
+  bool IsPressed(unsigned long button);
+  bool IsTriggered(unsigned long button);
+  bool IsRepeated(unsigned long button);
+  bool IsReleased(unsigned long button);
+  unsigned long GetPressed();
+  unsigned long GetTriggered();
+  unsigned long GetRepeated();
+  unsigned long GetReleased();
 
-	extern std::vector<int> press_time;
-	extern std::vector<bool> triggered;
-	extern std::vector<bool> repeated;
-	extern std::vector<bool> released;
-	extern int dir4;
-	extern int dir8;
-	extern int start_repeat_time;
-	extern int repeat_time;
-	extern std::vector< std::vector<int> > dirkeys;
+  extern std::vector<int> press_time;
+  extern std::vector<bool> triggered;
+  extern std::vector<bool> repeated;
+  extern std::vector<bool> released;
+  extern int dir4;
+  extern int dir8;
+  extern int start_repeat_time;
+  extern int repeat_time;
+  extern std::vector< std::vector<int> > dirkeys;
 };
 
 #endif

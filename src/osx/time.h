@@ -14,8 +14,8 @@
 /// Time namespace
 ////////////////////////////////////////////////////////////
 namespace Time {
-	long GetTime();
-	void SleepMs(long ms);
+  long GetTime();
+  void SleepMs(long ms);
 };
 
 #endif

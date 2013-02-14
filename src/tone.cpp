@@ -6,11 +6,11 @@
 // modification, are permitted provided that the following conditions
 // are met:
 //
-//	* Redistributions of source code must retain the above copyright notice,
-//	this list of conditions and the following disclaimer.
-//	* Redistributions in binary form must reproduce the above copyright
-//	notice, this list of conditions and the following disclaimer in the
-//	documentation and/or other materials provided with the distribution.
+//  * Redistributions of source code must retain the above copyright notice,
+//  this list of conditions and the following disclaimer.
+//  * Redistributions in binary form must reproduce the above copyright
+//  notice, this list of conditions and the following disclaimer in the
+//  documentation and/or other materials provided with the distribution.
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR
 // IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -34,24 +34,24 @@
 /// Constructor
 ///////////////////////////////////////////////////////////
 Tone::Tone() {
-	red = 0;
-	green = 0;
-	blue = 0;
-	gray = 0;
+  red = 0;
+  green = 0;
+  blue = 0;
+  gray = 0;
 }
 Tone::Tone(VALUE tone) {
-	red = NUM2DBL(rb_iv_get(tone, "@red"));
-	green = NUM2DBL(rb_iv_get(tone, "@green"));
-	blue = NUM2DBL(rb_iv_get(tone, "@blue"));
-	gray = NUM2DBL(rb_iv_get(tone, "@gray"));
+  red = NUM2DBL(rb_iv_get(tone, "@red"));
+  green = NUM2DBL(rb_iv_get(tone, "@green"));
+  blue = NUM2DBL(rb_iv_get(tone, "@blue"));
+  gray = NUM2DBL(rb_iv_get(tone, "@gray"));
 }
 
 ///////////////////////////////////////////////////////////
 /// Set
 ///////////////////////////////////////////////////////////
 void Tone::Set(VALUE tone) {
-	red = NUM2DBL(rb_iv_get(tone, "@red"));
-	green = NUM2DBL(rb_iv_get(tone, "@green"));
-	blue = NUM2DBL(rb_iv_get(tone, "@blue"));
-	gray = NUM2DBL(rb_iv_get(tone, "@gray"));
+  red = NUM2DBL(rb_iv_get(tone, "@red"));
+  green = NUM2DBL(rb_iv_get(tone, "@green"));
+  blue = NUM2DBL(rb_iv_get(tone, "@blue"));
+  gray = NUM2DBL(rb_iv_get(tone, "@gray"));
 }

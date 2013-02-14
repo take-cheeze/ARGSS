@@ -6,11 +6,11 @@
 // modification, are permitted provided that the following conditions
 // are met:
 //
-//	* Redistributions of source code must retain the above copyright notice,
-//	this list of conditions and the following disclaimer.
-//	* Redistributions in binary form must reproduce the above copyright
-//	notice, this list of conditions and the following disclaimer in the
-//	documentation and/or other materials provided with the distribution.
+//  * Redistributions of source code must retain the above copyright notice,
+//  this list of conditions and the following disclaimer.
+//  * Redistributions in binary form must reproduce the above copyright
+//  notice, this list of conditions and the following disclaimer in the
+//  documentation and/or other materials provided with the distribution.
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR
 // IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -33,23 +33,23 @@
 /// Constructor
 ///////////////////////////////////////////////////////////
 ZObj::ZObj(long iz, unsigned long icreation, unsigned long iid) {
-	z = iz;
-	creation = icreation;
-	id = iid;
+  z = iz;
+  creation = icreation;
+  id = iid;
 }
 
 ///////////////////////////////////////////////////////////
 /// Properties
 ///////////////////////////////////////////////////////////
 void ZObj::SetZ(long nz) {
-	z = nz;
+  z = nz;
 }
 long ZObj::GetZ() {
-	return z;
+  return z;
 }
 unsigned long ZObj::GetCreation(){
-	return creation;
+  return creation;
 }
 unsigned long ZObj::GetId() {
-	return id;
+  return id;
 }

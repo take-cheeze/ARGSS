@@ -6,11 +6,11 @@
 // modification, are permitted provided that the following conditions
 // are met:
 //
-//	* Redistributions of source code must retain the above copyright notice,
-//	this list of conditions and the following disclaimer.
-//	* Redistributions in binary form must reproduce the above copyright
-//	notice, this list of conditions and the following disclaimer in the
-//	documentation and/or other materials provided with the distribution.
+//  * Redistributions of source code must retain the above copyright notice,
+//  this list of conditions and the following disclaimer.
+//  * Redistributions in binary form must reproduce the above copyright
+//  notice, this list of conditions and the following disclaimer in the
+//  documentation and/or other materials provided with the distribution.
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR
 // IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -33,54 +33,54 @@
 #include "aruby.h"
 
 namespace ARGSS {
-	///////////////////////////////////////////////////////
-	/// ARGSS::Table namespace
-	///////////////////////////////////////////////////////
-	namespace ATable {
-		///////////////////////////////////////////////////
-		/// Initialize Table class.
-		///////////////////////////////////////////////////
-		void Init();
+  ///////////////////////////////////////////////////////
+  /// ARGSS::Table namespace
+  ///////////////////////////////////////////////////////
+  namespace ATable {
+    ///////////////////////////////////////////////////
+    /// Initialize Table class.
+    ///////////////////////////////////////////////////
+    void Init();
 
-		///////////////////////////////////////////////////
-		/// Create Table instance.
-		///////////////////////////////////////////////////
-		//@{
+    ///////////////////////////////////////////////////
+    /// Create Table instance.
+    ///////////////////////////////////////////////////
+    //@{
 
-		VALUE New(int xsize);
-		VALUE New(int xsize, int ysize);
-		VALUE New(int xsize, int ysize, int zsize);
+    VALUE New(int xsize);
+    VALUE New(int xsize, int ysize);
+    VALUE New(int xsize, int ysize, int zsize);
 
-		//@}
+    //@}
 
-		/// Table class id.
-		extern VALUE id;
+    /// Table class id.
+    extern VALUE id;
 
-		///////////////////////////////////////////////////
-		/// Table instance methods.
-		///////////////////////////////////////////////////
-		//@{
+    ///////////////////////////////////////////////////
+    /// Table instance methods.
+    ///////////////////////////////////////////////////
+    //@{
 
-		VALUE rinitialize(int argc, VALUE* argv, VALUE self);
-		VALUE rresize(int argc, VALUE* argv, VALUE self);
-		VALUE rxsize(VALUE self);
-		VALUE rysize(VALUE self);
-		VALUE rzsize(VALUE self);
-		VALUE raref(int argc, VALUE* argv, VALUE self);
-		VALUE raset(int argc, VALUE* argv, VALUE self);
-		VALUE rdump(int argc, VALUE* argv, VALUE self);
+    VALUE rinitialize(int argc, VALUE* argv, VALUE self);
+    VALUE rresize(int argc, VALUE* argv, VALUE self);
+    VALUE rxsize(VALUE self);
+    VALUE rysize(VALUE self);
+    VALUE rzsize(VALUE self);
+    VALUE raref(int argc, VALUE* argv, VALUE self);
+    VALUE raset(int argc, VALUE* argv, VALUE self);
+    VALUE rdump(int argc, VALUE* argv, VALUE self);
 
-		//@}
+    //@}
 
-		///////////////////////////////////////////////////
-		/// Table class methods.
-		///////////////////////////////////////////////////
-		//@{
+    ///////////////////////////////////////////////////
+    /// Table class methods.
+    ///////////////////////////////////////////////////
+    //@{
 
-		VALUE rload(VALUE self, VALUE str);
+    VALUE rload(VALUE self, VALUE str);
 
-		//@}
-	};
+    //@}
+  };
 };
 
 #endif

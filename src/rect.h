@@ -6,11 +6,11 @@
 // modification, are permitted provided that the following conditions
 // are met:
 //
-//	* Redistributions of source code must retain the above copyright notice,
-//	this list of conditions and the following disclaimer.
-//	* Redistributions in binary form must reproduce the above copyright
-//	notice, this list of conditions and the following disclaimer in the
-//	documentation and/or other materials provided with the distribution.
+//  * Redistributions of source code must retain the above copyright notice,
+//  this list of conditions and the following disclaimer.
+//  * Redistributions in binary form must reproduce the above copyright
+//  notice, this list of conditions and the following disclaimer in the
+//  documentation and/or other materials provided with the distribution.
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR
 // IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -36,22 +36,22 @@
 ///////////////////////////////////////////////////////////
 class Rect {
 public:
-	Rect();
-	Rect(unsigned long rect);
-	Rect(int ix, int iy, int iwidth, int iheight);
+  Rect();
+  Rect(unsigned long rect);
+  Rect(int ix, int iy, int iwidth, int iheight);
 
-	bool operator!=(const Rect& other) const;
+  bool operator!=(const Rect& other) const;
 
-	void Set(int nx, int ny, int nwidth, int nheight);
+  void Set(int nx, int ny, int nwidth, int nheight);
 
-	unsigned long GetARGSS();
-	void Adjust(int awidth, int aheight);
-	bool IsOutOfBounds(int awidth, int aheight) const;
+  unsigned long GetARGSS();
+  void Adjust(int awidth, int aheight);
+  bool IsOutOfBounds(int awidth, int aheight) const;
 
-	int x;
-	int y;
-	int width;
-	int height;
+  int x;
+  int y;
+  int width;
+  int height;
 };
 
 #endif

@@ -6,11 +6,11 @@
 // modification, are permitted provided that the following conditions
 // are met:
 //
-//	* Redistributions of source code must retain the above copyright notice,
-//	this list of conditions and the following disclaimer.
-//	* Redistributions in binary form must reproduce the above copyright
-//	notice, this list of conditions and the following disclaimer in the
-//	documentation and/or other materials provided with the distribution.
+//  * Redistributions of source code must retain the above copyright notice,
+//  this list of conditions and the following disclaimer.
+//  * Redistributions in binary form must reproduce the above copyright
+//  notice, this list of conditions and the following disclaimer in the
+//  documentation and/or other materials provided with the distribution.
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR
 // IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -41,44 +41,44 @@
 ///////////////////////////////////////////////////////////
 class WindowUi {
 public:
-	WindowUi(long iwidth, long iheight, std::string title, bool center, bool fs_flag);
-	~WindowUi();
+  WindowUi(long iwidth, long iheight, std::string title, bool center, bool fs_flag);
+  ~WindowUi();
 
-	void Dispose();
-	void SwapBuffers();
-	void Resize(long nwidth, long nheight);
-	void SetTitle(std::string title);
-	void ToggleFullscreen();
-	long GetWidth();
-	long GetHeight();
+  void Dispose();
+  void SwapBuffers();
+  void Resize(long nwidth, long nheight);
+  void SetTitle(std::string title);
+  void ToggleFullscreen();
+  long GetWidth();
+  long GetHeight();
 
-	bool GetEvent(Event& evnt);
-	int ProccesEvents(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+  bool GetEvent(Event& evnt);
+  int ProccesEvents(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-	bool IsFullscreen();
-	std::vector<bool> GetKeyStates();
-	bool GetMouseFocus();
-	int GetMouseWheel();
-	int GetMousePosX();
-	int GetMousePosY();
+  bool IsFullscreen();
+  std::vector<bool> GetKeyStates();
+  bool GetMouseFocus();
+  int GetMouseWheel();
+  int GetMousePosX();
+  int GetMousePosY();
 
 private:
-	Input::Keys::InputKey VK2IK(int vk);
+  Input::Keys::InputKey VK2IK(int vk);
 
-	HDC hdc;
-	HGLRC hrc;
-	HWND hwnd;
-	HINSTANCE hinstance;
-	long width;
-	long height;
+  HDC hdc;
+  HGLRC hrc;
+  HWND hwnd;
+  HINSTANCE hinstance;
+  long width;
+  long height;
 
-	std::queue<Event> events;
-	std::vector<bool> keys;
-	bool mouse_focus;
-	int mouse_wheel;
-	int mouse_x;
-	int mouse_y;
-	bool fullscreen;
+  std::queue<Event> events;
+  std::vector<bool> keys;
+  bool mouse_focus;
+  int mouse_wheel;
+  int mouse_x;
+  int mouse_y;
+  bool fullscreen;
 };
 
 #endif

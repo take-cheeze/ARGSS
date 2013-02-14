@@ -6,11 +6,11 @@
 // modification, are permitted provided that the following conditions
 // are met:
 //
-//	* Redistributions of source code must retain the above copyright notice,
-//	this list of conditions and the following disclaimer.
-//	* Redistributions in binary form must reproduce the above copyright
-//	notice, this list of conditions and the following disclaimer in the
-//	documentation and/or other materials provided with the distribution.
+//  * Redistributions of source code must retain the above copyright notice,
+//  this list of conditions and the following disclaimer.
+//  * Redistributions in binary form must reproduce the above copyright
+//  notice, this list of conditions and the following disclaimer in the
+//  documentation and/or other materials provided with the distribution.
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR
 // IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -33,26 +33,26 @@
 #include "win32/msgbox.h"
 
 static std::wstring s2ws(const std::string& s) {
-	int len;
-	int slength = (int)s.length() + 1;
-	len = MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, 0, 0);
-	wchar_t* buf = new wchar_t[len];
-	MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, buf, len);
-	std::wstring r(buf);
-	delete[] buf;
-	return r;
+  int len;
+  int slength = (int)s.length() + 1;
+  len = MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, 0, 0);
+  wchar_t* buf = new wchar_t[len];
+  MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, buf, len);
+  std::wstring r(buf);
+  delete[] buf;
+  return r;
 }
 
 ///////////////////////////////////////////////////////////
 /// Default Message Box with OK button
 ///////////////////////////////////////////////////////////
 void MsgBox::OK(std::string msg, std::string title) {
-	if (msg.length() == 0) return;
-	if (msg.length() == 1 && (msg[0] == '\n' || msg[0] == '\r')) return;
+  if (msg.length() == 0) return;
+  if (msg.length() == 1 && (msg[0] == '\n' || msg[0] == '\r')) return;
 #ifdef UNICODE
-	MessageBox(0, s2ws(msg).c_str(), s2ws(title).c_str(), MB_OK);
+  MessageBox(0, s2ws(msg).c_str(), s2ws(title).c_str(), MB_OK);
 #else
-	MessageBox(0, msg.c_str(), title.c_str(), MB_OK);
+  MessageBox(0, msg.c_str(), title.c_str(), MB_OK);
 #endif
 }
 
@@ -60,12 +60,12 @@ void MsgBox::OK(std::string msg, std::string title) {
 /// Error Message Box
 ///////////////////////////////////////////////////////////
 void MsgBox::Error(std::string msg, std::string title) {
-	if (msg.length() == 0) return;
-	if (msg.length() == 1 && (msg[0] == '\n' || msg[0] == '\r')) return;
+  if (msg.length() == 0) return;
+  if (msg.length() == 1 && (msg[0] == '\n' || msg[0] == '\r')) return;
 #ifdef UNICODE
-	MessageBox(0, s2ws(msg).c_str(), s2ws(title).c_str(), MB_OK | MB_ICONERROR);
+  MessageBox(0, s2ws(msg).c_str(), s2ws(title).c_str(), MB_OK | MB_ICONERROR);
 #else
-	MessageBox(0, msg.c_str(), title.c_str(), MB_OK | MB_ICONERROR);
+  MessageBox(0, msg.c_str(), title.c_str(), MB_OK | MB_ICONERROR);
 #endif
 }
 
@@ -73,12 +73,12 @@ void MsgBox::Error(std::string msg, std::string title) {
 /// Warning Message Box
 ///////////////////////////////////////////////////////////
 void MsgBox::Warning(std::string msg, std::string title) {
-	if (msg.length() == 0) return;
-	if (msg.length() == 1 && (msg[0] == '\n' || msg[0] == '\r')) return;
+  if (msg.length() == 0) return;
+  if (msg.length() == 1 && (msg[0] == '\n' || msg[0] == '\r')) return;
 #ifdef UNICODE
-	MessageBox(0, s2ws(msg).c_str(), s2ws(title).c_str(), MB_OK | MB_ICONEXCLAMATION);
+  MessageBox(0, s2ws(msg).c_str(), s2ws(title).c_str(), MB_OK | MB_ICONEXCLAMATION);
 #else
-	MessageBox(0, msg.c_str(), title.c_str(), MB_OK | MB_ICONEXCLAMATION);
+  MessageBox(0, msg.c_str(), title.c_str(), MB_OK | MB_ICONEXCLAMATION);
 #endif
 }
 

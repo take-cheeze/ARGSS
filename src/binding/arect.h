@@ -6,11 +6,11 @@
 // modification, are permitted provided that the following conditions
 // are met:
 //
-//	* Redistributions of source code must retain the above copyright notice,
-//	this list of conditions and the following disclaimer.
-//	* Redistributions in binary form must reproduce the above copyright
-//	notice, this list of conditions and the following disclaimer in the
-//	documentation and/or other materials provided with the distribution.
+//  * Redistributions of source code must retain the above copyright notice,
+//  this list of conditions and the following disclaimer.
+//  * Redistributions in binary form must reproduce the above copyright
+//  notice, this list of conditions and the following disclaimer in the
+//  documentation and/or other materials provided with the distribution.
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR
 // IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -33,57 +33,57 @@
 #include "aruby.h"
 
 namespace ARGSS {
-	///////////////////////////////////////////////////////
-	/// ARGSS::Rect namespace
-	///////////////////////////////////////////////////////
-	namespace ARect {
-		///////////////////////////////////////////////////
-		/// Initialize Rect class.
-		///////////////////////////////////////////////////
-		void Init();
+  ///////////////////////////////////////////////////////
+  /// ARGSS::Rect namespace
+  ///////////////////////////////////////////////////////
+  namespace ARect {
+    ///////////////////////////////////////////////////
+    /// Initialize Rect class.
+    ///////////////////////////////////////////////////
+    void Init();
 
-		///////////////////////////////////////////////////
-		/// Create Rect instance.
-		///////////////////////////////////////////////////
-		//@{
+    ///////////////////////////////////////////////////
+    /// Create Rect instance.
+    ///////////////////////////////////////////////////
+    //@{
 
-		VALUE New(double x, double y, double width, double height);
+    VALUE New(double x, double y, double width, double height);
 
-		//@}
+    //@}
 
-		/// Rect class id.
-		extern VALUE id;
+    /// Rect class id.
+    extern VALUE id;
 
-		///////////////////////////////////////////////////
-		/// Rect instance methods.
-		///////////////////////////////////////////////////
-		//@{
+    ///////////////////////////////////////////////////
+    /// Rect instance methods.
+    ///////////////////////////////////////////////////
+    //@{
 
-		VALUE rinitialize(VALUE self, VALUE x, VALUE y, VALUE w, VALUE h);
-		VALUE rset(VALUE self, VALUE x, VALUE y, VALUE w, VALUE h);
-		VALUE rx(VALUE self);
-		VALUE rxE(VALUE self, VALUE x);
-		VALUE ry(VALUE self);
-		VALUE ryE(VALUE self, VALUE y);
-		VALUE rwidth(VALUE self);
-		VALUE rwidthE(VALUE self, VALUE w);
-		VALUE rheight(VALUE self);
-		VALUE rheightE(VALUE self, VALUE h);
-		VALUE rempty(VALUE self);
-		VALUE rinspect(VALUE self);
-		VALUE rdump(int argc, VALUE* argv, VALUE self);
+    VALUE rinitialize(VALUE self, VALUE x, VALUE y, VALUE w, VALUE h);
+    VALUE rset(VALUE self, VALUE x, VALUE y, VALUE w, VALUE h);
+    VALUE rx(VALUE self);
+    VALUE rxE(VALUE self, VALUE x);
+    VALUE ry(VALUE self);
+    VALUE ryE(VALUE self, VALUE y);
+    VALUE rwidth(VALUE self);
+    VALUE rwidthE(VALUE self, VALUE w);
+    VALUE rheight(VALUE self);
+    VALUE rheightE(VALUE self, VALUE h);
+    VALUE rempty(VALUE self);
+    VALUE rinspect(VALUE self);
+    VALUE rdump(int argc, VALUE* argv, VALUE self);
 
-		//@}
+    //@}
 
-		///////////////////////////////////////////////////
-		/// Rect class methods.
-		///////////////////////////////////////////////////
-		//@{
+    ///////////////////////////////////////////////////
+    /// Rect class methods.
+    ///////////////////////////////////////////////////
+    //@{
 
-		VALUE rload(VALUE self, VALUE str);
+    VALUE rload(VALUE self, VALUE str);
 
-		//@}
-	};
+    //@}
+  };
 };
 
 #endif

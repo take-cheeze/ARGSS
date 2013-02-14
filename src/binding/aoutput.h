@@ -6,11 +6,11 @@
 // modification, are permitted provided that the following conditions
 // are met:
 //
-//	* Redistributions of source code must retain the above copyright notice,
-//	this list of conditions and the following disclaimer.
-//	* Redistributions in binary form must reproduce the above copyright
-//	notice, this list of conditions and the following disclaimer in the
-//	documentation and/or other materials provided with the distribution.
+//  * Redistributions of source code must retain the above copyright notice,
+//  this list of conditions and the following disclaimer.
+//  * Redistributions in binary form must reproduce the above copyright
+//  notice, this list of conditions and the following disclaimer in the
+//  documentation and/or other materials provided with the distribution.
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR
 // IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -33,43 +33,43 @@
 #include "aruby.h"
 
 namespace ARGSS {
-	///////////////////////////////////////////////////////
-	/// ARGSS::Output namespace
-	///////////////////////////////////////////////////////
-	namespace AOutput {
-		///////////////////////////////////////////////////
-		/// Initialize Output module.
-		///////////////////////////////////////////////////
-		void Init();
+  ///////////////////////////////////////////////////////
+  /// ARGSS::Output namespace
+  ///////////////////////////////////////////////////////
+  namespace AOutput {
+    ///////////////////////////////////////////////////
+    /// Initialize Output module.
+    ///////////////////////////////////////////////////
+    void Init();
 
-		/// Output module id.
-		extern VALUE id;
+    /// Output module id.
+    extern VALUE id;
 
-		/// Ruby stdout id.
-		extern VALUE stdout_id;
+    /// Ruby stdout id.
+    extern VALUE stdout_id;
 
-		/// Ruby stderr id.
-		extern VALUE stderr_id;
+    /// Ruby stderr id.
+    extern VALUE stderr_id;
 
-		/// Ruby stdin id.
-		extern VALUE stdin_id;
+    /// Ruby stdin id.
+    extern VALUE stdin_id;
 
-		///////////////////////////////////////////////////
-		/// Output module methods.
-		///////////////////////////////////////////////////
-		//@{
+    ///////////////////////////////////////////////////
+    /// Output module methods.
+    ///////////////////////////////////////////////////
+    //@{
 
-		VALUE rconsole(VALUE self);
-		VALUE rmsgbox(VALUE self);
-		VALUE rfile(VALUE self, VALUE file);
-		VALUE rnone(VALUE self);
-		VALUE rstdout_write(VALUE self, VALUE str);
-		VALUE rstderr_write(VALUE self, VALUE str);
-		VALUE stdin_gets(int argc, VALUE* argv, VALUE self);
-		VALUE stdin_getc(int argc, VALUE* argv, VALUE self);
+    VALUE rconsole(VALUE self);
+    VALUE rmsgbox(VALUE self);
+    VALUE rfile(VALUE self, VALUE file);
+    VALUE rnone(VALUE self);
+    VALUE rstdout_write(VALUE self, VALUE str);
+    VALUE rstderr_write(VALUE self, VALUE str);
+    VALUE stdin_gets(int argc, VALUE* argv, VALUE self);
+    VALUE stdin_getc(int argc, VALUE* argv, VALUE self);
 
-		//@}
-	};
+    //@}
+  };
 };
 
 #endif

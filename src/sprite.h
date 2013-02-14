@@ -6,11 +6,11 @@
 // modification, are permitted provided that the following conditions
 // are met:
 //
-//	* Redistributions of source code must retain the above copyright notice,
-//	this list of conditions and the following disclaimer.
-//	* Redistributions in binary form must reproduce the above copyright
-//	notice, this list of conditions and the following disclaimer in the
-//	documentation and/or other materials provided with the distribution.
+//  * Redistributions of source code must retain the above copyright notice,
+//  this list of conditions and the following disclaimer.
+//  * Redistributions in binary form must reproduce the above copyright
+//  notice, this list of conditions and the following disclaimer in the
+//  documentation and/or other materials provided with the distribution.
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR
 // IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -44,96 +44,96 @@ class Bitmap;
 ///////////////////////////////////////////////////////////
 class Sprite : public Drawable {
 public:
-	Sprite(unsigned long iid);
-	~Sprite();
+  Sprite(unsigned long iid);
+  ~Sprite();
 
-	static bool IsDisposed(unsigned long id);
-	static void New(unsigned long id);
-	static Sprite* Get(unsigned long id);
-	static void Dispose(unsigned long id);
+  static bool IsDisposed(unsigned long id);
+  static void New(unsigned long id);
+  static Sprite* Get(unsigned long id);
+  static void Dispose(unsigned long id);
 
-	void RefreshBitmaps();
-	void Draw(long z);
-	void Draw(long z, Bitmap* dst_bitmap);
+  void RefreshBitmaps();
+  void Draw(long z);
+  void Draw(long z, Bitmap* dst_bitmap);
 
-	void Flash(int duration);
-	void Flash(Color color, int duration);
-	void Update();
-	unsigned long GetViewport();
-	void SetViewport(unsigned long nviewport);
-	unsigned long GetBitmap();
-	void SetBitmap(unsigned long nbitmap);
-	unsigned long GetSrcRect();
-	void SetSrcRect(unsigned long nsrc_rect);
-	bool GetVisible();
-	void SetVisible(bool nvisible);
-	int GetX();
-	void SetX(int nx);
-	int GetY();
-	void SetY(int ny);
-	int GetZ();
-	void SetZ(int nz);
-	int GetOx();
-	void SetOx(int nox);
-	int GetOy();
-	void SetOy(int noy);
-	float GetZoomX();
-	void SetZoomX(float nzoom_x);
-	float GetZoomY();
-	void SetZoomY(float nzoom_y);
-	float GetAngle();
-	void SetAngle(float nangle);
-	bool GetFlipX();
-	void SetFlipX(bool nflipx);
-	bool GetFlipY();
-	void SetFlipY(bool nflipy);
-	int GetBushDepth();
-	void SetBushDepth(int nbush_depth);
-	int GetOpacity();
-	void SetOpacity(int nopacity);
-	int GetBlendType();
-	void SetBlendType(int nblend_type);
-	unsigned long GetColor();
-	void SetColor(unsigned long ncolor);
-	unsigned long GetTone();
-	void SetTone(unsigned long ntone);
+  void Flash(int duration);
+  void Flash(Color color, int duration);
+  void Update();
+  unsigned long GetViewport();
+  void SetViewport(unsigned long nviewport);
+  unsigned long GetBitmap();
+  void SetBitmap(unsigned long nbitmap);
+  unsigned long GetSrcRect();
+  void SetSrcRect(unsigned long nsrc_rect);
+  bool GetVisible();
+  void SetVisible(bool nvisible);
+  int GetX();
+  void SetX(int nx);
+  int GetY();
+  void SetY(int ny);
+  int GetZ();
+  void SetZ(int nz);
+  int GetOx();
+  void SetOx(int nox);
+  int GetOy();
+  void SetOy(int noy);
+  float GetZoomX();
+  void SetZoomX(float nzoom_x);
+  float GetZoomY();
+  void SetZoomY(float nzoom_y);
+  float GetAngle();
+  void SetAngle(float nangle);
+  bool GetFlipX();
+  void SetFlipX(bool nflipx);
+  bool GetFlipY();
+  void SetFlipY(bool nflipy);
+  int GetBushDepth();
+  void SetBushDepth(int nbush_depth);
+  int GetOpacity();
+  void SetOpacity(int nopacity);
+  int GetBlendType();
+  void SetBlendType(int nblend_type);
+  unsigned long GetColor();
+  void SetColor(unsigned long ncolor);
+  unsigned long GetTone();
+  void SetTone(unsigned long ntone);
 
 private:
-	unsigned long id;
-	unsigned long viewport;
-	unsigned long bitmap;
-	unsigned long src_rect;
-	bool visible;
-	int x;
-	int y;
-	int z;
-	int ox;
-	int oy;
-	float zoom_x;
-	float zoom_y;
-	float angle;
-	bool flipx;
-	bool flipy;
-	int bush_depth;
-	int opacity;
-	int blend_type;
-	unsigned long color;
-	unsigned long tone;
+  unsigned long id;
+  unsigned long viewport;
+  unsigned long bitmap;
+  unsigned long src_rect;
+  bool visible;
+  int x;
+  int y;
+  int z;
+  int ox;
+  int oy;
+  float zoom_x;
+  float zoom_y;
+  float angle;
+  bool flipx;
+  bool flipy;
+  int bush_depth;
+  int opacity;
+  int blend_type;
+  unsigned long color;
+  unsigned long tone;
 
-	GLuint flash_texture;
-	Color flash_color;
-	int flash_duration;
-	int flash_frame;
-	Bitmap* sprite;
-	Rect src_rect_sprite;
-	Rect src_rect_last;
-	bool needs_refresh;
-	bool flash_needs_refresh;
+  GLuint flash_texture;
+  Color flash_color;
+  int flash_duration;
+  int flash_frame;
+  Bitmap* sprite;
+  Rect src_rect_sprite;
+  Rect src_rect_last;
+  bool needs_refresh;
+  bool flash_needs_refresh;
 
-	void Refresh();
-	void RefreshFlash();
-	int GetWidth();
-	int GetHeight();
+  void Refresh();
+  void RefreshFlash();
+  int GetWidth();
+  int GetHeight();
 };
 
 #endif

@@ -20,8 +20,8 @@
 /// Keys namespace
 ////////////////////////////////////////////////////////////
 namespace Input {
-	void InitButtons();
-	extern std::map< int, std::vector<int> > buttons;
+  void InitButtons();
+  extern std::map< int, std::vector<int> > buttons;
 };
 
 #endif

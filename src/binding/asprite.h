@@ -6,11 +6,11 @@
 // modification, are permitted provided that the following conditions
 // are met:
 //
-//	* Redistributions of source code must retain the above copyright notice,
-//	this list of conditions and the following disclaimer.
-//	* Redistributions in binary form must reproduce the above copyright
-//	notice, this list of conditions and the following disclaimer in the
-//	documentation and/or other materials provided with the distribution.
+//  * Redistributions of source code must retain the above copyright notice,
+//  this list of conditions and the following disclaimer.
+//  * Redistributions in binary form must reproduce the above copyright
+//  notice, this list of conditions and the following disclaimer in the
+//  documentation and/or other materials provided with the distribution.
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR
 // IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -33,81 +33,81 @@
 #include "aruby.h"
 
 namespace ARGSS {
-	///////////////////////////////////////////////////////
-	/// ARGSS::Sprite namespace
-	///////////////////////////////////////////////////////
-	namespace ASprite {
-		///////////////////////////////////////////////////
-		/// Initialize Sprite class.
-		///////////////////////////////////////////////////
-		void Init();
+  ///////////////////////////////////////////////////////
+  /// ARGSS::Sprite namespace
+  ///////////////////////////////////////////////////////
+  namespace ASprite {
+    ///////////////////////////////////////////////////
+    /// Initialize Sprite class.
+    ///////////////////////////////////////////////////
+    void Init();
 
-		///////////////////////////////////////////////////
-		/// Check if Sprite is disposed.
-		/// An error will be raised if it is disposed.
-		///////////////////////////////////////////////////
-		void CheckDisposed(VALUE id);
+    ///////////////////////////////////////////////////
+    /// Check if Sprite is disposed.
+    /// An error will be raised if it is disposed.
+    ///////////////////////////////////////////////////
+    void CheckDisposed(VALUE id);
 
-		/// Sprite class id.
-		extern VALUE id;
+    /// Sprite class id.
+    extern VALUE id;
 
-		///////////////////////////////////////////////////
-		/// Sprite instance methods.
-		///////////////////////////////////////////////////
-		//@{
+    ///////////////////////////////////////////////////
+    /// Sprite instance methods.
+    ///////////////////////////////////////////////////
+    //@{
 
-		VALUE rinitialize(int argc, VALUE* argv, VALUE self);
-		VALUE rdispose(VALUE self);
-		VALUE rdisposedQ(VALUE self);
-		VALUE rflash(VALUE self, VALUE color, VALUE duration);
-		VALUE rupdate(VALUE self);
-		VALUE rwidth(VALUE self);
-		VALUE rheight(VALUE self);
-		VALUE rviewport(VALUE self);
-		VALUE rviewportE(VALUE self, VALUE viewport);
-		VALUE rbitmap(VALUE self);
-		VALUE rbitmapE(VALUE self, VALUE bitmap);
-		VALUE rsrc_rect(VALUE self);
-		VALUE rsrc_rectE(VALUE self, VALUE src_rect);
-		VALUE rvisible(VALUE self);
-		VALUE rvisibleE(VALUE self, VALUE visible);
-		VALUE rx(VALUE self);
-		VALUE rfx(VALUE self);
-		VALUE rxE(VALUE self, VALUE x);
-		VALUE ry(VALUE self);
-		VALUE rfy(VALUE self);
-		VALUE ryE(VALUE self, VALUE y);
-		VALUE rz(VALUE self);
-		VALUE rzE(VALUE self, VALUE z);
-		VALUE rox(VALUE self);
-		VALUE roxE(VALUE self, VALUE ox);
-		VALUE roy(VALUE self);
-		VALUE royE(VALUE self, VALUE oy);
-		VALUE rzoom_x(VALUE self);
-		VALUE rzoom_xE(VALUE self, VALUE zoom_x);
-		VALUE rzoom_y(VALUE self);
-		VALUE rzoom_yE(VALUE self, VALUE zoom_y);
-		VALUE rangle(VALUE self);
-		VALUE rangleE(VALUE self, VALUE angle);
-		VALUE rmirror(VALUE self);
-		VALUE rmirrorE(VALUE self, VALUE mirror);
-		VALUE rflipx(VALUE self);
-		VALUE rflipxE(VALUE self, VALUE flipx);
-		VALUE rflipy(VALUE self);
-		VALUE rflipyE(VALUE self, VALUE flipy);
-		VALUE rbush_depth(VALUE self);
-		VALUE rbush_depthE(VALUE self, VALUE bush_depth);
-		VALUE ropacity(VALUE self);
-		VALUE ropacityE(VALUE self, VALUE opacity);
-		VALUE rblend_type(VALUE self);
-		VALUE rblend_typeE(VALUE self, VALUE blend_type);
-		VALUE rcolor(VALUE self);
-		VALUE rcolorE(VALUE self, VALUE color);
-		VALUE rtone(VALUE self);
-		VALUE rtoneE(VALUE self, VALUE tone);
+    VALUE rinitialize(int argc, VALUE* argv, VALUE self);
+    VALUE rdispose(VALUE self);
+    VALUE rdisposedQ(VALUE self);
+    VALUE rflash(VALUE self, VALUE color, VALUE duration);
+    VALUE rupdate(VALUE self);
+    VALUE rwidth(VALUE self);
+    VALUE rheight(VALUE self);
+    VALUE rviewport(VALUE self);
+    VALUE rviewportE(VALUE self, VALUE viewport);
+    VALUE rbitmap(VALUE self);
+    VALUE rbitmapE(VALUE self, VALUE bitmap);
+    VALUE rsrc_rect(VALUE self);
+    VALUE rsrc_rectE(VALUE self, VALUE src_rect);
+    VALUE rvisible(VALUE self);
+    VALUE rvisibleE(VALUE self, VALUE visible);
+    VALUE rx(VALUE self);
+    VALUE rfx(VALUE self);
+    VALUE rxE(VALUE self, VALUE x);
+    VALUE ry(VALUE self);
+    VALUE rfy(VALUE self);
+    VALUE ryE(VALUE self, VALUE y);
+    VALUE rz(VALUE self);
+    VALUE rzE(VALUE self, VALUE z);
+    VALUE rox(VALUE self);
+    VALUE roxE(VALUE self, VALUE ox);
+    VALUE roy(VALUE self);
+    VALUE royE(VALUE self, VALUE oy);
+    VALUE rzoom_x(VALUE self);
+    VALUE rzoom_xE(VALUE self, VALUE zoom_x);
+    VALUE rzoom_y(VALUE self);
+    VALUE rzoom_yE(VALUE self, VALUE zoom_y);
+    VALUE rangle(VALUE self);
+    VALUE rangleE(VALUE self, VALUE angle);
+    VALUE rmirror(VALUE self);
+    VALUE rmirrorE(VALUE self, VALUE mirror);
+    VALUE rflipx(VALUE self);
+    VALUE rflipxE(VALUE self, VALUE flipx);
+    VALUE rflipy(VALUE self);
+    VALUE rflipyE(VALUE self, VALUE flipy);
+    VALUE rbush_depth(VALUE self);
+    VALUE rbush_depthE(VALUE self, VALUE bush_depth);
+    VALUE ropacity(VALUE self);
+    VALUE ropacityE(VALUE self, VALUE opacity);
+    VALUE rblend_type(VALUE self);
+    VALUE rblend_typeE(VALUE self, VALUE blend_type);
+    VALUE rcolor(VALUE self);
+    VALUE rcolorE(VALUE self, VALUE color);
+    VALUE rtone(VALUE self);
+    VALUE rtoneE(VALUE self, VALUE tone);
 
-		//@}
-	};
+    //@}
+  };
 };
 
 #endif

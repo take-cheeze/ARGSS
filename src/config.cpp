@@ -6,11 +6,11 @@
 // modification, are permitted provided that the following conditions
 // are met:
 //
-//	* Redistributions of source code must retain the above copyright notice,
-//	this list of conditions and the following disclaimer.
-//	* Redistributions in binary form must reproduce the above copyright
-//	notice, this list of conditions and the following disclaimer in the
-//	documentation and/or other materials provided with the distribution.
+//  * Redistributions of source code must retain the above copyright notice,
+//  this list of conditions and the following disclaimer.
+//  * Redistributions in binary form must reproduce the above copyright
+//  notice, this list of conditions and the following disclaimer in the
+//  documentation and/or other materials provided with the distribution.
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR
 // IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -46,33 +46,33 @@ int Config::Height;
 // Initialize Config
 ///////////////////////////////////////////////////////////
 void Config::Init() {
-	Title = GAME_TITLE;
-	ScriptsPath = SCRIPTS_PATH;
-	RTPS[0] = RTP1;
-	RTPS[1] = RTP2;
-	RTPS[2] = RTP3;
-	Width = SCREEN_WIDTH;
-	Height = SCREEN_HEIGHT;
-	#if (READ_INI_GAME_TITLE || READ_INI_SCRIPTS_PATH || READ_INI_SCREEN_SIZE || READ_INI_RTPS)
-		CSimpleIniA ini(true, false, false);
-		SI_Error rc = ini.LoadFile(INI_NAME);
-		if (rc < 0) {
-			Output::Error("ARGSS could not open %s file.", INI_NAME);
-		}
-		#if (READ_INI_SCRIPTS_PATH)
-			ScriptsPath = ini.GetValue("Game", "Scripts", SCRIPTS_PATH);
-		#endif
-		#if (READ_INI_GAME_TITLE)
-			Title = ini.GetValue("Game", "Title", GAME_TITLE);
-		#endif
-		#if (READ_INI_RTPS)
-			RTPS[0] = ini.GetValue("Game", "RTP1", RTP1);
-			RTPS[1] = ini.GetValue("Game", "RTP2", RTP2);
-			RTPS[2] = ini.GetValue("Game", "RTP3", RTP3);
-		#endif
-		#if (READ_INI_SCREEN_SIZE)
-			Width = ini.GetLongValue("Game", "Width", Width);
-			Height = ini.GetLongValue("Game", "Height", Height);
-		#endif
-	#endif
+  Title = GAME_TITLE;
+  ScriptsPath = SCRIPTS_PATH;
+  RTPS[0] = RTP1;
+  RTPS[1] = RTP2;
+  RTPS[2] = RTP3;
+  Width = SCREEN_WIDTH;
+  Height = SCREEN_HEIGHT;
+  #if (READ_INI_GAME_TITLE || READ_INI_SCRIPTS_PATH || READ_INI_SCREEN_SIZE || READ_INI_RTPS)
+    CSimpleIniA ini(true, false, false);
+    SI_Error rc = ini.LoadFile(INI_NAME);
+    if (rc < 0) {
+      Output::Error("ARGSS could not open %s file.", INI_NAME);
+    }
+    #if (READ_INI_SCRIPTS_PATH)
+      ScriptsPath = ini.GetValue("Game", "Scripts", SCRIPTS_PATH);
+    #endif
+    #if (READ_INI_GAME_TITLE)
+      Title = ini.GetValue("Game", "Title", GAME_TITLE);
+    #endif
+    #if (READ_INI_RTPS)
+      RTPS[0] = ini.GetValue("Game", "RTP1", RTP1);
+      RTPS[1] = ini.GetValue("Game", "RTP2", RTP2);
+      RTPS[2] = ini.GetValue("Game", "RTP3", RTP3);
+    #endif
+    #if (READ_INI_SCREEN_SIZE)
+      Width = ini.GetLongValue("Game", "Width", Width);
+      Height = ini.GetLongValue("Game", "Height", Height);
+    #endif
+  #endif
 }

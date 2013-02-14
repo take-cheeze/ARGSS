@@ -6,11 +6,11 @@
 // modification, are permitted provided that the following conditions
 // are met:
 //
-//	* Redistributions of source code must retain the above copyright notice,
-//	this list of conditions and the following disclaimer.
-//	* Redistributions in binary form must reproduce the above copyright
-//	notice, this list of conditions and the following disclaimer in the
-//	documentation and/or other materials provided with the distribution.
+//  * Redistributions of source code must retain the above copyright notice,
+//  this list of conditions and the following disclaimer.
+//  * Redistributions in binary form must reproduce the above copyright
+//  notice, this list of conditions and the following disclaimer in the
+//  documentation and/or other materials provided with the distribution.
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR
 // IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -42,54 +42,54 @@ class Drawable;
 /// Graphics namespace
 ///////////////////////////////////////////////////////////
 namespace Graphics {
-	void Init();
-	void InitOpenGL();
-	void Exit();
-	void RefreshAll();
-	void TimerWait();
-	void TimerContinue();
-	void DrawFrame();
+  void Init();
+  void InitOpenGL();
+  void Exit();
+  void RefreshAll();
+  void TimerWait();
+  void TimerContinue();
+  void DrawFrame();
 
-	void Update();
-	void Freeze();
-	void Transition(int duration, std::string const& filename, int vague);
-	void FrameReset();
-	void Wait(int duration);
-	void ResizeScreen(int width, int height);
-	unsigned long SnapToBitmap();
-	void FadeOut(int duration);
-	void FadeIn(int duration);
-	int GetFrameRate();
-	void SetFrameRate(int nframerate);
-	int GetFrameCount();
-	void SetFrameCount(int nframecount);
-	unsigned long GetBackColor();
-	void SetBackColor(unsigned long nbackcolor);
-	int GetBrightness();
-	void SetBrightness(int nbrightness);
+  void Update();
+  void Freeze();
+  void Transition(int duration, std::string const& filename, int vague);
+  void FrameReset();
+  void Wait(int duration);
+  void ResizeScreen(int width, int height);
+  unsigned long SnapToBitmap();
+  void FadeOut(int duration);
+  void FadeIn(int duration);
+  int GetFrameRate();
+  void SetFrameRate(int nframerate);
+  int GetFrameCount();
+  void SetFrameCount(int nframecount);
+  unsigned long GetBackColor();
+  void SetBackColor(unsigned long nbackcolor);
+  int GetBrightness();
+  void SetBrightness(int nbrightness);
 
-	bool SortZObj(ZObj &first, ZObj &second);
-	void RegisterZObj(long z, unsigned long id);
-	void RegisterZObj(long z, unsigned long id, bool multiz);
-	void RemoveZObj(unsigned long id);
-	void UpdateZObj(unsigned long id, long z);
+  bool SortZObj(ZObj &first, ZObj &second);
+  void RegisterZObj(long z, unsigned long id);
+  void RegisterZObj(long z, unsigned long id, bool multiz);
+  void RemoveZObj(unsigned long id);
+  void UpdateZObj(unsigned long id, long z);
 
-	extern int fps;
-	extern int framerate;
-	extern int framecount;
-	extern Color backcolor;
-	extern int brightness;
-	extern double framerate_interval;
-	extern long creation;
-	extern long last_tics;
-	extern long last_tics_wait;
-	extern long next_tics_fps;
+  extern int fps;
+  extern int framerate;
+  extern int framecount;
+  extern Color backcolor;
+  extern int brightness;
+  extern double framerate_interval;
+  extern long creation;
+  extern long last_tics;
+  extern long last_tics_wait;
+  extern long next_tics_fps;
 
-	extern std::map<unsigned long, Drawable*> drawable_map;
-	extern std::map<unsigned long, Drawable*>::iterator it_drawable_map;
+  extern std::map<unsigned long, Drawable*> drawable_map;
+  extern std::map<unsigned long, Drawable*>::iterator it_drawable_map;
 
-	extern std::list<ZObj> zlist;
-	extern std::list<ZObj>::iterator it_zlist;
+  extern std::list<ZObj> zlist;
+  extern std::list<ZObj>::iterator it_zlist;
 };
 
 #endif

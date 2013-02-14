@@ -6,11 +6,11 @@
 // modification, are permitted provided that the following conditions
 // are met:
 //
-//	* Redistributions of source code must retain the above copyright notice,
-//	this list of conditions and the following disclaimer.
-//	* Redistributions in binary form must reproduce the above copyright
-//	notice, this list of conditions and the following disclaimer in the
-//	documentation and/or other materials provided with the distribution.
+//  * Redistributions of source code must retain the above copyright notice,
+//  this list of conditions and the following disclaimer.
+//  * Redistributions in binary form must reproduce the above copyright
+//  notice, this list of conditions and the following disclaimer in the
+//  documentation and/or other materials provided with the distribution.
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR
 // IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -33,53 +33,53 @@
 #include "binding/atilemapautotiles_xp.h"
 
 namespace ARGSS {
-	///////////////////////////////////////////////////////
-	/// ARGSS::Tilemap namespace
-	///////////////////////////////////////////////////////
-	namespace ATilemap {
-		///////////////////////////////////////////////////
-		/// Initialize Tilemap class.
-		///////////////////////////////////////////////////
-		void Init();
+  ///////////////////////////////////////////////////////
+  /// ARGSS::Tilemap namespace
+  ///////////////////////////////////////////////////////
+  namespace ATilemap {
+    ///////////////////////////////////////////////////
+    /// Initialize Tilemap class.
+    ///////////////////////////////////////////////////
+    void Init();
 
-		///////////////////////////////////////////////////
-		/// Check if Tilemap is disposed.
-		/// An error will be raised if it is disposed.
-		///////////////////////////////////////////////////
-		void CheckDisposed(VALUE id);
+    ///////////////////////////////////////////////////
+    /// Check if Tilemap is disposed.
+    /// An error will be raised if it is disposed.
+    ///////////////////////////////////////////////////
+    void CheckDisposed(VALUE id);
 
-		/// Tilemap class id.
-		extern VALUE id;
+    /// Tilemap class id.
+    extern VALUE id;
 
-		///////////////////////////////////////////////////
-		/// Tilemap instance methods.
-		///////////////////////////////////////////////////
-		//@{
+    ///////////////////////////////////////////////////
+    /// Tilemap instance methods.
+    ///////////////////////////////////////////////////
+    //@{
 
-		VALUE rinitialize(int argc, VALUE* argv, VALUE self);
-		VALUE rdispose(VALUE self);
-		VALUE rdisposeQ(VALUE self);
-		VALUE rupdate(VALUE self);
-		VALUE rviewport(VALUE self);
-		VALUE rviewportE(VALUE self, VALUE viewport);
-		VALUE rtileset(VALUE self);
-		VALUE rtilesetE(VALUE self, VALUE tileset);
-		VALUE rautotiles(VALUE self);
-		VALUE rmap_data(VALUE self);
-		VALUE rmap_dataE(VALUE self, VALUE map_data);
-		VALUE rflash_data(VALUE self);
-		VALUE rflash_dataE(VALUE self, VALUE flash_data);
-		VALUE rpriorities(VALUE self);
-		VALUE rprioritiesE(VALUE self, VALUE priorities);
-		VALUE rvisible(VALUE self);
-		VALUE rvisibleE(VALUE self, VALUE visible);
-		VALUE rox(VALUE self);
-		VALUE roxE(VALUE self, VALUE ox);
-		VALUE roy(VALUE self);
-		VALUE royE(VALUE self, VALUE oy);
+    VALUE rinitialize(int argc, VALUE* argv, VALUE self);
+    VALUE rdispose(VALUE self);
+    VALUE rdisposeQ(VALUE self);
+    VALUE rupdate(VALUE self);
+    VALUE rviewport(VALUE self);
+    VALUE rviewportE(VALUE self, VALUE viewport);
+    VALUE rtileset(VALUE self);
+    VALUE rtilesetE(VALUE self, VALUE tileset);
+    VALUE rautotiles(VALUE self);
+    VALUE rmap_data(VALUE self);
+    VALUE rmap_dataE(VALUE self, VALUE map_data);
+    VALUE rflash_data(VALUE self);
+    VALUE rflash_dataE(VALUE self, VALUE flash_data);
+    VALUE rpriorities(VALUE self);
+    VALUE rprioritiesE(VALUE self, VALUE priorities);
+    VALUE rvisible(VALUE self);
+    VALUE rvisibleE(VALUE self, VALUE visible);
+    VALUE rox(VALUE self);
+    VALUE roxE(VALUE self, VALUE ox);
+    VALUE roy(VALUE self);
+    VALUE royE(VALUE self, VALUE oy);
 
-		//@}
-	};
+    //@}
+  };
 };
 
 #endif

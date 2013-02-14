@@ -6,11 +6,11 @@
 // modification, are permitted provided that the following conditions
 // are met:
 //
-//	* Redistributions of source code must retain the above copyright notice,
-//	this list of conditions and the following disclaimer.
-//	* Redistributions in binary form must reproduce the above copyright
-//	notice, this list of conditions and the following disclaimer in the
-//	documentation and/or other materials provided with the distribution.
+//  * Redistributions of source code must retain the above copyright notice,
+//  this list of conditions and the following disclaimer.
+//  * Redistributions in binary form must reproduce the above copyright
+//  notice, this list of conditions and the following disclaimer in the
+//  documentation and/or other materials provided with the distribution.
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR
 // IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -45,65 +45,65 @@ class Bitmap;
 ///////////////////////////////////////////////////////////
 class Viewport : public Drawable {
 public:
-	Viewport(unsigned long iid);
+  Viewport(unsigned long iid);
 
-	static bool IsDisposed(unsigned long id);
-	static void New(unsigned long id);
-	static Viewport* Get(unsigned long id);
-	static void Dispose(unsigned long id);
+  static bool IsDisposed(unsigned long id);
+  static void New(unsigned long id);
+  static Viewport* Get(unsigned long id);
+  static void Dispose(unsigned long id);
 
-	void RefreshBitmaps();
-	void Draw(long z);
-	void Draw(long z, Bitmap* dst_bitmap);
+  void RefreshBitmaps();
+  void Draw(long z);
+  void Draw(long z, Bitmap* dst_bitmap);
 
-	void Flash(int duration);
-	void Flash(Color const& color, int duration);
-	void Update();
-	unsigned long GetRect();
-	void SetRect(unsigned long nrect);
-	bool GetVisible();
-	void SetVisible(bool nvisible);
-	int GetZ();
-	void SetZ(int nz);
-	int GetOx();
-	void SetOx(int nox);
-	int GetOy();
-	void SetOy(int noy);
-	unsigned long GetColor();
-	void SetColor(unsigned long ncolor);
-	unsigned long GetTone();
-	void SetTone(unsigned long ntone);
+  void Flash(int duration);
+  void Flash(Color const& color, int duration);
+  void Update();
+  unsigned long GetRect();
+  void SetRect(unsigned long nrect);
+  bool GetVisible();
+  void SetVisible(bool nvisible);
+  int GetZ();
+  void SetZ(int nz);
+  int GetOx();
+  void SetOx(int nox);
+  int GetOy();
+  void SetOy(int noy);
+  unsigned long GetColor();
+  void SetColor(unsigned long ncolor);
+  unsigned long GetTone();
+  void SetTone(unsigned long ntone);
 
-	void RegisterZObj(long z, unsigned long id);
-	void RegisterZObj(long z, unsigned long id, bool multiz);
-	void RemoveZObj(unsigned long id);
-	void UpdateZObj(unsigned long id, long z);
+  void RegisterZObj(long z, unsigned long id);
+  void RegisterZObj(long z, unsigned long id, bool multiz);
+  void RemoveZObj(unsigned long id);
+  void UpdateZObj(unsigned long id, long z);
 
-	Rect GetViewportRect();
+  Rect GetViewportRect();
 
 private:
-	std::list<ZObj> zlist;
-	std::list<ZObj>::iterator it_zlist;
+  std::list<ZObj> zlist;
+  std::list<ZObj>::iterator it_zlist;
 
-	unsigned long id;
-	unsigned long rect;
-	bool visible;
-	int z;
-	int ox;
-	int oy;
-	unsigned long color;
-	unsigned long tone;
+  unsigned long id;
+  unsigned long rect;
+  bool visible;
+  int z;
+  int ox;
+  int oy;
+  unsigned long color;
+  unsigned long tone;
 
-	Color flash_color;
-	int flash_duration;
-	int flash_frame;
-	Color color_viewport;
-	Tone tone_viewport;
-	bool disposing;
+  Color flash_color;
+  int flash_duration;
+  int flash_frame;
+  Color color_viewport;
+  Tone tone_viewport;
+  bool disposing;
 
-	Bitmap* viewport;
+  Bitmap* viewport;
 
-	Rect dst_rect;
+  Rect dst_rect;
 };
 
 #endif

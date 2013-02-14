@@ -6,11 +6,11 @@
 // modification, are permitted provided that the following conditions
 // are met:
 //
-//	* Redistributions of source code must retain the above copyright notice,
-//	this list of conditions and the following disclaimer.
-//	* Redistributions in binary form must reproduce the above copyright
-//	notice, this list of conditions and the following disclaimer in the
-//	documentation and/or other materials provided with the distribution.
+//  * Redistributions of source code must retain the above copyright notice,
+//  this list of conditions and the following disclaimer.
+//  * Redistributions in binary form must reproduce the above copyright
+//  notice, this list of conditions and the following disclaimer in the
+//  documentation and/or other materials provided with the distribution.
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR
 // IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -38,35 +38,35 @@ VALUE ARGSS::AError::id;
 // ARGSS Error initialize
 ///////////////////////////////////////////////////////////
 void ARGSS::AError::Init() {
-	id = rb_define_class("ARGSSError", rb_eStandardError);
+  id = rb_define_class("ARGSSError", rb_eStandardError);
 }
 
 ///////////////////////////////////////////////////////////
 // FileNotFound
 ///////////////////////////////////////////////////////////
 void ARGSS::AError::FileNotFound(std::string file) {
-	VALUE enoent = rb_const_get(rb_mErrno, rb_intern("ENOENT"));
-	rb_raise(enoent, "No such file or directory - %s", file.c_str());
+  VALUE enoent = rb_const_get(rb_mErrno, rb_intern("ENOENT"));
+  rb_raise(enoent, "No such file or directory - %s", file.c_str());
 }
 
 ///////////////////////////////////////////////////////////
 // AudioNotLoad
 ///////////////////////////////////////////////////////////
 void ARGSS::AError::AudioNotLoad(std::string type, std::string file) {
-	rb_raise(ARGSS::AError::id, "couldn't load %s %s.\n", file.c_str(), type.c_str());
+  rb_raise(ARGSS::AError::id, "couldn't load %s %s.\n", file.c_str(), type.c_str());
 }
 
 void ARGSS::AError::AudioNotLoad(std::string type, std::string file, std::string description) {
-	rb_raise(ARGSS::AError::id, "couldn't load %s %s.\n%s\n", file.c_str(), type.c_str(), description.c_str());
+  rb_raise(ARGSS::AError::id, "couldn't load %s %s.\n%s\n", file.c_str(), type.c_str(), description.c_str());
 }
 
 ///////////////////////////////////////////////////////////
 // AudioNotPlay
 ///////////////////////////////////////////////////////////
 void ARGSS::AError::AudioNotPlay(std::string type, std::string file) {
-	rb_raise(ARGSS::AError::id, "couldn't play %s %s.\n", file.c_str(), type.c_str());
+  rb_raise(ARGSS::AError::id, "couldn't play %s %s.\n", file.c_str(), type.c_str());
 }
 
 void ARGSS::AError::AudioNotPlay(std::string type, std::string file, std::string description) {
-	rb_raise(ARGSS::AError::id, "couldn't play %s %s.\n%s\n", file.c_str(), type.c_str(), description.c_str());
+  rb_raise(ARGSS::AError::id, "couldn't play %s %s.\n%s\n", file.c_str(), type.c_str(), description.c_str());
 }

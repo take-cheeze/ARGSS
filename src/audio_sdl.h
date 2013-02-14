@@ -6,11 +6,11 @@
 // modification, are permitted provided that the following conditions
 // are met:
 //
-//	* Redistributions of source code must retain the above copyright notice,
-//	this list of conditions and the following disclaimer.
-//	* Redistributions in binary form must reproduce the above copyright
-//	notice, this list of conditions and the following disclaimer in the
-//	documentation and/or other materials provided with the distribution.
+//  * Redistributions of source code must retain the above copyright notice,
+//  this list of conditions and the following disclaimer.
+//  * Redistributions in binary form must reproduce the above copyright
+//  notice, this list of conditions and the following disclaimer in the
+//  documentation and/or other materials provided with the distribution.
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR
 // IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -39,24 +39,24 @@
 // Audio namespace.
 ///////////////////////////////////////////////////////////
 namespace Audio {
-	///////////////////////////////////////////////////////
-	/// ME finish callback.
-	/// Only one midi at a time can be playing with
-	/// SDL_mixer, so we have to pause the BGM playback and
-	/// resume it after finishing the ME. This callback will
-	/// continue the BGM playback.
-	///////////////////////////////////////////////////////
-	void ME_finish();
+  ///////////////////////////////////////////////////////
+  /// ME finish callback.
+  /// Only one midi at a time can be playing with
+  /// SDL_mixer, so we have to pause the BGM playback and
+  /// resume it after finishing the ME. This callback will
+  /// continue the BGM playback.
+  ///////////////////////////////////////////////////////
+  void ME_finish();
 
-	extern Mix_Music* bgm;
-	extern int bgm_volume;
-	extern bool bgm_playing;
-	extern Mix_Chunk* bgs;
-	extern int bgs_channel;
-	extern Mix_Music* me;
-	extern bool me_playing;
-	extern std::map<int, Mix_Chunk*> sounds;
-	extern std::map<int, Mix_Chunk*>::iterator it_sounds;
+  extern Mix_Music* bgm;
+  extern int bgm_volume;
+  extern bool bgm_playing;
+  extern Mix_Chunk* bgs;
+  extern int bgs_channel;
+  extern Mix_Music* me;
+  extern bool me_playing;
+  extern std::map<int, Mix_Chunk*> sounds;
+  extern std::map<int, Mix_Chunk*>::iterator it_sounds;
 };
 
 #endif

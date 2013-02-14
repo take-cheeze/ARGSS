@@ -6,11 +6,11 @@
 // modification, are permitted provided that the following conditions
 // are met:
 //
-//	* Redistributions of source code must retain the above copyright notice,
-//	this list of conditions and the following disclaimer.
-//	* Redistributions in binary form must reproduce the above copyright
-//	notice, this list of conditions and the following disclaimer in the
-//	documentation and/or other materials provided with the distribution.
+//  * Redistributions of source code must retain the above copyright notice,
+//  this list of conditions and the following disclaimer.
+//  * Redistributions in binary form must reproduce the above copyright
+//  notice, this list of conditions and the following disclaimer in the
+//  documentation and/or other materials provided with the distribution.
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR
 // IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -32,150 +32,150 @@
 
 ///////////////////////////////////////////////////////////
 // RPGMAKER
-//	Defines RPG Maker compability, RPGXP for RPG Maker XP and RPGVX for
-//	RPG Maker VX.
+//  Defines RPG Maker compability, RPGXP for RPG Maker XP and RPGVX for
+//  RPG Maker VX.
 ///////////////////////////////////////////////////////////
 #define RPGMAKER RPGXP
 
 ///////////////////////////////////////////////////////////
-//	GAME_TITLE
-//		Window title to show.
+//  GAME_TITLE
+//    Window title to show.
 //
-//	SCRIPTS_PATH
-//		Ruby scripts file path to load.
+//  SCRIPTS_PATH
+//    Ruby scripts file path to load.
 //
-//	SCRIPTS_ZLIB
-//		Flag for loading a zlib compressed ruby scripts file. (Like RMXP/VX)
+//  SCRIPTS_ZLIB
+//    Flag for loading a zlib compressed ruby scripts file. (Like RMXP/VX)
 //
-//	RTP#
-//		RTP 1, 2 and 3 names.
+//  RTP#
+//    RTP 1, 2 and 3 names.
 //
-//	SCREEN_WIDTH SCREEN_HEIGHT
-//		Screen default width and height.
+//  SCREEN_WIDTH SCREEN_HEIGHT
+//    Screen default width and height.
 //
-//	ALLOW_FULLSCREEN_TOGGLE
-//		Allows user to change fullscreen state.
+//  ALLOW_FULLSCREEN_TOGGLE
+//    Allows user to change fullscreen state.
 //
-//	RUN_FULLSCREEN
-//		Run game in fullscreen mode.
+//  RUN_FULLSCREEN
+//    Run game in fullscreen mode.
 //
-//	PAUSE_GAME_WHEN_FOCUS_LOST PAUSE_AUDIO_WHEN_FOCUS_LOST
-//		Pause the game process and/or audio when the argss window
-//		looses its focus.
+//  PAUSE_GAME_WHEN_FOCUS_LOST PAUSE_AUDIO_WHEN_FOCUS_LOST
+//    Pause the game process and/or audio when the argss window
+//    looses its focus.
 ///////////////////////////////////////////////////////////
-#define GAME_TITLE					"ARGSS Player"
-#define SCRIPTS_PATH				"scripts.rb"
-#define SCRIPTS_ZLIB				NO
-#define RTP1						""
-#define RTP2						""
-#define RTP3						""
-#define SCREEN_WIDTH				640
-#define SCREEN_HEIGHT				480
-#define ALLOW_FULLSCREEN_TOGGLE		YES
-#define RUN_FULLSCREEN				NO
-#define PAUSE_GAME_WHEN_FOCUS_LOST	YES
-#define PAUSE_AUDIO_WHEN_FOCUS_LOST	NO
+#define GAME_TITLE          "ARGSS Player"
+#define SCRIPTS_PATH        "scripts.rb"
+#define SCRIPTS_ZLIB        NO
+#define RTP1            ""
+#define RTP2            ""
+#define RTP3            ""
+#define SCREEN_WIDTH        640
+#define SCREEN_HEIGHT        480
+#define ALLOW_FULLSCREEN_TOGGLE    YES
+#define RUN_FULLSCREEN        NO
+#define PAUSE_GAME_WHEN_FOCUS_LOST  YES
+#define PAUSE_AUDIO_WHEN_FOCUS_LOST  NO
 
 ///////////////////////////////////////////////////////////
-//	INI_NAME
-//		INI configuration filename.
+//  INI_NAME
+//    INI configuration filename.
 //
-//	READ_INI_GAME_TITLE
-//		Read game title from ini file.
+//  READ_INI_GAME_TITLE
+//    Read game title from ini file.
 //
-//	READ_INI_SCRIPTS_PATH
-//		Read scripts path file from ini file.
+//  READ_INI_SCRIPTS_PATH
+//    Read scripts path file from ini file.
 //
-//	READ_INI_RTPS
-//		Read rtps name from ini file.
+//  READ_INI_RTPS
+//    Read rtps name from ini file.
 //
-//	READ_INI_SCREEN_SIZE
-//		Read screen size from ini file.
+//  READ_INI_SCREEN_SIZE
+//    Read screen size from ini file.
 ///////////////////////////////////////////////////////////
 #ifdef WIN32
 #define INI_NAME ".\\ARGSS.ini"
 #else
 #define INI_NAME "ARGSS.ini"
 #endif
-#define READ_INI_GAME_TITLE		YES
-#define READ_INI_SCRIPTS_PATH	YES
-#define READ_INI_RTPS			YES
-#define READ_INI_SCREEN_SIZE	YES
+#define READ_INI_GAME_TITLE    YES
+#define READ_INI_SCRIPTS_PATH  YES
+#define READ_INI_RTPS      YES
+#define READ_INI_SCREEN_SIZE  YES
 
 ///////////////////////////////////////////////////////////
-//	DEFAULT_FPS
-//		Default fps rate.
+//  DEFAULT_FPS
+//    Default fps rate.
 //
-//	DEFAULT_BACKCOLOR
-//		Default back color for the player window.
+//  DEFAULT_BACKCOLOR
+//    Default back color for the player window.
 //
-//	UPDATE_ALL_KEYS
-//		Update all keys or just the Input default buttons.
+//  UPDATE_ALL_KEYS
+//    Update all keys or just the Input default buttons.
 ///////////////////////////////////////////////////////////
-#define DEFAULT_FPS			60
-#define DEFAULT_BACKCOLOR	0x00000000
-#define UPDATE_ALL_KEYS		YES
-#define JOYSTICK_SUPPORT	YES
+#define DEFAULT_FPS      60
+#define DEFAULT_BACKCOLOR  0x00000000
+#define UPDATE_ALL_KEYS    YES
+#define JOYSTICK_SUPPORT  YES
 
 ///////////////////////////////////////////////////////////
-//	DEBUG
-//		Activate/deactivate debug.
+//  DEBUG
+//    Activate/deactivate debug.
 //
-//	DEBUG_VARIABLE
-//		Ruby debug flag variable.
+//  DEBUG_VARIABLE
+//    Ruby debug flag variable.
 //
-//	DEBUG_ONLY_FPS
-//		Restrict FPS on title bar only for DEBUG.
+//  DEBUG_ONLY_FPS
+//    Restrict FPS on title bar only for DEBUG.
 ///////////////////////////////////////////////////////////
-#define RUBY_DEBUG		YES
-#define DEBUG_VARIABLE	"$DEBUG"
-#define DEBUG_ONLY_FPS	NO
+#define RUBY_DEBUG    YES
+#define DEBUG_VARIABLE  "$DEBUG"
+#define DEBUG_ONLY_FPS  NO
 
 ///////////////////////////////////////////////////////////
-//	OUTPUT_TYPE
-//		0 - None
-//		1 - Console, if closed none
-//		2 - Console, if closed open it
-//		3 - Message Box
-//		4 - File
-//		5 - Try console, if closed file
-//		6 - Try console, if closed message box
+//  OUTPUT_TYPE
+//    0 - None
+//    1 - Console, if closed none
+//    2 - Console, if closed open it
+//    3 - Message Box
+//    4 - File
+//    5 - Try console, if closed file
+//    6 - Try console, if closed message box
 //
-//	OUTPUT_FILE
-//		Name of the file for output.
+//  OUTPUT_FILE
+//    Name of the file for output.
 ///////////////////////////////////////////////////////////
-#define OUTPUT_TYPE	6
-#define OUTPUT_FILE	"out.txt"
+#define OUTPUT_TYPE  6
+#define OUTPUT_FILE  "out.txt"
 
 ///////////////////////////////////////////////////////////
-//	Windows options
+//  Windows options
 //
-//	READ_BUTTON_ASSIGMENT
-//		If true, tries to read from registry the button
-//		assigment options.
+//  READ_BUTTON_ASSIGMENT
+//    If true, tries to read from registry the button
+//    assigment options.
 //
-//	READ_BUTTON_ASSIGMENT_KEY
-//		Registry key.
+//  READ_BUTTON_ASSIGMENT_KEY
+//    Registry key.
 //
-//	READ_BUTTON_ASSIGMENT_VALUE
-//		Registry entry value.
+//  READ_BUTTON_ASSIGMENT_VALUE
+//    Registry entry value.
 ///////////////////////////////////////////////////////////
-#define READ_BUTTON_ASSIGMENT		YES
-#define READ_BUTTON_ASSIGMENT_KEY	"SOFTWARE\\Enterbrain\\RGSS"
-#define READ_BUTTON_ASSIGMENT_VALUE	"ButtonAssign"
+#define READ_BUTTON_ASSIGMENT    YES
+#define READ_BUTTON_ASSIGMENT_KEY  "SOFTWARE\\Enterbrain\\RGSS"
+#define READ_BUTTON_ASSIGMENT_VALUE  "ButtonAssign"
 
 ///////////////////////////////////////////////////////////
-//	OSX options
+//  OSX options
 //
-//	OSX_CONFIG_FILE
-//		Path to the OSX configuration file; you can use the
-//		tilde (~) so that it looks it up from the current
-//		user's home directory. It has to be a ini file too.
+//  OSX_CONFIG_FILE
+//    Path to the OSX configuration file; you can use the
+//    tilde (~) so that it looks it up from the current
+//    user's home directory. It has to be a ini file too.
 ///////////////////////////////////////////////////////////
-#define OSX_CONFIG_FILE					"/Users/npepinpe/argss/config.ini"
-#define OSX_DEF_RPGXP_RTP				"rpgxp/rtp"
-#define OSX_DEF_RPGVX_RTP				"rpgvx/rtp"
-#define OSX_CONFIG_RPGXP_SECTION_NAME	"RPGXP"
-#define OSX_CONFIG_RPGVX_SECTION_NAME	"RPGVX"
-#define OSX_CONFIG_RTPPATH_KEY_NAME		"RTP_PATH"
-#define OSX_CONFIG_RGSS_SECTION_NAME	"RGSS"
+#define OSX_CONFIG_FILE          "/Users/npepinpe/argss/config.ini"
+#define OSX_DEF_RPGXP_RTP        "rpgxp/rtp"
+#define OSX_DEF_RPGVX_RTP        "rpgvx/rtp"
+#define OSX_CONFIG_RPGXP_SECTION_NAME  "RPGXP"
+#define OSX_CONFIG_RPGVX_SECTION_NAME  "RPGVX"
+#define OSX_CONFIG_RTPPATH_KEY_NAME    "RTP_PATH"
+#define OSX_CONFIG_RGSS_SECTION_NAME  "RGSS"

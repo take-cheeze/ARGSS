@@ -6,11 +6,11 @@
 // modification, are permitted provided that the following conditions
 // are met:
 //
-//	* Redistributions of source code must retain the above copyright notice,
-//	this list of conditions and the following disclaimer.
-//	* Redistributions in binary form must reproduce the above copyright
-//	notice, this list of conditions and the following disclaimer in the
-//	documentation and/or other materials provided with the distribution.
+//  * Redistributions of source code must retain the above copyright notice,
+//  this list of conditions and the following disclaimer.
+//  * Redistributions in binary form must reproduce the above copyright
+//  notice, this list of conditions and the following disclaimer in the
+//  documentation and/or other materials provided with the distribution.
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR
 // IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -34,25 +34,25 @@
 #include "aruby.h"
 
 namespace ARGSS {
-	///////////////////////////////////////////////////////
-	/// ARGSS::Error namespace
-	///////////////////////////////////////////////////////
-	namespace AError {
-		///////////////////////////////////////////////////
-		/// Initialize Error class.
-		///////////////////////////////////////////////////
-		void Init();
+  ///////////////////////////////////////////////////////
+  /// ARGSS::Error namespace
+  ///////////////////////////////////////////////////////
+  namespace AError {
+    ///////////////////////////////////////////////////
+    /// Initialize Error class.
+    ///////////////////////////////////////////////////
+    void Init();
 
-		/// Error class id.
-		extern VALUE id;
+    /// Error class id.
+    extern VALUE id;
 
-		void FileNotFound(std::string file);
+    void FileNotFound(std::string file);
 
-		void AudioNotLoad(std::string type, std::string file);
-		void AudioNotLoad(std::string type, std::string file, std::string description);
-		void AudioNotPlay(std::string type, std::string file);
-		void AudioNotPlay(std::string type, std::string file, std::string description);
-	};
+    void AudioNotLoad(std::string type, std::string file);
+    void AudioNotLoad(std::string type, std::string file, std::string description);
+    void AudioNotPlay(std::string type, std::string file);
+    void AudioNotPlay(std::string type, std::string file, std::string description);
+  };
 };
 
 #endif

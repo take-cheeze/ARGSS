@@ -6,11 +6,11 @@
 // modification, are permitted provided that the following conditions
 // are met:
 //
-//	* Redistributions of source code must retain the above copyright notice,
-//	this list of conditions and the following disclaimer.
-//	* Redistributions in binary form must reproduce the above copyright
-//	notice, this list of conditions and the following disclaimer in the
-//	documentation and/or other materials provided with the distribution.
+//  * Redistributions of source code must retain the above copyright notice,
+//  this list of conditions and the following disclaimer.
+//  * Redistributions in binary form must reproduce the above copyright
+//  notice, this list of conditions and the following disclaimer in the
+//  documentation and/or other materials provided with the distribution.
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR
 // IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -33,59 +33,59 @@
 #include "aruby.h"
 
 namespace ARGSS {
-	///////////////////////////////////////////////////////
-	/// ARGSS::Plane namespace
-	///////////////////////////////////////////////////////
-	namespace APlane {
-		///////////////////////////////////////////////////
-		/// Initialize Plane class.
-		///////////////////////////////////////////////////
-		void Init();
+  ///////////////////////////////////////////////////////
+  /// ARGSS::Plane namespace
+  ///////////////////////////////////////////////////////
+  namespace APlane {
+    ///////////////////////////////////////////////////
+    /// Initialize Plane class.
+    ///////////////////////////////////////////////////
+    void Init();
 
-		///////////////////////////////////////////////////
-		/// Check if Plane is disposed.
-		/// An error will be raised if it is disposed.
-		///////////////////////////////////////////////////
-		void CheckDisposed(VALUE id);
+    ///////////////////////////////////////////////////
+    /// Check if Plane is disposed.
+    /// An error will be raised if it is disposed.
+    ///////////////////////////////////////////////////
+    void CheckDisposed(VALUE id);
 
-		/// Plane class id.
-		extern VALUE id;
+    /// Plane class id.
+    extern VALUE id;
 
-		///////////////////////////////////////////////////
-		/// Plane instance methods.
-		///////////////////////////////////////////////////
-		//@{
+    ///////////////////////////////////////////////////
+    /// Plane instance methods.
+    ///////////////////////////////////////////////////
+    //@{
 
-		VALUE rinitialize(int argc, VALUE* argv, VALUE self);
-		VALUE rdispose(VALUE self);
-		VALUE rdisposedQ(VALUE self);
-		VALUE rviewport(VALUE self);
-		VALUE rviewportE(VALUE self, VALUE viewport);
-		VALUE rbitmap(VALUE self);
-		VALUE rbitmapE(VALUE self, VALUE bitmap);
-		VALUE rvisible(VALUE self);
-		VALUE rvisibleE(VALUE self, VALUE visible);
-		VALUE rz(VALUE self);
-		VALUE rzE(VALUE self, VALUE z);
-		VALUE rox(VALUE self);
-		VALUE roxE(VALUE self, VALUE ox);
-		VALUE roy(VALUE self);
-		VALUE royE(VALUE self, VALUE oy);
-		VALUE rzoom_x(VALUE self);
-		VALUE rzoom_xE(VALUE self, VALUE zoom_x);
-		VALUE rzoom_y(VALUE self);
-		VALUE rzoom_yE(VALUE self, VALUE zoom_y);
-		VALUE ropacity(VALUE self);
-		VALUE ropacityE(VALUE self, VALUE opacity);
-		VALUE rblend_type(VALUE self);
-		VALUE rblend_typeE(VALUE self, VALUE blend_type);
-		VALUE rcolor(VALUE self);
-		VALUE rcolorE(VALUE self, VALUE color);
-		VALUE rtone(VALUE self);
-		VALUE rtoneE(VALUE self, VALUE tone);
+    VALUE rinitialize(int argc, VALUE* argv, VALUE self);
+    VALUE rdispose(VALUE self);
+    VALUE rdisposedQ(VALUE self);
+    VALUE rviewport(VALUE self);
+    VALUE rviewportE(VALUE self, VALUE viewport);
+    VALUE rbitmap(VALUE self);
+    VALUE rbitmapE(VALUE self, VALUE bitmap);
+    VALUE rvisible(VALUE self);
+    VALUE rvisibleE(VALUE self, VALUE visible);
+    VALUE rz(VALUE self);
+    VALUE rzE(VALUE self, VALUE z);
+    VALUE rox(VALUE self);
+    VALUE roxE(VALUE self, VALUE ox);
+    VALUE roy(VALUE self);
+    VALUE royE(VALUE self, VALUE oy);
+    VALUE rzoom_x(VALUE self);
+    VALUE rzoom_xE(VALUE self, VALUE zoom_x);
+    VALUE rzoom_y(VALUE self);
+    VALUE rzoom_yE(VALUE self, VALUE zoom_y);
+    VALUE ropacity(VALUE self);
+    VALUE ropacityE(VALUE self, VALUE opacity);
+    VALUE rblend_type(VALUE self);
+    VALUE rblend_typeE(VALUE self, VALUE blend_type);
+    VALUE rcolor(VALUE self);
+    VALUE rcolorE(VALUE self, VALUE color);
+    VALUE rtone(VALUE self);
+    VALUE rtoneE(VALUE self, VALUE tone);
 
-		//@}
-	};
+    //@}
+  };
 };
 
 #endif

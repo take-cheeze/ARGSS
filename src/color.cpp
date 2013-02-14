@@ -6,11 +6,11 @@
 // modification, are permitted provided that the following conditions
 // are met:
 //
-//	* Redistributions of source code must retain the above copyright notice,
-//	this list of conditions and the following disclaimer.
-//	* Redistributions in binary form must reproduce the above copyright
-//	notice, this list of conditions and the following disclaimer in the
-//	documentation and/or other materials provided with the distribution.
+//  * Redistributions of source code must retain the above copyright notice,
+//  this list of conditions and the following disclaimer.
+//  * Redistributions in binary form must reproduce the above copyright
+//  notice, this list of conditions and the following disclaimer in the
+//  documentation and/or other materials provided with the distribution.
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR
 // IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -34,56 +34,56 @@
 /// Constructor
 ///////////////////////////////////////////////////////////
 Color::Color() {
-	red = 0.0f;
-	green = 0.0f;
-	blue = 0.0f;
-	alpha = 0.0f;
+  red = 0.0f;
+  green = 0.0f;
+  blue = 0.0f;
+  alpha = 0.0f;
 }
 Color::Color(VALUE color) {
-	red = (float)NUM2DBL(rb_iv_get(color, "@red"));
-	green = (float)NUM2DBL(rb_iv_get(color, "@green"));
-	blue = (float)NUM2DBL(rb_iv_get(color, "@blue"));
-	alpha = (float)NUM2DBL(rb_iv_get(color, "@alpha"));
+  red = (float)NUM2DBL(rb_iv_get(color, "@red"));
+  green = (float)NUM2DBL(rb_iv_get(color, "@green"));
+  blue = (float)NUM2DBL(rb_iv_get(color, "@blue"));
+  alpha = (float)NUM2DBL(rb_iv_get(color, "@alpha"));
 }
 Color::Color(int ired, int igreen, int iblue, int ialpha) {
-	red = (float)ired;
-	green = (float)igreen;
-	blue = (float)iblue;
-	alpha = (float)ialpha;
+  red = (float)ired;
+  green = (float)igreen;
+  blue = (float)iblue;
+  alpha = (float)ialpha;
 }
 
 ///////////////////////////////////////////////////////////
 /// Set
 ///////////////////////////////////////////////////////////
 void Color::Set(VALUE color) {
-	red = (float)NUM2DBL(rb_iv_get(color, "@red"));
-	green = (float)NUM2DBL(rb_iv_get(color, "@green"));
-	blue = (float)NUM2DBL(rb_iv_get(color, "@blue"));
-	alpha = (float)NUM2DBL(rb_iv_get(color, "@alpha"));
+  red = (float)NUM2DBL(rb_iv_get(color, "@red"));
+  green = (float)NUM2DBL(rb_iv_get(color, "@green"));
+  blue = (float)NUM2DBL(rb_iv_get(color, "@blue"));
+  alpha = (float)NUM2DBL(rb_iv_get(color, "@alpha"));
 }
 
 ///////////////////////////////////////////////////////////
 /// Get ARGSS
 ///////////////////////////////////////////////////////////
 unsigned long Color::GetARGSS() const {
-	VALUE args[4] = {rb_float_new(red), rb_float_new(green), rb_float_new(blue), rb_float_new(alpha)};
-	return rb_class_new_instance(4, args, ARGSS::AColor::id);
+  VALUE args[4] = {rb_float_new(red), rb_float_new(green), rb_float_new(blue), rb_float_new(alpha)};
+  return rb_class_new_instance(4, args, ARGSS::AColor::id);
 }
 
 ///////////////////////////////////////////////////////////
 /// Get uint32_t
 ///////////////////////////////////////////////////////////
 uint32_t Color::GetUint32() const {
-	return ((uint8_t)red) + (((uint8_t)green) << 8) + (((uint8_t)blue) << 16) + (((uint8_t)alpha) << 24);
+  return ((uint8_t)red) + (((uint8_t)green) << 8) + (((uint8_t)blue) << 16) + (((uint8_t)alpha) << 24);
 }
 
 ///////////////////////////////////////////////////////////
 /// Static create Color from uint32_t
 ///////////////////////////////////////////////////////////
 Color Color::NewUint32(uint32_t color) {
-	int r = (color & 0x000000ff);
-	int g = (color & 0x0000ff00) >> 8;
-	int b = (color & 0x00ff0000) >> 16;
-	int a = (color & 0xff000000) >> 24;
-	return Color(r, g, b, a);
+  int r = (color & 0x000000ff);
+  int g = (color & 0x0000ff00) >> 8;
+  int b = (color & 0x00ff0000) >> 16;
+  int a = (color & 0xff000000) >> 24;
+  return Color(r, g, b, a);
 }

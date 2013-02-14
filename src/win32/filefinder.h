@@ -6,11 +6,11 @@
 // modification, are permitted provided that the following conditions
 // are met:
 //
-//	* Redistributions of source code must retain the above copyright notice,
-//	this list of conditions and the following disclaimer.
-//	* Redistributions in binary form must reproduce the above copyright
-//	notice, this list of conditions and the following disclaimer in the
-//	documentation and/or other materials provided with the distribution.
+//  * Redistributions of source code must retain the above copyright notice,
+//  this list of conditions and the following disclaimer.
+//  * Redistributions in binary form must reproduce the above copyright
+//  notice, this list of conditions and the following disclaimer in the
+//  documentation and/or other materials provided with the distribution.
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR
 // IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -36,13 +36,13 @@
 /// FileFinder namespace
 ///////////////////////////////////////////////////////////
 namespace FileFinder {
-	void Init();
-	std::string FindImage(std::string name);
-	std::string FindMusic(std::string name);
-	std::string FindFont(std::string name);
+  void Init();
+  std::string FindImage(std::string name);
+  std::string FindMusic(std::string name);
+  std::string FindFont(std::string name);
 
-	extern std::string fonts_path;
-	extern std::string rtp_paths[3];
+  extern std::string fonts_path;
+  extern std::string rtp_paths[3];
 };
 
 #endif

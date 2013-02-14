@@ -6,11 +6,11 @@
 // modification, are permitted provided that the following conditions
 // are met:
 //
-//	* Redistributions of source code must retain the above copyright notice,
-//	this list of conditions and the following disclaimer.
-//	* Redistributions in binary form must reproduce the above copyright
-//	notice, this list of conditions and the following disclaimer in the
-//	documentation and/or other materials provided with the distribution.
+//  * Redistributions of source code must retain the above copyright notice,
+//  this list of conditions and the following disclaimer.
+//  * Redistributions in binary form must reproduce the above copyright
+//  notice, this list of conditions and the following disclaimer in the
+//  documentation and/or other materials provided with the distribution.
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR
 // IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -30,7 +30,7 @@
 #include <string>
 
 extern "C" {
-	#include "ruby.h"
+  #include "ruby.h"
 }
 
 #include "binding/argss.h"
@@ -60,27 +60,27 @@ extern "C" {
 // Initialize
 ///////////////////////////////////////////////////////////
 void ARGSS::Init() {
-	ARGSS::ABitmap::Init();
-	ARGSS::AColor::Init();
-	ARGSS::AError::Init();
-	ARGSS::AFont::Init();
-	ARGSS::APlane::Init();
-	ARGSS::ARect::Init();
-	ARGSS::ASprite::Init();
-	ARGSS::ATable::Init();
-	ARGSS::ATilemap::Init();
-	ARGSS::ATone::Init();
-	ARGSS::AViewport::Init();
-	ARGSS::AWindow::Init();
+  ARGSS::ABitmap::Init();
+  ARGSS::AColor::Init();
+  ARGSS::AError::Init();
+  ARGSS::AFont::Init();
+  ARGSS::APlane::Init();
+  ARGSS::ARect::Init();
+  ARGSS::ASprite::Init();
+  ARGSS::ATable::Init();
+  ARGSS::ATilemap::Init();
+  ARGSS::ATone::Init();
+  ARGSS::AViewport::Init();
+  ARGSS::AWindow::Init();
 
-	ARGSS::AAudio::Init();
-	ARGSS::AGraphics::Init();
-	ARGSS::AInput::Init();
-	ARGSS::AKeys::Init();
-	ARGSS::AOutput::Init();
+  ARGSS::AAudio::Init();
+  ARGSS::AGraphics::Init();
+  ARGSS::AInput::Init();
+  ARGSS::AKeys::Init();
+  ARGSS::AOutput::Init();
 
-	ARGSS::ARPG::Init();
-	/*ARGSS::ARPG::ACache::Init();
-	ARGSS::ARPG::ASprite::Init();
-	ARGSS::ARPG::AWeather::Init();*/
+  ARGSS::ARPG::Init();
+  /*ARGSS::ARPG::ACache::Init();
+  ARGSS::ARPG::ASprite::Init();
+  ARGSS::ARPG::AWeather::Init();*/
 }

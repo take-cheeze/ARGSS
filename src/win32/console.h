@@ -6,11 +6,11 @@
 // modification, are permitted provided that the following conditions
 // are met:
 //
-//	* Redistributions of source code must retain the above copyright notice,
-//	this list of conditions and the following disclaimer.
-//	* Redistributions in binary form must reproduce the above copyright
-//	notice, this list of conditions and the following disclaimer in the
-//	documentation and/or other materials provided with the distribution.
+//  * Redistributions of source code must retain the above copyright notice,
+//  this list of conditions and the following disclaimer.
+//  * Redistributions in binary form must reproduce the above copyright
+//  notice, this list of conditions and the following disclaimer in the
+//  documentation and/or other materials provided with the distribution.
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR
 // IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -36,12 +36,12 @@
 /// Console Namespace
 ///////////////////////////////////////////////////////////
 namespace Console {
-	void Init();
-	void SetTitle(char* title);
-	void SetLines(int lines);
-	void Free();
-	bool Active();
-	void Write(std::string msg);
+  void Init();
+  void SetTitle(char* title);
+  void SetLines(int lines);
+  void Free();
+  bool Active();
+  void Write(std::string msg);
 };
 
 #endif

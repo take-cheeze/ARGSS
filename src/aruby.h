@@ -6,11 +6,11 @@
 // modification, are permitted provided that the following conditions
 // are met:
 //
-//	* Redistributions of source code must retain the above copyright notice,
-//	this list of conditions and the following disclaimer.
-//	* Redistributions in binary form must reproduce the above copyright
-//	notice, this list of conditions and the following disclaimer in the
-//	documentation and/or other materials provided with the distribution.
+//  * Redistributions of source code must retain the above copyright notice,
+//  this list of conditions and the following disclaimer.
+//  * Redistributions in binary form must reproduce the above copyright
+//  notice, this list of conditions and the following disclaimer in the
+//  documentation and/or other materials provided with the distribution.
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR
 // IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -31,7 +31,7 @@
 // Headers
 ///////////////////////////////////////////////////////////
 extern "C" {
-	#include "ruby.h"
+  #include "ruby.h"
 }
 
 ///////////////////////////////////////////////////////////
@@ -39,48 +39,48 @@ extern "C" {
 /// It manages the ruby embedding.
 ///////////////////////////////////////////////////////////
 namespace ARuby {
-	///////////////////////////////////////////////////////
-	/// Initializes ruby.
-	///////////////////////////////////////////////////////
-	void Init();
+  ///////////////////////////////////////////////////////
+  /// Initializes ruby.
+  ///////////////////////////////////////////////////////
+  void Init();
 
-	///////////////////////////////////////////////////////
-	/// Starts ruby.
-	///////////////////////////////////////////////////////
-	void Run();
+  ///////////////////////////////////////////////////////
+  /// Starts ruby.
+  ///////////////////////////////////////////////////////
+  void Run();
 
-	///////////////////////////////////////////////////////
-	/// Stops ruby excecution.
-	///////////////////////////////////////////////////////
-	void Exit();
+  ///////////////////////////////////////////////////////
+  /// Stops ruby excecution.
+  ///////////////////////////////////////////////////////
+  void Exit();
 
-	///////////////////////////////////////////////////////
-	/// Adds an object to the protected objects list.
-	///////////////////////////////////////////////////////
-	void AddObject(VALUE id);
+  ///////////////////////////////////////////////////////
+  /// Adds an object to the protected objects list.
+  ///////////////////////////////////////////////////////
+  void AddObject(VALUE id);
 
-	///////////////////////////////////////////////////////
-	/// Removes an object from the protected objects list.
-	///////////////////////////////////////////////////////
-	void RemoveObject(VALUE id);
+  ///////////////////////////////////////////////////////
+  /// Removes an object from the protected objects list.
+  ///////////////////////////////////////////////////////
+  void RemoveObject(VALUE id);
 
-	///////////////////////////////////////////////////////
-	/// Global ruby load_data function.
-	/// Loads from filename a marshaled object.
-	///////////////////////////////////////////////////////
-	VALUE rload_data(VALUE self, VALUE filename);
+  ///////////////////////////////////////////////////////
+  /// Global ruby load_data function.
+  /// Loads from filename a marshaled object.
+  ///////////////////////////////////////////////////////
+  VALUE rload_data(VALUE self, VALUE filename);
 
-	///////////////////////////////////////////////////////
-	/// Global ruby save_data function.
-	/// Saves to filename the given object marshaled.
-	///////////////////////////////////////////////////////
-	VALUE rsave_data(VALUE self, VALUE obj, VALUE filename);
+  ///////////////////////////////////////////////////////
+  /// Global ruby save_data function.
+  /// Saves to filename the given object marshaled.
+  ///////////////////////////////////////////////////////
+  VALUE rsave_data(VALUE self, VALUE obj, VALUE filename);
 
-	/// List of protected objects.
-	/// Protected objects are not destroyed by ruby GC.
-	/// Useful for classes like Bitmap that needs to be
-	/// disposed before they can be totally destroyed.
-	extern VALUE protected_objects;
+  /// List of protected objects.
+  /// Protected objects are not destroyed by ruby GC.
+  /// Useful for classes like Bitmap that needs to be
+  /// disposed before they can be totally destroyed.
+  extern VALUE protected_objects;
 }
 
 ///////////////////////////////////////////////////////////

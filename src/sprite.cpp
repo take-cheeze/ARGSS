@@ -6,11 +6,11 @@
 // modification, are permitted provided that the following conditions
 // are met:
 //
-//	* Redistributions of source code must retain the above copyright notice,
-//	this list of conditions and the following disclaimer.
-//	* Redistributions in binary form must reproduce the above copyright
-//	notice, this list of conditions and the following disclaimer in the
-//	documentation and/or other materials provided with the distribution.
+//  * Redistributions of source code must retain the above copyright notice,
+//  this list of conditions and the following disclaimer.
+//  * Redistributions in binary form must reproduce the above copyright
+//  notice, this list of conditions and the following disclaimer in the
+//  documentation and/or other materials provided with the distribution.
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR
 // IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -45,594 +45,594 @@
 /// Constructor
 ///////////////////////////////////////////////////////////
 Sprite::Sprite(VALUE iid) {
-	id = iid;
-	viewport = rb_iv_get(id, "@viewport");
-	src_rect = rb_iv_get(id, "@src_rect");
-	bitmap = Qnil;
-	visible = true;
-	x = 0;
-	y = 0;
-	z = 0;
-	ox = 0;
-	oy = 0;
-	zoom_x = 1.0;
-	zoom_y = 1.0;
-	angle = 0;
-	flipx = false;
-	flipy = false;
-	bush_depth = 0;
-	opacity = 255;
-	blend_type = 0;
-	color = rb_iv_get(id, "@color");
-	tone = rb_iv_get(id, "@tone");
-	sprite = NULL;
-	flash_duration = 0;
-	flash_needs_refresh = false;
+  id = iid;
+  viewport = rb_iv_get(id, "@viewport");
+  src_rect = rb_iv_get(id, "@src_rect");
+  bitmap = Qnil;
+  visible = true;
+  x = 0;
+  y = 0;
+  z = 0;
+  ox = 0;
+  oy = 0;
+  zoom_x = 1.0;
+  zoom_y = 1.0;
+  angle = 0;
+  flipx = false;
+  flipy = false;
+  bush_depth = 0;
+  opacity = 255;
+  blend_type = 0;
+  color = rb_iv_get(id, "@color");
+  tone = rb_iv_get(id, "@tone");
+  sprite = NULL;
+  flash_duration = 0;
+  flash_needs_refresh = false;
 
-	if (viewport != Qnil) {
-		Viewport::Get(viewport)->RegisterZObj(0, id);
-	} else {
-		Graphics::RegisterZObj(0, id);
-	}
+  if (viewport != Qnil) {
+    Viewport::Get(viewport)->RegisterZObj(0, id);
+  } else {
+    Graphics::RegisterZObj(0, id);
+  }
 }
 
 ///////////////////////////////////////////////////////////
 /// Destructor
 ///////////////////////////////////////////////////////////
 Sprite::~Sprite() {
-	delete sprite;
-	if (flash_texture > 0) {
-		glDeleteTextures(1, &flash_texture);
-		flash_texture = 0;
-	}
+  delete sprite;
+  if (flash_texture > 0) {
+    glDeleteTextures(1, &flash_texture);
+    flash_texture = 0;
+  }
 }
 
 ///////////////////////////////////////////////////////////
 /// Class Is Sprite Disposed?
 ///////////////////////////////////////////////////////////
 bool Sprite::IsDisposed(VALUE id) {
-	return Graphics::drawable_map.count(id) == 0;
+  return Graphics::drawable_map.count(id) == 0;
 }
 
 ///////////////////////////////////////////////////////////
 /// Class New Sprite
 ///////////////////////////////////////////////////////////
 void Sprite::New(VALUE id) {
-	Graphics::drawable_map[id] = new Sprite(id);
+  Graphics::drawable_map[id] = new Sprite(id);
 }
 
 ///////////////////////////////////////////////////////////
 /// Class Get Sprite
 ///////////////////////////////////////////////////////////
 Sprite* Sprite::Get(VALUE id) {
-	return (Sprite*)Graphics::drawable_map[id];
+  return (Sprite*)Graphics::drawable_map[id];
 }
 
 ///////////////////////////////////////////////////////////
 /// Class Dispose Sprite
 ///////////////////////////////////////////////////////////
 void Sprite::Dispose(unsigned long id) {
-	if (Sprite::Get(id)->viewport != Qnil) {
-		Viewport::Get(Sprite::Get(id)->viewport)->RemoveZObj(id);
-	} else {
-		Graphics::RemoveZObj(id);
-	}
-	delete Graphics::drawable_map[id];
-	std::map<unsigned long, Drawable*>::iterator it = Graphics::drawable_map.find(id);
-	Graphics::drawable_map.erase(it);
+  if (Sprite::Get(id)->viewport != Qnil) {
+    Viewport::Get(Sprite::Get(id)->viewport)->RemoveZObj(id);
+  } else {
+    Graphics::RemoveZObj(id);
+  }
+  delete Graphics::drawable_map[id];
+  std::map<unsigned long, Drawable*>::iterator it = Graphics::drawable_map.find(id);
+  Graphics::drawable_map.erase(it);
 }
 
 ///////////////////////////////////////////////////////////
 /// Refresh Bitmaps
 ///////////////////////////////////////////////////////////
 void Sprite::RefreshBitmaps() {
-	if (sprite != NULL) sprite->Changed();
+  if (sprite != NULL) sprite->Changed();
 }
 
 ///////////////////////////////////////////////////////////
 /// Draw
 ///////////////////////////////////////////////////////////
 void Sprite::Draw(long z) {
-	if (!visible) return;
-	if (bitmap == Qnil) return;
+  if (!visible) return;
+  if (bitmap == Qnil) return;
 
-	src_rect_sprite = Rect(src_rect);
+  src_rect_sprite = Rect(src_rect);
 
-	int width = src_rect_sprite.width;
-	int height = src_rect_sprite.height;
-	if (width <= 0 || height <= 0)
-	if (x < -width || x > Player::GetWidth() || y < -height || y > Player::GetHeight()) return;
-	if (zoom_x == 0 || zoom_y == 0 || opacity == 0) return;
-	if (flash_duration > 0 && flash_color.red == -1) return;
+  int width = src_rect_sprite.width;
+  int height = src_rect_sprite.height;
+  if (width <= 0 || height <= 0)
+  if (x < -width || x > Player::GetWidth() || y < -height || y > Player::GetHeight()) return;
+  if (zoom_x == 0 || zoom_y == 0 || opacity == 0) return;
+  if (flash_duration > 0 && flash_color.red == -1) return;
 
-	Refresh();
+  Refresh();
 
-	glEnable(GL_TEXTURE_2D);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+  glEnable(GL_TEXTURE_2D);
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
 
-	sprite->BindBitmap();
+  sprite->BindBitmap();
 
-	glTranslatef((float)x, (float)y, 0.0f);
+  glTranslatef((float)x, (float)y, 0.0f);
 
-	if (viewport != Qnil) {
-		Rect rect = Viewport::Get(viewport)->GetViewportRect();
+  if (viewport != Qnil) {
+    Rect rect = Viewport::Get(viewport)->GetViewportRect();
 
-		glEnable(GL_SCISSOR_TEST);
-		glScissor(rect.x, Player::GetHeight() - (rect.y + rect.height), rect.width, rect.height);
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(rect.x, Player::GetHeight() - (rect.y + rect.height), rect.width, rect.height);
 
-		glTranslatef((float)rect.x, (float)rect.y, 0.0f);
-	}
+    glTranslatef((float)rect.x, (float)rect.y, 0.0f);
+  }
 
-	glRotatef((float)angle, 0.0f, 0.0f, 1.0f);
-	glTranslatef((float)-ox * zoom_x, (float)-oy * zoom_y, 0.0f);
+  glRotatef((float)angle, 0.0f, 0.0f, 1.0f);
+  glTranslatef((float)-ox * zoom_x, (float)-oy * zoom_y, 0.0f);
 
-	glColor4f(1.0f, 1.0f, 1.0f, opacity / 255.0f);
+  glColor4f(1.0f, 1.0f, 1.0f, opacity / 255.0f);
 
-	float corners[4][2] = {{0.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, 1.0f}, {0.0f, 1.0f}};
-	if (src_rect_sprite != sprite->GetRect()) {
-		float rx = (float)src_rect_sprite.x / (float)sprite->GetWidth();
-		float ry = (float)src_rect_sprite.y / (float)sprite->GetHeight();
-		float rw = (float)src_rect_sprite.width / (float)sprite->GetWidth();
-		float rh = (float)src_rect_sprite.height / (float)sprite->GetHeight();
-		corners[0][0] = rx;			corners[0][1] = ry;
-		corners[1][0] = rx + rw;	corners[1][1] = ry;
-		corners[2][0] = rx + rw;	corners[2][1] = ry + rh;
-		corners[3][0] = rx;			corners[3][1] = ry + rh;
-	}
-	if (flipx && flipy) {
-		corners[0][0] = 1.0f - corners[0][0]; corners[0][1] = 1.0f - corners[0][1];
-		corners[1][0] = 1.0f - corners[1][0]; corners[1][1] = 1.0f - corners[1][1];
-		corners[2][0] = 1.0f - corners[2][0]; corners[2][1] = 1.0f - corners[2][1];
-		corners[3][0] = 1.0f - corners[3][0]; corners[3][1] = 1.0f - corners[3][1];
-	} else if (flipx) {
-		corners[0][0] = 1.0f - corners[0][0];
-		corners[1][0] = 1.0f - corners[1][0];
-		corners[2][0] = 1.0f - corners[2][0];
-		corners[3][0] = 1.0f - corners[3][0];
-	} else if (flipy) {
-		corners[0][1] = 1.0f - corners[0][1];
-		corners[1][1] = 1.0f - corners[1][1];
-		corners[2][1] = 1.0f - corners[2][1];
-		corners[3][1] = 1.0f - corners[3][1];
-	}
+  float corners[4][2] = {{0.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, 1.0f}, {0.0f, 1.0f}};
+  if (src_rect_sprite != sprite->GetRect()) {
+    float rx = (float)src_rect_sprite.x / (float)sprite->GetWidth();
+    float ry = (float)src_rect_sprite.y / (float)sprite->GetHeight();
+    float rw = (float)src_rect_sprite.width / (float)sprite->GetWidth();
+    float rh = (float)src_rect_sprite.height / (float)sprite->GetHeight();
+    corners[0][0] = rx;      corners[0][1] = ry;
+    corners[1][0] = rx + rw;  corners[1][1] = ry;
+    corners[2][0] = rx + rw;  corners[2][1] = ry + rh;
+    corners[3][0] = rx;      corners[3][1] = ry + rh;
+  }
+  if (flipx && flipy) {
+    corners[0][0] = 1.0f - corners[0][0]; corners[0][1] = 1.0f - corners[0][1];
+    corners[1][0] = 1.0f - corners[1][0]; corners[1][1] = 1.0f - corners[1][1];
+    corners[2][0] = 1.0f - corners[2][0]; corners[2][1] = 1.0f - corners[2][1];
+    corners[3][0] = 1.0f - corners[3][0]; corners[3][1] = 1.0f - corners[3][1];
+  } else if (flipx) {
+    corners[0][0] = 1.0f - corners[0][0];
+    corners[1][0] = 1.0f - corners[1][0];
+    corners[2][0] = 1.0f - corners[2][0];
+    corners[3][0] = 1.0f - corners[3][0];
+  } else if (flipy) {
+    corners[0][1] = 1.0f - corners[0][1];
+    corners[1][1] = 1.0f - corners[1][1];
+    corners[2][1] = 1.0f - corners[2][1];
+    corners[3][1] = 1.0f - corners[3][1];
+  }
 
-	glEnable(GL_BLEND);
-	switch (blend_type) {
-	case 1:
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-		break;
-	case 2:
-		glBlendFunc(GL_SRC_ALPHA_SATURATE, GL_ONE_MINUS_SRC_COLOR);
-		break;
-	default:
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	}
+  glEnable(GL_BLEND);
+  switch (blend_type) {
+  case 1:
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    break;
+  case 2:
+    glBlendFunc(GL_SRC_ALPHA_SATURATE, GL_ONE_MINUS_SRC_COLOR);
+    break;
+  default:
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  }
 
-	if (bush_depth == 0) {
-		glBegin(GL_QUADS);
-			glTexCoord2f(corners[0][0], corners[0][1]); glVertex2f(0.0f, 0.0f);
-			glTexCoord2f(corners[1][0], corners[1][1]); glVertex2f(width * zoom_x, 0.0f);
-			glTexCoord2f(corners[2][0], corners[2][1]); glVertex2f(width * zoom_x, height * zoom_y);
-			glTexCoord2f(corners[3][0], corners[3][1]); glVertex2f(0.0f, height * zoom_y);
-		glEnd();
-	} else {
-		if (flipy) {
-			glBegin(GL_QUADS);
-				glTexCoord2f(corners[0][0], corners[0][1] - bush_depth / (float)sprite->GetHeight());	glVertex2f(0.0f, bush_depth * zoom_y);
-				glTexCoord2f(corners[1][0], corners[1][1] - bush_depth / (float)sprite->GetHeight());	glVertex2f(width * zoom_x, bush_depth * zoom_y);
-				glTexCoord2f(corners[2][0], corners[2][1]);												glVertex2f(width * zoom_x, height * zoom_y);
-				glTexCoord2f(corners[3][0], corners[3][1]);												glVertex2f(0.0f, height * zoom_y);
-			glEnd();
+  if (bush_depth == 0) {
+    glBegin(GL_QUADS);
+      glTexCoord2f(corners[0][0], corners[0][1]); glVertex2f(0.0f, 0.0f);
+      glTexCoord2f(corners[1][0], corners[1][1]); glVertex2f(width * zoom_x, 0.0f);
+      glTexCoord2f(corners[2][0], corners[2][1]); glVertex2f(width * zoom_x, height * zoom_y);
+      glTexCoord2f(corners[3][0], corners[3][1]); glVertex2f(0.0f, height * zoom_y);
+    glEnd();
+  } else {
+    if (flipy) {
+      glBegin(GL_QUADS);
+        glTexCoord2f(corners[0][0], corners[0][1] - bush_depth / (float)sprite->GetHeight());  glVertex2f(0.0f, bush_depth * zoom_y);
+        glTexCoord2f(corners[1][0], corners[1][1] - bush_depth / (float)sprite->GetHeight());  glVertex2f(width * zoom_x, bush_depth * zoom_y);
+        glTexCoord2f(corners[2][0], corners[2][1]);                        glVertex2f(width * zoom_x, height * zoom_y);
+        glTexCoord2f(corners[3][0], corners[3][1]);                        glVertex2f(0.0f, height * zoom_y);
+      glEnd();
 
-			glColor4f(1.0f, 1.0f, 1.0f, 0.5f * (opacity / 255.0f));
-			glBegin(GL_QUADS);
-				glTexCoord2f(corners[0][0], corners[0][1]);												glVertex2f(0.0f, 0.0f);
-				glTexCoord2f(corners[1][0], corners[1][1]);												glVertex2f(width * zoom_x, 0.0f);
-				glTexCoord2f(corners[2][0], corners[0][1] - bush_depth / (float)sprite->GetHeight());	glVertex2f(width * zoom_x, bush_depth * zoom_y);
-				glTexCoord2f(corners[3][0], corners[1][1] - bush_depth / (float)sprite->GetHeight());	glVertex2f(0.0f, bush_depth * zoom_y);
-			glEnd();
-		} else {
-			glBegin(GL_QUADS);
-				glTexCoord2f(corners[0][0], corners[0][1]);												glVertex2f(0.0f, 0.0f);
-				glTexCoord2f(corners[1][0], corners[1][1]);												glVertex2f(width * zoom_x, 0.0f);
-				glTexCoord2f(corners[2][0], corners[2][1] - bush_depth / (float)sprite->GetHeight());	glVertex2f(width * zoom_x, (height - bush_depth) * zoom_y);
-				glTexCoord2f(corners[3][0], corners[3][1] - bush_depth / (float)sprite->GetHeight());	glVertex2f(0.0f, (height - bush_depth) * zoom_y);
-			glEnd();
+      glColor4f(1.0f, 1.0f, 1.0f, 0.5f * (opacity / 255.0f));
+      glBegin(GL_QUADS);
+        glTexCoord2f(corners[0][0], corners[0][1]);                        glVertex2f(0.0f, 0.0f);
+        glTexCoord2f(corners[1][0], corners[1][1]);                        glVertex2f(width * zoom_x, 0.0f);
+        glTexCoord2f(corners[2][0], corners[0][1] - bush_depth / (float)sprite->GetHeight());  glVertex2f(width * zoom_x, bush_depth * zoom_y);
+        glTexCoord2f(corners[3][0], corners[1][1] - bush_depth / (float)sprite->GetHeight());  glVertex2f(0.0f, bush_depth * zoom_y);
+      glEnd();
+    } else {
+      glBegin(GL_QUADS);
+        glTexCoord2f(corners[0][0], corners[0][1]);                        glVertex2f(0.0f, 0.0f);
+        glTexCoord2f(corners[1][0], corners[1][1]);                        glVertex2f(width * zoom_x, 0.0f);
+        glTexCoord2f(corners[2][0], corners[2][1] - bush_depth / (float)sprite->GetHeight());  glVertex2f(width * zoom_x, (height - bush_depth) * zoom_y);
+        glTexCoord2f(corners[3][0], corners[3][1] - bush_depth / (float)sprite->GetHeight());  glVertex2f(0.0f, (height - bush_depth) * zoom_y);
+      glEnd();
 
-			glColor4f(1.0f, 1.0f, 1.0f, 0.5f * (opacity / 255.0f));
-			glBegin(GL_QUADS);
-				glTexCoord2f(corners[0][0], corners[2][1] - bush_depth / (float)sprite->GetHeight());	glVertex2f(0.0f, (height - bush_depth) * zoom_y);
-				glTexCoord2f(corners[1][0], corners[3][1] - bush_depth / (float)sprite->GetHeight());	glVertex2f(width * zoom_x, (height - bush_depth) * zoom_y);
-				glTexCoord2f(corners[2][0], corners[2][1]);												glVertex2f(width * zoom_x, height * zoom_y);
-				glTexCoord2f(corners[3][0], corners[3][1]);												glVertex2f(0.0f, height * zoom_y);
-			glEnd();
-		}
-	}
+      glColor4f(1.0f, 1.0f, 1.0f, 0.5f * (opacity / 255.0f));
+      glBegin(GL_QUADS);
+        glTexCoord2f(corners[0][0], corners[2][1] - bush_depth / (float)sprite->GetHeight());  glVertex2f(0.0f, (height - bush_depth) * zoom_y);
+        glTexCoord2f(corners[1][0], corners[3][1] - bush_depth / (float)sprite->GetHeight());  glVertex2f(width * zoom_x, (height - bush_depth) * zoom_y);
+        glTexCoord2f(corners[2][0], corners[2][1]);                        glVertex2f(width * zoom_x, height * zoom_y);
+        glTexCoord2f(corners[3][0], corners[3][1]);                        glVertex2f(0.0f, height * zoom_y);
+      glEnd();
+    }
+  }
 
-	if (flash_duration > 0) {
-		glBindTexture(GL_TEXTURE_2D, flash_texture);
-		GLfloat alpha = ((float)flash_color.alpha / 255.0f) * (1.0f - flash_frame / (float)flash_duration);
-		glColor4f((float)flash_color.red / 255.0f, (GLfloat)flash_color.green / 255.0f, (float)flash_color.blue / 255.0f, alpha);
-		glBegin(GL_QUADS);
-			glTexCoord2f(corners[0][0], corners[0][1]); glVertex2f(0.0f, 0.0f);
-			glTexCoord2f(corners[1][0], corners[1][1]); glVertex2f(width * zoom_x, 0.0f);
-			glTexCoord2f(corners[2][0], corners[2][1]); glVertex2f(width * zoom_x, height * zoom_y);
-			glTexCoord2f(corners[3][0], corners[3][1]); glVertex2f(0.0f, height * zoom_y);
-		glEnd();
-	}
+  if (flash_duration > 0) {
+    glBindTexture(GL_TEXTURE_2D, flash_texture);
+    GLfloat alpha = ((float)flash_color.alpha / 255.0f) * (1.0f - flash_frame / (float)flash_duration);
+    glColor4f((float)flash_color.red / 255.0f, (GLfloat)flash_color.green / 255.0f, (float)flash_color.blue / 255.0f, alpha);
+    glBegin(GL_QUADS);
+      glTexCoord2f(corners[0][0], corners[0][1]); glVertex2f(0.0f, 0.0f);
+      glTexCoord2f(corners[1][0], corners[1][1]); glVertex2f(width * zoom_x, 0.0f);
+      glTexCoord2f(corners[2][0], corners[2][1]); glVertex2f(width * zoom_x, height * zoom_y);
+      glTexCoord2f(corners[3][0], corners[3][1]); glVertex2f(0.0f, height * zoom_y);
+    glEnd();
+  }
 
-	glDisable(GL_SCISSOR_TEST);
-	/*if (!visible) return;
-	if (bitmap == Qnil) return;
+  glDisable(GL_SCISSOR_TEST);
+  /*if (!visible) return;
+  if (bitmap == Qnil) return;
 
-	src_rect_sprite = Rect(src_rect);
+  src_rect_sprite = Rect(src_rect);
 
-	int width = src_rect_sprite.width;
-	int height = src_rect_sprite.height;
-	if (width <= 0 || height <= 0)
-	if (x < -width || x > Player::GetWidth() || y < -height || y > Player::GetHeight()) return;
-	if (zoom_x == 0 || zoom_y == 0 || opacity == 0) return;
-	if (flash_duration > 0 && flash_color.red == -1) return;
+  int width = src_rect_sprite.width;
+  int height = src_rect_sprite.height;
+  if (width <= 0 || height <= 0)
+  if (x < -width || x > Player::GetWidth() || y < -height || y > Player::GetHeight()) return;
+  if (zoom_x == 0 || zoom_y == 0 || opacity == 0) return;
+  if (flash_duration > 0 && flash_color.red == -1) return;
 
-	Refresh();
+  Refresh();
 
-	glEnable(GL_TEXTURE_2D);
+  glEnable(GL_TEXTURE_2D);
 
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
 
-	sprite->BindBitmap();
+  sprite->BindBitmap();
 
-	glTranslatef((float)x, (float)y, 0.0f);
+  glTranslatef((float)x, (float)y, 0.0f);
 
-	if (viewport != Qnil) {
-		Rect rect = Viewport::Get(viewport)->GetViewportRect();
+  if (viewport != Qnil) {
+    Rect rect = Viewport::Get(viewport)->GetViewportRect();
 
-		glEnable(GL_SCISSOR_TEST);
-		glScissor(rect.x, Player::GetHeight() - (rect.y + rect.height), rect.width, rect.height);
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(rect.x, Player::GetHeight() - (rect.y + rect.height), rect.width, rect.height);
 
-		glTranslatef((float)rect.x, (float)rect.y, 0.0f);
-	}
+    glTranslatef((float)rect.x, (float)rect.y, 0.0f);
+  }
 
-	glRotatef((float)angle, 0.0f, 0.0f, 1.0f);
-	glTranslatef((float)-ox * zoom_x, (float)-oy * zoom_y, 0.0f);
+  glRotatef((float)angle, 0.0f, 0.0f, 1.0f);
+  glTranslatef((float)-ox * zoom_x, (float)-oy * zoom_y, 0.0f);
 
-	glColor4f(1.0f, 1.0f, 1.0f, opacity / 255.0f);
+  glColor4f(1.0f, 1.0f, 1.0f, opacity / 255.0f);
 
-	float corners[4][2] = {0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f};
-	if (flipx && flipy) {
-		corners[0][0] = 1.0f; corners[0][1] = 1.0f;
-		corners[1][0] = 0.0f; corners[1][1] = 1.0f;
-		corners[2][0] = 0.0f; corners[2][1] = 0.0f;
-		corners[3][0] = 1.0f; corners[3][1] = 0.0f;
-	} else if (flipx) {
-		corners[0][0] = 1.0f; corners[0][1] = 0.0f;
-		corners[1][0] = 0.0f; corners[1][1] = 0.0f;
-		corners[2][0] = 0.0f; corners[2][1] = 1.0f;
-		corners[3][0] = 1.0f; corners[3][1] = 1.0f;
-	} else if (flipy) {
-		corners[0][0] = 0.0f; corners[0][1] = 1.0f;
-		corners[1][0] = 1.0f; corners[1][1] = 1.0f;
-		corners[2][0] = 1.0f; corners[2][1] = 0.0f;
-		corners[3][0] = 0.0f; corners[3][1] = 0.0f;
-	}
+  float corners[4][2] = {0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f};
+  if (flipx && flipy) {
+    corners[0][0] = 1.0f; corners[0][1] = 1.0f;
+    corners[1][0] = 0.0f; corners[1][1] = 1.0f;
+    corners[2][0] = 0.0f; corners[2][1] = 0.0f;
+    corners[3][0] = 1.0f; corners[3][1] = 0.0f;
+  } else if (flipx) {
+    corners[0][0] = 1.0f; corners[0][1] = 0.0f;
+    corners[1][0] = 0.0f; corners[1][1] = 0.0f;
+    corners[2][0] = 0.0f; corners[2][1] = 1.0f;
+    corners[3][0] = 1.0f; corners[3][1] = 1.0f;
+  } else if (flipy) {
+    corners[0][0] = 0.0f; corners[0][1] = 1.0f;
+    corners[1][0] = 1.0f; corners[1][1] = 1.0f;
+    corners[2][0] = 1.0f; corners[2][1] = 0.0f;
+    corners[3][0] = 0.0f; corners[3][1] = 0.0f;
+  }
 
-	glEnable(GL_BLEND);
-	switch (blend_type) {
-	case 1:
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-		break;
-	case 2:
-		glBlendFunc(GL_SRC_ALPHA_SATURATE, GL_ONE_MINUS_SRC_COLOR);
-		break;
-	default:
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	}
+  glEnable(GL_BLEND);
+  switch (blend_type) {
+  case 1:
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    break;
+  case 2:
+    glBlendFunc(GL_SRC_ALPHA_SATURATE, GL_ONE_MINUS_SRC_COLOR);
+    break;
+  default:
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  }
 
-	if (bush_depth == 0) {
-		glBegin(GL_QUADS);
-			glTexCoord2f(corners[0][0], corners[0][1]); glVertex2f(0.0f, 0.0f);
-			glTexCoord2f(corners[1][0], corners[1][1]); glVertex2f(width * zoom_x, 0.0f);
-			glTexCoord2f(corners[2][0], corners[2][1]); glVertex2f(width * zoom_x, height * zoom_y);
-			glTexCoord2f(corners[3][0], corners[3][1]); glVertex2f(0.0f, height * zoom_y);
-		glEnd();
-	} else {
-		glBegin(GL_QUADS);
-			glTexCoord2f(0.0f, 0.0f);								glVertex2f(0.0f, 0.0f);
-			glTexCoord2f(1.0f, 0.0f);								glVertex2f(width * zoom_x, 0.0f);
-			glTexCoord2f(1.0f, 1.0f - bush_depth / (float)height);	glVertex2f(width * zoom_x, (height - bush_depth) * zoom_y);
-			glTexCoord2f(0.0f, 1.0f - bush_depth / (float)height);	glVertex2f(0.0f, (height - bush_depth) * zoom_y);
-		glEnd();
+  if (bush_depth == 0) {
+    glBegin(GL_QUADS);
+      glTexCoord2f(corners[0][0], corners[0][1]); glVertex2f(0.0f, 0.0f);
+      glTexCoord2f(corners[1][0], corners[1][1]); glVertex2f(width * zoom_x, 0.0f);
+      glTexCoord2f(corners[2][0], corners[2][1]); glVertex2f(width * zoom_x, height * zoom_y);
+      glTexCoord2f(corners[3][0], corners[3][1]); glVertex2f(0.0f, height * zoom_y);
+    glEnd();
+  } else {
+    glBegin(GL_QUADS);
+      glTexCoord2f(0.0f, 0.0f);                glVertex2f(0.0f, 0.0f);
+      glTexCoord2f(1.0f, 0.0f);                glVertex2f(width * zoom_x, 0.0f);
+      glTexCoord2f(1.0f, 1.0f - bush_depth / (float)height);  glVertex2f(width * zoom_x, (height - bush_depth) * zoom_y);
+      glTexCoord2f(0.0f, 1.0f - bush_depth / (float)height);  glVertex2f(0.0f, (height - bush_depth) * zoom_y);
+    glEnd();
 
-		glColor4f(1.0f, 1.0f, 1.0f, 0.5f * (opacity / 255.0f));
-		glBegin(GL_QUADS);
-			glTexCoord2f(0.0f, (1.0f - bush_depth / (float)height));	glVertex2f(0.0f, (height - bush_depth) * zoom_y);
-			glTexCoord2f(1.0f, (1.0f - bush_depth / (float)height));	glVertex2f(width * zoom_x, (height - bush_depth) * zoom_y);
-			glTexCoord2f(1.0f, 1.0f);									glVertex2f(width * zoom_x, height * zoom_y);
-			glTexCoord2f(0.0f, 1.0f);									glVertex2f(0.0f, height * zoom_y);
-		glEnd();
-	}
+    glColor4f(1.0f, 1.0f, 1.0f, 0.5f * (opacity / 255.0f));
+    glBegin(GL_QUADS);
+      glTexCoord2f(0.0f, (1.0f - bush_depth / (float)height));  glVertex2f(0.0f, (height - bush_depth) * zoom_y);
+      glTexCoord2f(1.0f, (1.0f - bush_depth / (float)height));  glVertex2f(width * zoom_x, (height - bush_depth) * zoom_y);
+      glTexCoord2f(1.0f, 1.0f);                  glVertex2f(width * zoom_x, height * zoom_y);
+      glTexCoord2f(0.0f, 1.0f);                  glVertex2f(0.0f, height * zoom_y);
+    glEnd();
+  }
 
-	if (flash_duration > 0) {
-		glBindTexture(GL_TEXTURE_2D, flash_texture);
-		GLfloat alpha = ((float)flash_color.alpha / 255.0f) * (1.0f - flash_frame / (float)flash_duration);
-		glColor4f((float)flash_color.red / 255.0f, (GLfloat)flash_color.green / 255.0f, (float)flash_color.blue / 255.0f, alpha);
-		glBegin(GL_QUADS);
-			glTexCoord2f(corners[0][0], corners[0][1]); glVertex2f(0.0f, 0.0f);
-			glTexCoord2f(corners[1][0], corners[1][1]); glVertex2f(width * zoom_x, 0.0f);
-			glTexCoord2f(corners[2][0], corners[2][1]); glVertex2f(width * zoom_x, height * zoom_y);
-			glTexCoord2f(corners[3][0], corners[3][1]); glVertex2f(0.0f, height * zoom_y);
-		glEnd();
-	}
+  if (flash_duration > 0) {
+    glBindTexture(GL_TEXTURE_2D, flash_texture);
+    GLfloat alpha = ((float)flash_color.alpha / 255.0f) * (1.0f - flash_frame / (float)flash_duration);
+    glColor4f((float)flash_color.red / 255.0f, (GLfloat)flash_color.green / 255.0f, (float)flash_color.blue / 255.0f, alpha);
+    glBegin(GL_QUADS);
+      glTexCoord2f(corners[0][0], corners[0][1]); glVertex2f(0.0f, 0.0f);
+      glTexCoord2f(corners[1][0], corners[1][1]); glVertex2f(width * zoom_x, 0.0f);
+      glTexCoord2f(corners[2][0], corners[2][1]); glVertex2f(width * zoom_x, height * zoom_y);
+      glTexCoord2f(corners[3][0], corners[3][1]); glVertex2f(0.0f, height * zoom_y);
+    glEnd();
+  }
 
-	glDisable(GL_SCISSOR_TEST);*/
+  glDisable(GL_SCISSOR_TEST);*/
 }
 void Sprite::Draw(long z, Bitmap* dst_bitmap) {
-	/*if (!visible) return;
-	if (GetWidth() <= 0 || GetHeight() <= 0) return;
-	if (x < -GetWidth() || x > dst_bitmap->GetWidth() || y < -GetHeight() || y > dst_bitmap->GetHeight()) return;
-	if (!bitmap) return;
+  /*if (!visible) return;
+  if (GetWidth() <= 0 || GetHeight() <= 0) return;
+  if (x < -GetWidth() || x > dst_bitmap->GetWidth() || y < -GetHeight() || y > dst_bitmap->GetHeight()) return;
+  if (!bitmap) return;
 
-	src_rect_sprite = Rect(src_rect);
-	if (src_rect_sprite != src_rect_last) {
-		src_rect_last = src_rect_sprite;
-		needs_refresh = true;
-	}
+  src_rect_sprite = Rect(src_rect);
+  if (src_rect_sprite != src_rect_last) {
+    src_rect_last = src_rect_sprite;
+    needs_refresh = true;
+  }
 
-	if (needs_refresh) Refresh();
+  if (needs_refresh) Refresh();
 
-	dst_bitmap->Blit(x - ox, y - oy, sprite, sprite->GetRect(), 255);*/
+  dst_bitmap->Blit(x - ox, y - oy, sprite, sprite->GetRect(), 255);*/
 }
 
 ///////////////////////////////////////////////////////////
 /// Refresh
 ///////////////////////////////////////////////////////////
 void Sprite::Refresh() {
-	if (needs_refresh) {
-		needs_refresh = false;
+  if (needs_refresh) {
+    needs_refresh = false;
 
-		if (sprite) delete sprite;
+    if (sprite) delete sprite;
 
-		sprite = new Bitmap(Bitmap::Get(bitmap), Bitmap::Get(bitmap)->GetRect());
+    sprite = new Bitmap(Bitmap::Get(bitmap), Bitmap::Get(bitmap)->GetRect());
 
-		sprite->ToneChange(Tone(tone));
-	}
-	if (flash_needs_refresh) {
-		flash_needs_refresh = false;
-		RefreshFlash();
-	}
+    sprite->ToneChange(Tone(tone));
+  }
+  if (flash_needs_refresh) {
+    flash_needs_refresh = false;
+    RefreshFlash();
+  }
 
-	sprite->Refresh();
-	/*Tone tone_sprite(tone);
+  sprite->Refresh();
+  /*Tone tone_sprite(tone);
 
-	if (src_rect_sprite != src_rect_last) {
-		src_rect_last = src_rect_sprite;
-		if (tone_sprite.red != 0 || tone_sprite.green != 0 || tone_sprite.blue != 0 || tone_sprite.gray != 0) {
-			needs_refresh = true;
-		}
-		flash_needs_refresh = true;
-	}
+  if (src_rect_sprite != src_rect_last) {
+    src_rect_last = src_rect_sprite;
+    if (tone_sprite.red != 0 || tone_sprite.green != 0 || tone_sprite.blue != 0 || tone_sprite.gray != 0) {
+      needs_refresh = true;
+    }
+    flash_needs_refresh = true;
+  }
 
-	if (needs_refresh) {
-		needs_refresh = false;
+  if (needs_refresh) {
+    needs_refresh = false;
 
-		if (sprite) delete sprite;
+    if (sprite) delete sprite;
 
-		sprite = new Bitmap(Bitmap::Get(bitmap), src_rect_sprite);
+    sprite = new Bitmap(Bitmap::Get(bitmap), src_rect_sprite);
 
-		sprite->ToneChange(tone_sprite);
-	}
-	if (flash_needs_refresh) {
-		flash_needs_refresh = false;
-		RefreshFlash();
-	}
+    sprite->ToneChange(tone_sprite);
+  }
+  if (flash_needs_refresh) {
+    flash_needs_refresh = false;
+    RefreshFlash();
+  }
 
-	sprite->Refresh();*/
+  sprite->Refresh();*/
 }
 
 ///////////////////////////////////////////////////////////
 /// Get Width
 ///////////////////////////////////////////////////////////
 int Sprite::GetWidth() {
-	return NUM2INT(rb_iv_get(src_rect, "@width"));
+  return NUM2INT(rb_iv_get(src_rect, "@width"));
 }
 
 ///////////////////////////////////////////////////////////
 /// Get Height
 ///////////////////////////////////////////////////////////
 int Sprite::GetHeight() {
-	return NUM2INT(rb_iv_get(src_rect, "@height"));
+  return NUM2INT(rb_iv_get(src_rect, "@height"));
 }
 
 ///////////////////////////////////////////////////////////
 /// Update
 ///////////////////////////////////////////////////////////
 void Sprite::Update() {
-	if (flash_duration != 0) {
-		flash_frame += 1;
-		if (flash_duration == flash_frame) {
-			flash_duration = 0;
-			if (flash_texture > 0) {
-				glDeleteTextures(1, &flash_texture);
-				flash_texture = 0;
-			}
-		}
-	}
+  if (flash_duration != 0) {
+    flash_frame += 1;
+    if (flash_duration == flash_frame) {
+      flash_duration = 0;
+      if (flash_texture > 0) {
+        glDeleteTextures(1, &flash_texture);
+        flash_texture = 0;
+      }
+    }
+  }
 }
 
 ///////////////////////////////////////////////////////////
 /// Flash
 ///////////////////////////////////////////////////////////
 void Sprite::Flash(int duration){
-	flash_color = Color(-1, -1, -1, -1);
-	flash_duration = duration;
-	flash_frame = 0;
+  flash_color = Color(-1, -1, -1, -1);
+  flash_duration = duration;
+  flash_frame = 0;
 }
 void Sprite::Flash(Color color, int duration){
-	flash_color = color;
-	flash_duration = duration;
-	flash_frame = 0;
-	flash_needs_refresh = true;
+  flash_color = color;
+  flash_duration = duration;
+  flash_frame = 0;
+  flash_needs_refresh = true;
 }
 void Sprite::RefreshFlash() {
-	if (flash_texture > 0) glDeleteTextures(1, &flash_texture);
+  if (flash_texture > 0) glDeleteTextures(1, &flash_texture);
 
-	glEnable(GL_TEXTURE_2D);
-	glGenTextures(1, &flash_texture);
-	glBindTexture(GL_TEXTURE_2D, flash_texture);
+  glEnable(GL_TEXTURE_2D);
+  glGenTextures(1, &flash_texture);
+  glBindTexture(GL_TEXTURE_2D, flash_texture);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-	glPixelTransferf(GL_RED_BIAS, 255.0f);
-	glPixelTransferf(GL_GREEN_BIAS, 255.0f);
-	glPixelTransferf(GL_BLUE_BIAS, 255.0f);
+  glPixelTransferf(GL_RED_BIAS, 255.0f);
+  glPixelTransferf(GL_GREEN_BIAS, 255.0f);
+  glPixelTransferf(GL_BLUE_BIAS, 255.0f);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, 4, sprite->GetWidth(), sprite->GetHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, sprite->GetPixels());
+  glTexImage2D(GL_TEXTURE_2D, 0, 4, sprite->GetWidth(), sprite->GetHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, sprite->GetPixels());
 
-	glPixelTransferf(GL_RED_BIAS, 0.0f);
-	glPixelTransferf(GL_GREEN_BIAS, 0.0f);
-	glPixelTransferf(GL_BLUE_BIAS, 0.0f);
+  glPixelTransferf(GL_RED_BIAS, 0.0f);
+  glPixelTransferf(GL_GREEN_BIAS, 0.0f);
+  glPixelTransferf(GL_BLUE_BIAS, 0.0f);
 }
 
 ///////////////////////////////////////////////////////////
 /// Properties
 ///////////////////////////////////////////////////////////
 VALUE Sprite::GetViewport() {
-	return viewport;
+  return viewport;
 }
 void Sprite::SetViewport(VALUE nviewport) {
-	if (viewport != nviewport) {
-		if (nviewport != Qnil) {
-			Graphics::RemoveZObj(id);
-			Viewport::Get(nviewport)->RegisterZObj(0, id);
-		} else {
-			if (viewport != Qnil) Viewport::Get(viewport)->RemoveZObj(id);
-			Graphics::RegisterZObj(0, id);
-		}
-	}
-	viewport = nviewport;
+  if (viewport != nviewport) {
+    if (nviewport != Qnil) {
+      Graphics::RemoveZObj(id);
+      Viewport::Get(nviewport)->RegisterZObj(0, id);
+    } else {
+      if (viewport != Qnil) Viewport::Get(viewport)->RemoveZObj(id);
+      Graphics::RegisterZObj(0, id);
+    }
+  }
+  viewport = nviewport;
 }
 VALUE Sprite::GetBitmap() {
-	return bitmap;
+  return bitmap;
 }
 void Sprite::SetBitmap(VALUE nbitmap) {
-	if (bitmap != nbitmap) {
-		needs_refresh = true;
-		flash_needs_refresh = true;
-	}
-	bitmap = nbitmap;
+  if (bitmap != nbitmap) {
+    needs_refresh = true;
+    flash_needs_refresh = true;
+  }
+  bitmap = nbitmap;
 }
 VALUE Sprite::GetSrcRect() {
-	return src_rect;
+  return src_rect;
 }
 void Sprite::SetSrcRect(VALUE nsrc_rect) {
-	src_rect = nsrc_rect;
+  src_rect = nsrc_rect;
 }
 bool Sprite::GetVisible() {
-	return visible;
+  return visible;
 }
 void Sprite::SetVisible(bool nvisible) {
-	visible = nvisible;
+  visible = nvisible;
 }
 int Sprite::GetX() {
-	return x;
+  return x;
 }
 void Sprite::SetX(int nx) {
-	x = nx;
+  x = nx;
 }
 int Sprite::GetY() {
-	return y;
+  return y;
 }
 void Sprite::SetY(int ny) {
-	y = ny;
+  y = ny;
 }
 int Sprite::GetZ() {
-	return z;
+  return z;
 }
 void Sprite::SetZ(int nz) {
-	if (z != nz) {
-		if (viewport != Qnil) {
-			Viewport::Get(viewport)->UpdateZObj(id, nz);
-		} else {
-			Graphics::UpdateZObj(id, nz);
-		}
-	}
-	z = nz;
+  if (z != nz) {
+    if (viewport != Qnil) {
+      Viewport::Get(viewport)->UpdateZObj(id, nz);
+    } else {
+      Graphics::UpdateZObj(id, nz);
+    }
+  }
+  z = nz;
 }
 int Sprite::GetOx() {
-	return ox;
+  return ox;
 }
 void Sprite::SetOx(int nox) {
-	ox = nox;
+  ox = nox;
 }
 int Sprite::GetOy() {
-	return oy;
+  return oy;
 }
 void Sprite::SetOy(int noy) {
-	oy = noy;
+  oy = noy;
 }
 float Sprite::GetZoomX() {
-	return zoom_x;
+  return zoom_x;
 }
 void Sprite::SetZoomX(float nzoom_x) {
-	zoom_x = nzoom_x;
+  zoom_x = nzoom_x;
 }
 float Sprite::GetZoomY() {
-	return zoom_y;
+  return zoom_y;
 }
 void Sprite::SetZoomY(float nzoom_y) {
-	zoom_y = nzoom_y;
+  zoom_y = nzoom_y;
 }
 float Sprite::GetAngle() {
-	return angle;
+  return angle;
 }
 void Sprite::SetAngle(float nangle) {
-	angle = nangle;
+  angle = nangle;
 }
 bool Sprite::GetFlipX() {
-	return flipx;
+  return flipx;
 }
 void Sprite::SetFlipX(bool nflipx) {
-	flipx = nflipx;
+  flipx = nflipx;
 }
 bool Sprite::GetFlipY() {
-	return flipy;
+  return flipy;
 }
 void Sprite::SetFlipY(bool nflipy) {
-	flipy = nflipy;
+  flipy = nflipy;
 }
 int Sprite::GetBushDepth() {
-	return bush_depth;
+  return bush_depth;
 }
 void Sprite::SetBushDepth(int nbush_depth) {
-	bush_depth = nbush_depth;
+  bush_depth = nbush_depth;
 }
 int Sprite::GetOpacity() {
-	return opacity;
+  return opacity;
 }
 void Sprite::SetOpacity(int nopacity) {
-	opacity = nopacity;
+  opacity = nopacity;
 }
 int Sprite::GetBlendType() {
-	return blend_type;
+  return blend_type;
 }
 void Sprite::SetBlendType(int nblend_type) {
-	blend_type = nblend_type;
+  blend_type = nblend_type;
 }
 VALUE Sprite::GetColor() {
-	return color;
+  return color;
 }
 void Sprite::SetColor(VALUE ncolor) {
-	color = ncolor;
+  color = ncolor;
 }
 VALUE Sprite::GetTone() {
-	return tone;
+  return tone;
 }
 void Sprite::SetTone(VALUE ntone) {
-	if (tone != ntone) needs_refresh = true;
-	tone = ntone;
+  if (tone != ntone) needs_refresh = true;
+  tone = ntone;
 }

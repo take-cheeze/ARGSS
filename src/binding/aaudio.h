@@ -6,11 +6,11 @@
 // modification, are permitted provided that the following conditions
 // are met:
 //
-//	* Redistributions of source code must retain the above copyright notice,
-//	this list of conditions and the following disclaimer.
-//	* Redistributions in binary form must reproduce the above copyright
-//	notice, this list of conditions and the following disclaimer in the
-//	documentation and/or other materials provided with the distribution.
+//  * Redistributions of source code must retain the above copyright notice,
+//  this list of conditions and the following disclaimer.
+//  * Redistributions in binary form must reproduce the above copyright
+//  notice, this list of conditions and the following disclaimer in the
+//  documentation and/or other materials provided with the distribution.
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR
 // IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -33,37 +33,37 @@
 #include "aruby.h"
 
 namespace ARGSS {
-	///////////////////////////////////////////////////////
-	/// ARGSS::Audio namespace
-	///////////////////////////////////////////////////////
-	namespace AAudio {
-		///////////////////////////////////////////////////
-		/// Initialize Audio module.
-		///////////////////////////////////////////////////
-		void Init();
+  ///////////////////////////////////////////////////////
+  /// ARGSS::Audio namespace
+  ///////////////////////////////////////////////////////
+  namespace AAudio {
+    ///////////////////////////////////////////////////
+    /// Initialize Audio module.
+    ///////////////////////////////////////////////////
+    void Init();
 
-		/// Audio module id.
-		extern VALUE id;
+    /// Audio module id.
+    extern VALUE id;
 
-		///////////////////////////////////////////////////
-		/// Audio module methods.
-		///////////////////////////////////////////////////
-		//@{
+    ///////////////////////////////////////////////////
+    /// Audio module methods.
+    ///////////////////////////////////////////////////
+    //@{
 
-		VALUE rbgm_play(int argc, VALUE* argv, VALUE self);
-		VALUE rbgm_stop(VALUE self);
-		VALUE rbgm_fade(VALUE self, VALUE fade);
-		VALUE rbgs_play(int argc, VALUE* argv, VALUE self);
-		VALUE rbgs_stop(VALUE self);
-		VALUE rbgs_fade(VALUE self, VALUE fade);
-		VALUE rme_play(int argc, VALUE* argv, VALUE self);
-		VALUE rme_stop(VALUE self);
-		VALUE rme_fade(VALUE self, VALUE fade);
-		VALUE rse_play(int argc, VALUE* argv, VALUE self);
-		VALUE rse_stop(VALUE self);
+    VALUE rbgm_play(int argc, VALUE* argv, VALUE self);
+    VALUE rbgm_stop(VALUE self);
+    VALUE rbgm_fade(VALUE self, VALUE fade);
+    VALUE rbgs_play(int argc, VALUE* argv, VALUE self);
+    VALUE rbgs_stop(VALUE self);
+    VALUE rbgs_fade(VALUE self, VALUE fade);
+    VALUE rme_play(int argc, VALUE* argv, VALUE self);
+    VALUE rme_stop(VALUE self);
+    VALUE rme_fade(VALUE self, VALUE fade);
+    VALUE rse_play(int argc, VALUE* argv, VALUE self);
+    VALUE rse_stop(VALUE self);
 
-		//@}
-	};
+    //@}
+  };
 };
 
 #endif

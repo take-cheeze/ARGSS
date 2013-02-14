@@ -6,11 +6,11 @@
 // modification, are permitted provided that the following conditions
 // are met:
 //
-//	* Redistributions of source code must retain the above copyright notice,
-//	this list of conditions and the following disclaimer.
-//	* Redistributions in binary form must reproduce the above copyright
-//	notice, this list of conditions and the following disclaimer in the
-//	documentation and/or other materials provided with the distribution.
+//  * Redistributions of source code must retain the above copyright notice,
+//  this list of conditions and the following disclaimer.
+//  * Redistributions in binary form must reproduce the above copyright
+//  notice, this list of conditions and the following disclaimer in the
+//  documentation and/or other materials provided with the distribution.
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR
 // IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -30,7 +30,7 @@
 // Headers
 ///////////////////////////////////////////////////////////
 #ifdef MINGW
-	#define _WIN32_WINNT 0x0500
+  #define _WIN32_WINNT 0x0500
 #endif
 #include <windows.h>
 #include <stdio.h>
@@ -44,55 +44,55 @@
 /// Initialize Console
 ///////////////////////////////////////////////////////////
 void Console::Init() {
-	AllocConsole();
-	long lStdHandle = (long)GetStdHandle(STD_INPUT_HANDLE);
-	int hConHandle = _open_osfhandle(lStdHandle, _O_TEXT);
-	FILE* fp = _fdopen( hConHandle, "r");
-	*stdin = *fp;
-	setvbuf(stdin, NULL, _IONBF, 0);
-	Sleep(10);
+  AllocConsole();
+  long lStdHandle = (long)GetStdHandle(STD_INPUT_HANDLE);
+  int hConHandle = _open_osfhandle(lStdHandle, _O_TEXT);
+  FILE* fp = _fdopen( hConHandle, "r");
+  *stdin = *fp;
+  setvbuf(stdin, NULL, _IONBF, 0);
+  Sleep(10);
 }
 
 ///////////////////////////////////////////////////////////
 /// Set console title
 ///////////////////////////////////////////////////////////
 void Console::SetTitle(char* title) {
-	TCHAR* text = (TCHAR*)(title);
-	SetConsoleTitle(text);
+  TCHAR* text = (TCHAR*)(title);
+  SetConsoleTitle(text);
 }
 
 ///////////////////////////////////////////////////////////
 /// Set console max lines
 ///////////////////////////////////////////////////////////
 void Console::SetLines(int lines) {
-	CONSOLE_SCREEN_BUFFER_INFO coninfo;
-	GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &coninfo);
-	coninfo.dwSize.Y = (short)lines;
-	SetConsoleScreenBufferSize(GetStdHandle(STD_OUTPUT_HANDLE), coninfo.dwSize);
+  CONSOLE_SCREEN_BUFFER_INFO coninfo;
+  GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &coninfo);
+  coninfo.dwSize.Y = (short)lines;
+  SetConsoleScreenBufferSize(GetStdHandle(STD_OUTPUT_HANDLE), coninfo.dwSize);
 }
 
 ///////////////////////////////////////////////////////////
 /// Free console
 ///////////////////////////////////////////////////////////
 void Console::Free() {
-	FreeConsole();
+  FreeConsole();
 }
 
 ///////////////////////////////////////////////////////////
 /// Get console active status
 ///////////////////////////////////////////////////////////
 bool Console::Active() {
-	return GetConsoleWindow() != NULL;
+  return GetConsoleWindow() != NULL;
 }
 
 ///////////////////////////////////////////////////////////
 /// Write message to console
 ///////////////////////////////////////////////////////////
 void Console::Write(std::string msg) {
-	unsigned long n;
-	HANDLE out;
-	out = GetStdHandle(STD_OUTPUT_HANDLE);
-	WriteConsoleA(out, msg.c_str(), msg.size(), &n, NULL);
+  unsigned long n;
+  HANDLE out;
+  out = GetStdHandle(STD_OUTPUT_HANDLE);
+  WriteConsoleA(out, msg.c_str(), msg.size(), &n, NULL);
 }
 
 #endif

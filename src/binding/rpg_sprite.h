@@ -6,11 +6,11 @@
 // modification, are permitted provided that the following conditions
 // are met:
 //
-//	* Redistributions of source code must retain the above copyright notice,
-//	this list of conditions and the following disclaimer.
-//	* Redistributions in binary form must reproduce the above copyright
-//	notice, this list of conditions and the following disclaimer in the
-//	documentation and/or other materials provided with the distribution.
+//  * Redistributions of source code must retain the above copyright notice,
+//  this list of conditions and the following disclaimer.
+//  * Redistributions in binary form must reproduce the above copyright
+//  notice, this list of conditions and the following disclaimer in the
+//  documentation and/or other materials provided with the distribution.
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR
 // IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -33,51 +33,51 @@
 #include "aruby.h"
 
 namespace ARGSS {
-	namespace ARPG {
-		///////////////////////////////////////////////////
-		/// ARGSS::RPG::Sprite namespace
-		///////////////////////////////////////////////////
-		namespace ASprite {
-			///////////////////////////////////////////////
-			/// Initialize Sprite class.
-			///////////////////////////////////////////////
-			void Init();
+  namespace ARPG {
+    ///////////////////////////////////////////////////
+    /// ARGSS::RPG::Sprite namespace
+    ///////////////////////////////////////////////////
+    namespace ASprite {
+      ///////////////////////////////////////////////
+      /// Initialize Sprite class.
+      ///////////////////////////////////////////////
+      void Init();
 
-			/// Sprite class id.
-			extern VALUE id;
+      /// Sprite class id.
+      extern VALUE id;
 
-			///////////////////////////////////////////////
-			/// Sprite instance methods.
-			///////////////////////////////////////////////
-			//@{
+      ///////////////////////////////////////////////
+      /// Sprite instance methods.
+      ///////////////////////////////////////////////
+      //@{
 
-			VALUE rinitialize(int argc, VALUE* argv, VALUE self);
-			VALUE rdispose(VALUE self);
-			VALUE rwhiten(VALUE self);
-			VALUE rappear(VALUE self);
-			VALUE rescape(VALUE self);
-			VALUE rcollapse(VALUE self);
-			VALUE rdamage(VALUE self, VALUE value, VALUE critical);
-			VALUE ranimation(VALUE self, VALUE animation, VALUE hit);
-			VALUE rloop_animation(VALUE self, VALUE animation);
-			VALUE rdispose_damage(VALUE self);
-			VALUE rdispose_animation(VALUE self);
-			VALUE rdispose_loop_animation(VALUE self);
-			VALUE rblink_on(VALUE self);
-			VALUE rblink_off(VALUE self);
-			VALUE rblinkQ(VALUE self);
-			VALUE reffectQ(VALUE self);
-			VALUE rupdate(VALUE self);
-			VALUE rupdate_animation(VALUE self);
-			VALUE rupdate_loop_animation(VALUE self);
-			VALUE ranimation_set_sprites(VALUE self, VALUE sprites, VALUE cell_data, VALUE position);
-			VALUE ranimation_process_timing(VALUE self, VALUE timing, VALUE hit);
-			VALUE rxE(VALUE self, VALUE x);
-			VALUE ryE(VALUE self, VALUE y);
+      VALUE rinitialize(int argc, VALUE* argv, VALUE self);
+      VALUE rdispose(VALUE self);
+      VALUE rwhiten(VALUE self);
+      VALUE rappear(VALUE self);
+      VALUE rescape(VALUE self);
+      VALUE rcollapse(VALUE self);
+      VALUE rdamage(VALUE self, VALUE value, VALUE critical);
+      VALUE ranimation(VALUE self, VALUE animation, VALUE hit);
+      VALUE rloop_animation(VALUE self, VALUE animation);
+      VALUE rdispose_damage(VALUE self);
+      VALUE rdispose_animation(VALUE self);
+      VALUE rdispose_loop_animation(VALUE self);
+      VALUE rblink_on(VALUE self);
+      VALUE rblink_off(VALUE self);
+      VALUE rblinkQ(VALUE self);
+      VALUE reffectQ(VALUE self);
+      VALUE rupdate(VALUE self);
+      VALUE rupdate_animation(VALUE self);
+      VALUE rupdate_loop_animation(VALUE self);
+      VALUE ranimation_set_sprites(VALUE self, VALUE sprites, VALUE cell_data, VALUE position);
+      VALUE ranimation_process_timing(VALUE self, VALUE timing, VALUE hit);
+      VALUE rxE(VALUE self, VALUE x);
+      VALUE ryE(VALUE self, VALUE y);
 
-			//@}
-		};
-	};
+      //@}
+    };
+  };
 };
 
 #endif

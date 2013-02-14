@@ -18,17 +18,17 @@
 ////////////////////////////////////////////////////////////
 /// Defines
 ////////////////////////////////////////////////////////////
-#define MSGBOX_LEVEL_INFO		0
-#define MSGBOX_LEVEL_ERROR		1
-#define MSGBOX_LEVEL_WARNING	2
+#define MSGBOX_LEVEL_INFO    0
+#define MSGBOX_LEVEL_ERROR    1
+#define MSGBOX_LEVEL_WARNING  2
 
 ////////////////////////////////////////////////////////////
 /// Message Box namespace
 ////////////////////////////////////////////////////////////
 namespace MsgBox {
-	void OK(std::string msg, std::string title);
-	void Error(std::string msg, std::string title);
-	void Warning(std::string msg, std::string title);
+  void OK(std::string msg, std::string title);
+  void Error(std::string msg, std::string title);
+  void Warning(std::string msg, std::string title);
 };
 
 #endif
