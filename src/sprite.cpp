@@ -32,27 +32,23 @@
 #include <utility>
 
 #include "sprite.h"
-#include "aruby.h"
-#include "binding/asprite.h"
 #include "viewport.h"
 #include "player.h"
 #include "graphics.h"
 #include "config.h"
 #include "rect.h"
 #include "bitmap.h"
+#include "texture.h"
 
 ///////////////////////////////////////////////////////////
 /// Constructor
 ///////////////////////////////////////////////////////////
-Sprite::Sprite(VALUE iid) {
-  id = iid;
-  viewport = rb_iv_get(id, "@viewport");
-  src_rect = rb_iv_get(id, "@src_rect");
-  bitmap = Qnil;
+Sprite::Sprite() {
+  src_rect = boost::make_shared<Rect>(0, 0, 0, 0);
   visible = true;
   x = 0;
   y = 0;
-  z = 0;
+  z_ = 0;
   ox = 0;
   oy = 0;
   zoom_x = 1.0;
@@ -63,16 +59,15 @@ Sprite::Sprite(VALUE iid) {
   bush_depth = 0;
   opacity = 255;
   blend_type = 0;
-  color = rb_iv_get(id, "@color");
-  tone = rb_iv_get(id, "@tone");
-  sprite = NULL;
+  color = boost::make_shared<Color>(0, 0, 0, 255);
+  tone_ = boost::make_shared<Tone>(0, 0, 0, 0);
   flash_duration = 0;
   flash_needs_refresh = false;
 
-  if (viewport != Qnil) {
-    Viewport::Get(viewport)->RegisterZObj(0, id);
+  if (viewport_) {
+    viewport_->RegisterZObj(0, *this);
   } else {
-    Graphics::RegisterZObj(0, id);
+    Graphics::RegisterZObj(0, *this);
   }
 }
 
@@ -80,47 +75,27 @@ Sprite::Sprite(VALUE iid) {
 /// Destructor
 ///////////////////////////////////////////////////////////
 Sprite::~Sprite() {
-  delete sprite;
   if (flash_texture > 0) {
     glDeleteTextures(1, &flash_texture);
     flash_texture = 0;
   }
 }
 
-///////////////////////////////////////////////////////////
-/// Class Is Sprite Disposed?
-///////////////////////////////////////////////////////////
-bool Sprite::IsDisposed(VALUE id) {
-  return Graphics::drawable_map.count(id) == 0;
-}
-
-///////////////////////////////////////////////////////////
-/// Class New Sprite
-///////////////////////////////////////////////////////////
-void Sprite::New(VALUE id) {
-  Graphics::drawable_map[id] = new Sprite(id);
-}
-
-///////////////////////////////////////////////////////////
-/// Class Get Sprite
-///////////////////////////////////////////////////////////
-Sprite* Sprite::Get(VALUE id) {
-  return (Sprite*)Graphics::drawable_map[id];
-}
-
+/*
 ///////////////////////////////////////////////////////////
 /// Class Dispose Sprite
 ///////////////////////////////////////////////////////////
-void Sprite::Dispose(unsigned long id) {
+void Sprite::Dispose(VALUE id) {
   if (Sprite::Get(id)->viewport != Qnil) {
     Viewport::Get(Sprite::Get(id)->viewport)->RemoveZObj(id);
   } else {
     Graphics::RemoveZObj(id);
   }
   delete Graphics::drawable_map[id];
-  std::map<unsigned long, Drawable*>::iterator it = Graphics::drawable_map.find(id);
+  std::map<VALUE, Drawable*>::iterator it = Graphics::drawable_map.find(id);
   Graphics::drawable_map.erase(it);
 }
+*/
 
 ///////////////////////////////////////////////////////////
 /// Refresh Bitmaps
@@ -132,11 +107,10 @@ void Sprite::RefreshBitmaps() {
 ///////////////////////////////////////////////////////////
 /// Draw
 ///////////////////////////////////////////////////////////
-void Sprite::Draw(long z) {
-  if (!visible) return;
-  if (bitmap == Qnil) return;
+void Sprite::Draw(long /* z */) {
+  if (not visible or not bitmap_) return;
 
-  src_rect_sprite = Rect(src_rect);
+  src_rect_sprite = *src_rect;
 
   int width = src_rect_sprite.width;
   int height = src_rect_sprite.height;
@@ -151,12 +125,12 @@ void Sprite::Draw(long z) {
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 
-  sprite->BindBitmap();
+  Graphics::GetTexture(sprite).Bind();
 
   glTranslatef((float)x, (float)y, 0.0f);
 
-  if (viewport != Qnil) {
-    Rect rect = Viewport::Get(viewport)->GetViewportRect();
+  if (viewport_) {
+    Rect rect = viewport_->GetViewportRect();
 
     glEnable(GL_SCISSOR_TEST);
     glScissor(rect.x, Player::GetHeight() - (rect.y + rect.height), rect.width, rect.height);
@@ -368,22 +342,6 @@ void Sprite::Draw(long z) {
 
   glDisable(GL_SCISSOR_TEST);*/
 }
-void Sprite::Draw(long z, Bitmap* dst_bitmap) {
-  /*if (!visible) return;
-  if (GetWidth() <= 0 || GetHeight() <= 0) return;
-  if (x < -GetWidth() || x > dst_bitmap->GetWidth() || y < -GetHeight() || y > dst_bitmap->GetHeight()) return;
-  if (!bitmap) return;
-
-  src_rect_sprite = Rect(src_rect);
-  if (src_rect_sprite != src_rect_last) {
-    src_rect_last = src_rect_sprite;
-    needs_refresh = true;
-  }
-
-  if (needs_refresh) Refresh();
-
-  dst_bitmap->Blit(x - ox, y - oy, sprite, sprite->GetRect(), 255);*/
-}
 
 ///////////////////////////////////////////////////////////
 /// Refresh
@@ -392,18 +350,15 @@ void Sprite::Refresh() {
   if (needs_refresh) {
     needs_refresh = false;
 
-    if (sprite) delete sprite;
+    sprite = boost::make_shared<Bitmap>(*bitmap_, bitmap_->GetRect());
 
-    sprite = new Bitmap(Bitmap::Get(bitmap), Bitmap::Get(bitmap)->GetRect());
-
-    sprite->ToneChange(Tone(tone));
+    sprite->ToneChange(*tone_);
   }
   if (flash_needs_refresh) {
     flash_needs_refresh = false;
     RefreshFlash();
   }
 
-  sprite->Refresh();
   /*Tone tone_sprite(tone);
 
   if (src_rect_sprite != src_rect_last) {
@@ -429,20 +384,6 @@ void Sprite::Refresh() {
   }
 
   sprite->Refresh();*/
-}
-
-///////////////////////////////////////////////////////////
-/// Get Width
-///////////////////////////////////////////////////////////
-int Sprite::GetWidth() {
-  return NUM2INT(rb_iv_get(src_rect, "@width"));
-}
-
-///////////////////////////////////////////////////////////
-/// Get Height
-///////////////////////////////////////////////////////////
-int Sprite::GetHeight() {
-  return NUM2INT(rb_iv_get(src_rect, "@height"));
 }
 
 ///////////////////////////////////////////////////////////
@@ -475,6 +416,7 @@ void Sprite::Flash(Color color, int duration){
   flash_frame = 0;
   flash_needs_refresh = true;
 }
+
 void Sprite::RefreshFlash() {
   if (flash_texture > 0) glDeleteTextures(1, &flash_texture);
 
@@ -501,138 +443,38 @@ void Sprite::RefreshFlash() {
 ///////////////////////////////////////////////////////////
 /// Properties
 ///////////////////////////////////////////////////////////
-VALUE Sprite::GetViewport() {
-  return viewport;
-}
-void Sprite::SetViewport(VALUE nviewport) {
-  if (viewport != nviewport) {
-    if (nviewport != Qnil) {
-      Graphics::RemoveZObj(id);
-      Viewport::Get(nviewport)->RegisterZObj(0, id);
+void Sprite::viewport(ViewportRef const& v) {
+  if (viewport_ != v) {
+    if (v) {
+      Graphics::RemoveZObj(*this);
+      v->RegisterZObj(0, *this);
     } else {
-      if (viewport != Qnil) Viewport::Get(viewport)->RemoveZObj(id);
-      Graphics::RegisterZObj(0, id);
+      if (viewport_) viewport_->RemoveZObj(*this);
+      Graphics::RegisterZObj(0, *this);
     }
   }
-  viewport = nviewport;
+  viewport_ = v;
 }
-VALUE Sprite::GetBitmap() {
-  return bitmap;
-}
-void Sprite::SetBitmap(VALUE nbitmap) {
-  if (bitmap != nbitmap) {
+
+void Sprite::bitmap(BitmapRef const& bmp) {
+  if (bitmap_ != bmp) {
     needs_refresh = true;
     flash_needs_refresh = true;
   }
-  bitmap = nbitmap;
+  bitmap_ = bmp;
 }
-VALUE Sprite::GetSrcRect() {
-  return src_rect;
-}
-void Sprite::SetSrcRect(VALUE nsrc_rect) {
-  src_rect = nsrc_rect;
-}
-bool Sprite::GetVisible() {
-  return visible;
-}
-void Sprite::SetVisible(bool nvisible) {
-  visible = nvisible;
-}
-int Sprite::GetX() {
-  return x;
-}
-void Sprite::SetX(int nx) {
-  x = nx;
-}
-int Sprite::GetY() {
-  return y;
-}
-void Sprite::SetY(int ny) {
-  y = ny;
-}
-int Sprite::GetZ() {
-  return z;
-}
-void Sprite::SetZ(int nz) {
-  if (z != nz) {
-    if (viewport != Qnil) {
-      Viewport::Get(viewport)->UpdateZObj(id, nz);
+
+void Sprite::z(int nz) {
+  if (z_ != nz) {
+    if (viewport_) {
+      viewport_->UpdateZObj(*this, nz);
     } else {
-      Graphics::UpdateZObj(id, nz);
+      Graphics::UpdateZObj(*this, nz);
     }
   }
-  z = nz;
+  z_ = nz;
 }
-int Sprite::GetOx() {
-  return ox;
-}
-void Sprite::SetOx(int nox) {
-  ox = nox;
-}
-int Sprite::GetOy() {
-  return oy;
-}
-void Sprite::SetOy(int noy) {
-  oy = noy;
-}
-float Sprite::GetZoomX() {
-  return zoom_x;
-}
-void Sprite::SetZoomX(float nzoom_x) {
-  zoom_x = nzoom_x;
-}
-float Sprite::GetZoomY() {
-  return zoom_y;
-}
-void Sprite::SetZoomY(float nzoom_y) {
-  zoom_y = nzoom_y;
-}
-float Sprite::GetAngle() {
-  return angle;
-}
-void Sprite::SetAngle(float nangle) {
-  angle = nangle;
-}
-bool Sprite::GetFlipX() {
-  return flipx;
-}
-void Sprite::SetFlipX(bool nflipx) {
-  flipx = nflipx;
-}
-bool Sprite::GetFlipY() {
-  return flipy;
-}
-void Sprite::SetFlipY(bool nflipy) {
-  flipy = nflipy;
-}
-int Sprite::GetBushDepth() {
-  return bush_depth;
-}
-void Sprite::SetBushDepth(int nbush_depth) {
-  bush_depth = nbush_depth;
-}
-int Sprite::GetOpacity() {
-  return opacity;
-}
-void Sprite::SetOpacity(int nopacity) {
-  opacity = nopacity;
-}
-int Sprite::GetBlendType() {
-  return blend_type;
-}
-void Sprite::SetBlendType(int nblend_type) {
-  blend_type = nblend_type;
-}
-VALUE Sprite::GetColor() {
-  return color;
-}
-void Sprite::SetColor(VALUE ncolor) {
-  color = ncolor;
-}
-VALUE Sprite::GetTone() {
-  return tone;
-}
-void Sprite::SetTone(VALUE ntone) {
-  if (tone != ntone) needs_refresh = true;
-  tone = ntone;
+void Sprite::tone(ToneRef const& ntone) {
+  if (*tone_ != *ntone) needs_refresh = true;
+  tone_ = ntone;
 }

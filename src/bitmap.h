@@ -34,8 +34,11 @@
 #include <string>
 #include <boost/cstdint.hpp>
 
-#include "aruby.h"
-#include "opengl.h"
+#include "bitmap_fwd.h"
+
+extern "C" {
+#include <ruby.h>
+}
 
 class Tone;
 class Color;
@@ -46,29 +49,19 @@ class Rect;
 ///////////////////////////////////////////////////////////
 class Bitmap {
 public:
-  Bitmap();
   Bitmap(int iwidth, int iheight);
-  Bitmap(VALUE iid, std::string const& filename);
-  Bitmap(VALUE iid, int iwidth, int iheight);
-  Bitmap(Bitmap* source, Rect const& src_rect);
-  ~Bitmap();
+  Bitmap(Bitmap const& source, Rect const& src_rect);
 
-  static bool IsDisposed(VALUE id);
-  static void New(VALUE id, std::string const& filename);
-  static void New(VALUE id, int width, int height);
-  static Bitmap* Get(VALUE id);
-  static void Dispose(VALUE id);
-  static void RefreshBitmaps();
-  static void DisposeBitmaps();
+  static BitmapRef Create(std::string const& filename);
 
   int GetWidth() const;
   int GetHeight() const;
   Color GetPixel(int x, int y) const;
   Rect GetRect() const;
 
-  void Copy(int x, int y, Bitmap* source, Rect const& src_rect);
-  void Blit(int x, int y, Bitmap* source, Rect const& src_rect, int opacity);
-  void StretchBlit(Rect const& dst_rect, Bitmap* src_bitmap, Rect const& src_rect, int opacity);
+  void Copy(int x, int y, Bitmap const& source, Rect const& src_rect);
+  void Blit(int x, int y, Bitmap const& source, Rect const& src_rect, int opacity);
+  void StretchBlit(Rect const& dst_rect, Bitmap const& src_bitmap, Rect const& src_rect, int opacity);
   void FillRect(Rect const& rect, Color const& color);
   void Clear();
   void Clear(Color const& color);
@@ -89,21 +82,22 @@ public:
   void OpacityChange(int opacity, int bush_depth = 0);
   void Flip(bool flipx, bool flipy);
   void Zoom(double zoom_x, double zoom_y);
-  Bitmap* Resample(int scalew, int scaleh, Rect src_rect);
+  BitmapRef Resample(int scalew, int scaleh, Rect src_rect) const;
   void Rotate(float angle);
 
   void Changed();
-  void Refresh();
-  void BindBitmap();
+  bool dirty();
+
   uint32_t* GetPixels();
+  uint32_t const* GetPixels() const;
 
-protected:
-  VALUE id;
+  FontRef font;
 
-  GLuint gl_bitmap;
-  int width, height;
+private:
+  size_t const width_, height_;
+  bool dirty_;
 
-  std::vector<uint32_t> pixels;
+  std::vector<uint32_t> pixels_;
 };
 
 #endif

@@ -43,19 +43,11 @@ namespace ARGSS {
     void Init();
 
     ///////////////////////////////////////////////////
-    /// Check if Bitmap is disposed.
-    /// An error will be raised if it is disposed.
-    ///////////////////////////////////////////////////
-    void CheckDisposed(VALUE id);
-
-    /// Bitmap class id.
-    extern VALUE id;
-
-    ///////////////////////////////////////////////////
     /// Bitmap instance methods.
     ///////////////////////////////////////////////////
     //@{
 
+    VALUE rnew(int argc, VALUE* argv, VALUE klass);
     VALUE rinitialize(int argc, VALUE* argv, VALUE self);
     VALUE rdispose(VALUE self);
     VALUE rdisposedQ(VALUE self);

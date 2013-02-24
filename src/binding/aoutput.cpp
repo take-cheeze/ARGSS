@@ -34,7 +34,6 @@
 ///////////////////////////////////////////////////////////
 // Global Variables
 ///////////////////////////////////////////////////////////
-VALUE ARGSS::AOutput::id;
 VALUE ARGSS::AOutput::stdout_id;
 VALUE ARGSS::AOutput::stderr_id;
 VALUE ARGSS::AOutput::stdin_id;
@@ -42,19 +41,19 @@ VALUE ARGSS::AOutput::stdin_id;
 ///////////////////////////////////////////////////////////
 // ARGSS Output module methods
 ///////////////////////////////////////////////////////////
-VALUE ARGSS::AOutput::rconsole(VALUE self) {
+VALUE ARGSS::AOutput::rconsole(VALUE /* self */) {
   Output::Console();
   return Qnil;
 }
-VALUE ARGSS::AOutput::rmsgbox(VALUE self) {
+VALUE ARGSS::AOutput::rmsgbox(VALUE /* self */) {
   Output::MsgBox();
   return Qnil;
 }
-VALUE ARGSS::AOutput::rfile(VALUE self, VALUE file) {
+VALUE ARGSS::AOutput::rfile(VALUE /* self */, VALUE file) {
   Output::File(StringValuePtr(file));
   return Qnil;
 }
-VALUE ARGSS::AOutput::rnone(VALUE self) {
+VALUE ARGSS::AOutput::rnone(VALUE /* self */) {
   Output::None();
   return Qnil;
 }
@@ -62,23 +61,23 @@ VALUE ARGSS::AOutput::rnone(VALUE self) {
 ///////////////////////////////////////////////////////////
 // ARGSS Stdout, Stderr and Stdin methods
 ///////////////////////////////////////////////////////////
-VALUE ARGSS::AOutput::rstdout_write(VALUE self, VALUE str) {
+VALUE ARGSS::AOutput::rstdout_write(VALUE /* self */, VALUE str) {
   if (TYPE(str) != T_STRING) str = rb_obj_as_string(str);
   if (RSTRING(str)->len == 0) return INT2FIX(0);
   Output::PostStr(StringValuePtr(str));
   return INT2FIX(RSTRING(str)->len);
 }
-VALUE ARGSS::AOutput::rstderr_write(VALUE self, VALUE str) {
+VALUE ARGSS::AOutput::rstderr_write(VALUE /* self */, VALUE str) {
   if (TYPE(str) != T_STRING) str = rb_obj_as_string(str);
   if (RSTRING(str)->len == 0) return INT2FIX(0);
   //Output::Error(StringValuePtr(str));
   return INT2FIX(RSTRING(str)->len);
 }
-VALUE ARGSS::AOutput::stdin_gets(int argc, VALUE* argv, VALUE self) {
+VALUE ARGSS::AOutput::stdin_gets(int /* argc */, VALUE* /* argv */, VALUE /* self */) {
   std::string str = Output::Gets();
   return rb_str_new(str.c_str(), str.length());
 }
-VALUE ARGSS::AOutput::stdin_getc(int argc, VALUE* argv, VALUE self) {
+VALUE ARGSS::AOutput::stdin_getc(int /* argc */, VALUE* /* argv */, VALUE /* self */) {
   std::string str = Output::Getc();
   return rb_str_new(str.c_str(), str.length());
 }
@@ -87,11 +86,13 @@ VALUE ARGSS::AOutput::stdin_getc(int argc, VALUE* argv, VALUE self) {
 // ARGSS Output initialize
 ///////////////////////////////////////////////////////////
 void ARGSS::AOutput::Init() {
-  id = rb_define_module("Output");
-  rb_define_singleton_method(id, "console", (rubyfunc)rconsole, 0);
-  rb_define_singleton_method(id, "msgbox", (rubyfunc)rmsgbox, 0);
-  rb_define_singleton_method(id, "file", (rubyfunc)rfile, 1);
-  rb_define_singleton_method(id, "none", (rubyfunc)rnone, 0);
+  rb_method const methods[] = {
+    rb_method("console", rconsole, true),
+    rb_method("msgbox", rmsgbox, true),
+    rb_method("file", rfile, true),
+    rb_method("none", rnone, true),
+    rb_method() };
+  VALUE const id = define_module("Output", methods);
 
   stdout_id = rb_define_class_under(id, "Stdout", rb_cObject);
   rb_define_method(stdout_id, "write", (rubyfunc)rstdout_write, 1);

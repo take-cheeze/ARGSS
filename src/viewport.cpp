@@ -33,81 +33,43 @@
 #include "plane.h"
 #include "tilemap_xp.h"
 #include "window_xp.h"
-#include "aruby.h"
 #include "graphics.h"
 #include "player.h"
 
 ///////////////////////////////////////////////////////////
 /// Constructor
 ///////////////////////////////////////////////////////////
-Viewport::Viewport(VALUE iid) {
-  id = iid;
-  rect = rb_iv_get(id, "@rect");
+Viewport::Viewport() {
   visible = true;
-  z = 0;
+  z_ = 0;
   ox = 0;
   oy = 0;
-  color = rb_iv_get(id, "@color");
-  tone = rb_iv_get(id, "@tone");
+  color = boost::make_shared<Color>(0, 0, 0, 0);
+  tone = boost::make_shared<Tone>(0, 0, 0, 0);
   flash_duration = 0;
   disposing = false;
 
-  dst_rect = Rect(rect);
+  dst_rect = *rect;
 
-  Graphics::RegisterZObj(0, id);
+  Graphics::RegisterZObj(0, *this);
 }
 
-///////////////////////////////////////////////////////////
-/// Class Is Viewport Disposed?
-///////////////////////////////////////////////////////////
-bool Viewport::IsDisposed(VALUE id) {
-  return Graphics::drawable_map.count(id) == 0;
-}
-
-///////////////////////////////////////////////////////////
-/// Class New Viewport
-///////////////////////////////////////////////////////////
-void Viewport::New(VALUE id) {
-  Graphics::drawable_map[id] = new Viewport(id);
-}
-
-///////////////////////////////////////////////////////////
-/// Class Get Viewport
-///////////////////////////////////////////////////////////
-Viewport* Viewport::Get(VALUE id) {
-  return (Viewport*)Graphics::drawable_map[id];
-}
-
-///////////////////////////////////////////////////////////
-/// Class Dispose Viewport
-///////////////////////////////////////////////////////////
-void Viewport::Dispose(unsigned long id) {
-  delete Graphics::drawable_map[id];
-  std::map<unsigned long, Drawable*>::iterator it = Graphics::drawable_map.find(id);
-  Graphics::drawable_map.erase(it);
-
-  Graphics::RemoveZObj(id);
-}
-
-///////////////////////////////////////////////////////////
-/// Refresh Bitmaps
-///////////////////////////////////////////////////////////
-void Viewport::RefreshBitmaps() {
-
+Viewport::~Viewport() {
+  Graphics::RemoveZObj(*this);
 }
 
 ///////////////////////////////////////////////////////////
 /// Draw
 ///////////////////////////////////////////////////////////
-void Viewport::Draw(long z) {
+void Viewport::Draw(long /* z */) {
   if (!visible) return;
 
-  dst_rect = Rect(rect);
+  dst_rect = *rect;
 
   if (dst_rect.x < -dst_rect.width || dst_rect.x > Player::GetWidth() || dst_rect.y < -dst_rect.height || dst_rect.y > Player::GetHeight()) return;
 
-  for (it_zlist = zlist.begin(); it_zlist != zlist.end(); it_zlist++) {
-    Graphics::drawable_map[it_zlist->GetId()]->Draw(it_zlist->GetZ());
+  for (std::list<ZObj>::iterator i = zlist.begin(); i != zlist.end(); i++) {
+    i->GetId()->Draw(i->GetZ());
   }
 }
 
@@ -140,60 +102,20 @@ void Viewport::Flash(Color const& color, int duration){
 ///////////////////////////////////////////////////////////
 /// Properties
 ///////////////////////////////////////////////////////////
-VALUE Viewport::GetRect() {
-  return rect;
-}
-void Viewport::SetRect(VALUE nrect) {
-  rect = nrect;
-}
-bool Viewport::GetVisible() {
-  return visible;
-}
-void Viewport::SetVisible(bool nvisible) {
-  visible = nvisible;
-}
-int Viewport::GetZ() {
-  return z;
-}
-void Viewport::SetZ(int nz) {
-  if (z != nz) Graphics::UpdateZObj(id, nz);
-  z = nz;
-}
-int Viewport::GetOx() {
-  return ox;
-}
-void Viewport::SetOx(int nox) {
-  ox = nox;
-}
-int Viewport::GetOy() {
-  return oy;
-}
-void Viewport::SetOy(int noy) {
-  oy = noy;
-}
-VALUE Viewport::GetColor() {
-  return color;
-}
-void Viewport::SetColor(VALUE ncolor) {
-  color = ncolor;
-}
-VALUE Viewport::GetTone() {
-  return tone;
-}
-void Viewport::SetTone(VALUE ntone) {
-  tone = ntone;
+void Viewport::z(int nz) {
+  if (z_ != nz) Graphics::UpdateZObj(*this, nz);
+  z_ = nz;
 }
 
 ///////////////////////////////////////////////////////////
 /// Register ZObj
 ///////////////////////////////////////////////////////////
-void Viewport::RegisterZObj(long z, unsigned long id) {
-  Graphics::creation += 1;
-  ZObj zobj(z, Graphics::creation, id);
+void Viewport::RegisterZObj(long z, Drawable& id) {
+  ZObj zobj(z, Graphics::get_creation_id(), id);
   zlist.push_back(zobj);
   zlist.sort(Graphics::SortZObj);
 }
-void Viewport::RegisterZObj(long z, unsigned long id, bool multiz) {
+void Viewport::RegisterZObj(long z, Drawable& id, bool /* multiz */) {
   ZObj zobj(z, 999999, id);
   zlist.push_back(zobj);
   zlist.sort(Graphics::SortZObj);
@@ -203,11 +125,11 @@ void Viewport::RegisterZObj(long z, unsigned long id, bool multiz) {
 /// Remove ZObj
 ///////////////////////////////////////////////////////////
 struct remove_zobj_id : public std::binary_function<ZObj, ZObj, bool> {
-  remove_zobj_id(VALUE val) : id(val) {}
+  remove_zobj_id(Drawable& val) : id(&val) {}
   bool operator () (ZObj &obj) const {return obj.GetId() == id;}
-  unsigned long id;
+  Drawable* id;
 };
-void Viewport::RemoveZObj(unsigned long id) {
+void Viewport::RemoveZObj(Drawable& id) {
   if (disposing) return;
   zlist.remove_if (remove_zobj_id(id));
 }
@@ -215,10 +137,10 @@ void Viewport::RemoveZObj(unsigned long id) {
 ///////////////////////////////////////////////////////////
 /// Update ZObj Z
 ///////////////////////////////////////////////////////////
-void Viewport::UpdateZObj(unsigned long id, long z) {
-  for (it_zlist = zlist.begin(); it_zlist != zlist.end(); it_zlist++) {
-    if (it_zlist->GetId() == id) {
-      it_zlist->SetZ(z);
+void Viewport::UpdateZObj(Drawable& id, long z) {
+  for (std::list<ZObj>::iterator i = zlist.begin(); i != zlist.end(); i++) {
+    if (i->GetId() == &id) {
+      i->SetZ(z);
       break;
     }
   }

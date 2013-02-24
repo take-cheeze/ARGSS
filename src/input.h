@@ -31,33 +31,35 @@
 // Headers
 ///////////////////////////////////////////////////////////
 #include <vector>
+#include <bitset>
+#include <boost/array.hpp>
 #include "keys.h"
 
 ///////////////////////////////////////////////////////////
 /// Input namespace
 ///////////////////////////////////////////////////////////
 namespace Input {
-  void Init();
-  void Update();
-  void ClearKeys();
-  bool IsPressed(unsigned long button);
-  bool IsTriggered(unsigned long button);
-  bool IsRepeated(unsigned long button);
-  bool IsReleased(unsigned long button);
-  unsigned long GetPressed();
-  unsigned long GetTriggered();
-  unsigned long GetRepeated();
-  unsigned long GetReleased();
+void Init();
+void Update();
+void ClearKeys();
+bool IsPressed(rgss_key button);
+bool IsTriggered(rgss_key button);
+bool IsRepeated(rgss_key button);
+bool IsReleased(rgss_key button);
+std::vector<rgss_key> GetPressed();
+std::vector<rgss_key> GetTriggered();
+std::vector<rgss_key> GetRepeated();
+std::vector<rgss_key> GetReleased();
 
-  extern std::vector<int> press_time;
-  extern std::vector<bool> triggered;
-  extern std::vector<bool> repeated;
-  extern std::vector<bool> released;
-  extern int dir4;
-  extern int dir8;
-  extern int start_repeat_time;
-  extern int repeat_time;
-  extern std::vector< std::vector<int> > dirkeys;
+extern boost::array<int, Keys::KEYS_COUNT> press_time;
+extern std::bitset<Keys::KEYS_COUNT> triggered;
+extern std::bitset<Keys::KEYS_COUNT> repeated;
+extern std::bitset<Keys::KEYS_COUNT> released;
+extern int dir4;
+extern int dir8;
+extern int start_repeat_time;
+extern int repeat_time;
+extern std::vector<std::vector<int> > dirkeys;
 };
 
 #endif

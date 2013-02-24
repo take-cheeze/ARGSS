@@ -35,302 +35,249 @@
 #include "binding/arect.h"
 #include "binding/aviewport.h"
 #include "window_xp.h"
-
-///////////////////////////////////////////////////////////
-// Global Variables
-///////////////////////////////////////////////////////////
-VALUE ARGSS::AWindow::id;
+#include "output.h"
+#include <algorithm>
 
 ///////////////////////////////////////////////////////////
 // Limit opacity value between 0 and 255
 ///////////////////////////////////////////////////////////
 static int LimitOpacityValue(int v) {
-  return (v > 255) ? 255 : (v < 0) ? 0 : v;
+  return std::max(0, std::min(255, v));
 }
 
 ///////////////////////////////////////////////////////////
 // ARGSS Window instance methods
 ///////////////////////////////////////////////////////////
 VALUE ARGSS::AWindow::rinitialize(int argc, VALUE* argv, VALUE self) {
+  set_ptr(self, boost::make_shared<Window>());
   if (argc == 1) {
-    Check_Classes_N(argv[0], ARGSS::AViewport::id);
-    rb_iv_set(self, "@viewport", argv[0]);
+    Check_Classes_N(argv[0], ruby_class<Viewport>());
+    get<Window>(self).viewport(get_ptr<Viewport>(argv[0]));
   } else if (argc == 0) {
-    rb_iv_set(self, "@viewport", Qnil);
-  }
-  else raise_argn(argc, 1);
-  rb_iv_set(self, "@windowskin", Qnil);
-  rb_iv_set(self, "@contents", Qnil);
-  rb_iv_set(self, "@stretch", Qtrue);
-  rb_iv_set(self, "@cursor_rect", ARGSS::ARect::New(0, 0, 0, 0));
-  rb_iv_set(self, "@active", Qtrue);
-  rb_iv_set(self, "@visible", Qtrue);
-  rb_iv_set(self, "@pause", Qfalse);
-  rb_iv_set(self, "@x", INT2NUM(0));
-  rb_iv_set(self, "@y", INT2NUM(0));
-  rb_iv_set(self, "@width", INT2NUM(0));
-  rb_iv_set(self, "@height", INT2NUM(0));
-  rb_iv_set(self, "@z", INT2NUM(0));
-  rb_iv_set(self, "@ox", INT2NUM(0));
-  rb_iv_set(self, "@oy", INT2NUM(0));
-  rb_iv_set(self, "@opacity", INT2NUM(255));
-  rb_iv_set(self, "@back_opacity", INT2NUM(255));
-  rb_iv_set(self, "@contents_opacity", INT2NUM(255));
-  Window::New(self);
-  ARuby::AddObject(self);
+  } else raise_argn(argc, 1);
   return self;
 }
 VALUE ARGSS::AWindow::rdispose(VALUE self) {
-  if (!Window::IsDisposed(self)) {
-    Window::Dispose(self);
-    ARuby::RemoveObject(self);
-  }
+  get_ptr<Window>(self).reset();
   return self;
 }
 VALUE ARGSS::AWindow::rdisposedQ(VALUE self) {
-  return BOOL2NUM(Window::IsDisposed(self));
+  return BOOL2NUM(not get_ptr<Window>(self));
 }
 VALUE ARGSS::AWindow::rupdate(VALUE self) {
-  ARGSS::AWindow::CheckDisposed(self);
-  Window::Get(self)->Update();
+  check_disposed<Window>(self);
+  get<Window>(self).Update();
   return Qnil;
 }
 VALUE ARGSS::AWindow::rviewport(VALUE self) {
-  ARGSS::AWindow::CheckDisposed(self);
-  return rb_iv_get(self, "@viewport");
+  check_disposed<Window>(self);
+  return create(get<Window>(self).viewport());
 }
 VALUE ARGSS::AWindow::rviewportE(VALUE self, VALUE viewport) {
-  ARGSS::AWindow::CheckDisposed(self);
-  Check_Classes_N(viewport, ARGSS::AViewport::id);
-  Window::Get(self)->SetViewport(viewport);
-  return rb_iv_set(self, "@viewport", viewport);
+  check_disposed<Window>(self);
+  Check_Classes_N(viewport, ruby_class<Viewport>());
+  return get<Window>(self).viewport(get_ptr<Viewport>(viewport)), viewport;
 }
 VALUE ARGSS::AWindow::rwindowskin(VALUE self) {
-  ARGSS::AWindow::CheckDisposed(self);
-  return rb_iv_get(self, "@windowskin");
+  check_disposed<Window>(self);
+  return create(get<Window>(self).windowskin);
 }
 VALUE ARGSS::AWindow::rwindowskinE(VALUE self, VALUE windowskin) {
-  ARGSS::AWindow::CheckDisposed(self);
-  Check_Classes_N(windowskin, ARGSS::ABitmap::id);
-  Window::Get(self)->SetWindowskin(windowskin);
-  return rb_iv_set(self, "@windowskin", windowskin);
+  check_disposed<Window>(self);
+  Check_Classes_N(windowskin, ruby_class<Bitmap>());
+  return get<Window>(self).windowskin = get_ptr<Bitmap>(windowskin), windowskin;
 }
 VALUE ARGSS::AWindow::rcontents(VALUE self) {
-  ARGSS::AWindow::CheckDisposed(self);
-  return rb_iv_get(self, "@contents");
+  check_disposed<Window>(self);
+  return create(get<Window>(self).contents);
 }
 VALUE ARGSS::AWindow::rcontentsE(VALUE self, VALUE contents) {
-  ARGSS::AWindow::CheckDisposed(self);
-  Check_Classes_N(contents, ARGSS::ABitmap::id);
-  Window::Get(self)->SetContents(contents);
-  return rb_iv_set(self, "@contents", contents);
+  check_disposed<Window>(self);
+  Check_Classes_N(contents, ruby_class<Bitmap>());
+  return get<Window>(self).contents = get_ptr<Bitmap>(contents), contents;
 }
 VALUE ARGSS::AWindow::rstretch(VALUE self) {
-  ARGSS::AWindow::CheckDisposed(self);
-  return rb_iv_get(self, "@stretch");
+  check_disposed<Window>(self);
+  return BOOL2NUM(get<Window>(self).stretch);
 }
 VALUE ARGSS::AWindow::rstretchE(VALUE self, VALUE stretch) {
-  ARGSS::AWindow::CheckDisposed(self);
-  Window::Get(self)->SetStretch(NUM2BOOL(stretch));
-  return rb_iv_set(self, "@stretch", stretch);
+  check_disposed<Window>(self);
+  return get<Window>(self).stretch = NUM2BOOL(stretch), stretch;
 }
 VALUE ARGSS::AWindow::rcursor_rect(VALUE self) {
-  ARGSS::AWindow::CheckDisposed(self);
-  return rb_iv_get(self, "@cursor_rect");
+  check_disposed<Window>(self);
+  return create(get<Window>(self).cursor_rect);
 }
 VALUE ARGSS::AWindow::rcursor_rectE(VALUE self, VALUE cursor_rect) {
-  ARGSS::AWindow::CheckDisposed(self);
-  Check_Class(cursor_rect, ARGSS::ARect::id);
-  Window::Get(self)->SetCursorRect(cursor_rect);
-  return rb_iv_set(self, "@cursor_rect", cursor_rect);
+  check_disposed<Window>(self);
+  Check_Class(cursor_rect, ruby_class<Rect>());
+  return get<Window>(self).cursor_rect = get_ptr<Rect>(cursor_rect), cursor_rect;
 }
 VALUE ARGSS::AWindow::ractive(VALUE self) {
-  ARGSS::AWindow::CheckDisposed(self);
-  return rb_iv_get(self, "@active");
+  check_disposed<Window>(self);
+  return BOOL2NUM(get<Window>(self).active);
 }
 VALUE ARGSS::AWindow::ractiveE(VALUE self, VALUE active) {
-  ARGSS::AWindow::CheckDisposed(self);
-  Window::Get(self)->SetActive(NUM2BOOL(active));
-  return rb_iv_set(self, "@active", active);
+  check_disposed<Window>(self);
+  return get<Window>(self).active = NUM2BOOL(active), active;
 }
 VALUE ARGSS::AWindow::rvisible(VALUE self) {
-  ARGSS::AWindow::CheckDisposed(self);
-  return rb_iv_get(self, "@visible");
+  check_disposed<Window>(self);
+  return NUM2BOOL(get<Window>(self).visible);
 }
 VALUE ARGSS::AWindow::rvisibleE(VALUE self, VALUE visible) {
-  ARGSS::AWindow::CheckDisposed(self);
-  Window::Get(self)->SetVisible(NUM2BOOL(visible));
-  return rb_iv_set(self, "@visible", visible);
+  check_disposed<Window>(self);
+  return get<Window>(self).visible = NUM2BOOL(visible), visible;
 }
 VALUE ARGSS::AWindow::rpause(VALUE self) {
-  ARGSS::AWindow::CheckDisposed(self);
-  return rb_iv_get(self, "@pause");
+  check_disposed<Window>(self);
+  return BOOL2NUM(get<Window>(self).pause);
 }
 VALUE ARGSS::AWindow::rpauseE(VALUE self, VALUE pause) {
-  ARGSS::AWindow::CheckDisposed(self);
-  Window::Get(self)->SetPause(NUM2BOOL(pause));
-  return rb_iv_set(self, "@pause", pause);
+  check_disposed<Window>(self);
+  return get<Window>(self).pause = NUM2BOOL(pause), pause;
 }
 VALUE ARGSS::AWindow::rx(VALUE self) {
-  ARGSS::AWindow::CheckDisposed(self);
-  return rb_to_int(rb_iv_get(self, "@x"));
+  check_disposed<Window>(self);
+  return INT2NUM(get<Window>(self).x);
 }
 VALUE ARGSS::AWindow::rfx(VALUE self) {
-  ARGSS::AWindow::CheckDisposed(self);
-  return rb_Float(rb_iv_get(self, "@x"));
+  check_disposed<Window>(self);
+  return rb_float_new(get<Window>(self).x);
 }
 VALUE ARGSS::AWindow::rxE(VALUE self, VALUE x) {
-  ARGSS::AWindow::CheckDisposed(self);
-  Window::Get(self)->SetX(NUM2INT(x));
-  return rb_iv_set(self, "@x", x);
+  check_disposed<Window>(self);
+  return get<Window>(self).x = NUM2INT(x), x;
 }
 VALUE ARGSS::AWindow::ry(VALUE self) {
-  ARGSS::AWindow::CheckDisposed(self);
-  return rb_to_int(rb_iv_get(self, "@y"));
+  check_disposed<Window>(self);
+  return INT2NUM(get<Window>(self).y);
 }
 VALUE ARGSS::AWindow::rfy(VALUE self) {
-  ARGSS::AWindow::CheckDisposed(self);
-  return rb_Float(rb_iv_get(self, "@y"));
+  check_disposed<Window>(self);
+  return rb_float_new(get<Window>(self).y);
 }
 VALUE ARGSS::AWindow::ryE(VALUE self, VALUE y) {
-  ARGSS::AWindow::CheckDisposed(self);
-  Window::Get(self)->SetY(NUM2INT(y));
-  return rb_iv_set(self, "@y", y);
+  check_disposed<Window>(self);
+  return get<Window>(self).y = NUM2INT(y), y;
 }
 VALUE ARGSS::AWindow::rwidth(VALUE self) {
-  ARGSS::AWindow::CheckDisposed(self);
-  return rb_iv_get(self, "@width");
+  check_disposed<Window>(self);
+  return NUM2INT(get<Window>(self).width);
 }
 VALUE ARGSS::AWindow::rwidthE(VALUE self, VALUE width) {
-  ARGSS::AWindow::CheckDisposed(self);
-  int w = NUM2INT(width);
-  if (w < 0) w = 0;
-  Window::Get(self)->SetWidth(w);
-  return rb_iv_set(self, "@width", INT2NUM(w));
+  check_disposed<Window>(self);
+  return INT2NUM(get<Window>(self).width = std::max<int>(0, NUM2INT(width)));
 }
 VALUE ARGSS::AWindow::rheight(VALUE self) {
-  ARGSS::AWindow::CheckDisposed(self);
-  return rb_iv_get(self, "@height");
+  check_disposed<Window>(self);
+  return INT2NUM(get<Window>(self).height);
 }
 VALUE ARGSS::AWindow::rheightE(VALUE self, VALUE height) {
-  ARGSS::AWindow::CheckDisposed(self);
-  int h = NUM2INT(height);
-  if (h < 0) h = 0;
-  Window::Get(self)->SetHeight(h);
-  return rb_iv_set(self, "@height", INT2NUM(h));
+  check_disposed<Window>(self);
+  get<Window>(self).height = std::max<int>(0, NUM2INT(height));
+  return height;
 }
 VALUE ARGSS::AWindow::rz(VALUE self) {
-  ARGSS::AWindow::CheckDisposed(self);
-  return rb_iv_get(self, "@z");
+  check_disposed<Window>(self);
+  return INT2NUM(get<Window>(self).z());
 }
 VALUE ARGSS::AWindow::rzE(VALUE self, VALUE z) {
-  ARGSS::AWindow::CheckDisposed(self);
-  Window::Get(self)->SetZ(NUM2INT(z));
-  return rb_iv_set(self, "@z", z);
+  check_disposed<Window>(self);
+  return get<Window>(self).z(NUM2INT(z)), z;
 }
 VALUE ARGSS::AWindow::rox(VALUE self) {
-  ARGSS::AWindow::CheckDisposed(self);
-  return rb_iv_get(self, "@ox");
+  check_disposed<Window>(self);
+  return INT2NUM(get<Window>(self).ox);
 }
 VALUE ARGSS::AWindow::roxE(VALUE self, VALUE ox) {
-  ARGSS::AWindow::CheckDisposed(self);
-  Window::Get(self)->SetOx(NUM2INT(ox));
-  return rb_iv_set(self, "@ox", ox);
+  check_disposed<Window>(self);
+  return get<Window>(self).ox = NUM2INT(ox), ox;
 }
 VALUE ARGSS::AWindow::roy(VALUE self) {
-  ARGSS::AWindow::CheckDisposed(self);
-  return rb_iv_get(self, "@oy");
+  check_disposed<Window>(self);
+  return INT2NUM(get<Window>(self).oy);
 }
 VALUE ARGSS::AWindow::royE(VALUE self, VALUE oy) {
-  ARGSS::AWindow::CheckDisposed(self);
-  Window::Get(self)->SetOy(NUM2INT(oy));
-  return rb_iv_set(self, "@oy", oy);
+  check_disposed<Window>(self);
+  get<Window>(self).oy = NUM2INT(oy);
+  return get<Window>(self).oy = NUM2INT(oy), oy;
 }
 VALUE ARGSS::AWindow::ropacity(VALUE self) {
-  ARGSS::AWindow::CheckDisposed(self);
-  return rb_iv_get(self, "@opacity");
+  check_disposed<Window>(self);
+  return INT2NUM(get<Window>(self).opacity);
 }
 VALUE ARGSS::AWindow::ropacityE(VALUE self, VALUE opacity) {
-  ARGSS::AWindow::CheckDisposed(self);
-  opacity = LimitOpacityValue(NUM2INT(opacity));
-  Window::Get(self)->SetOpacity(opacity);
-  return rb_iv_set(self, "@opacity", INT2NUM(opacity));
+  check_disposed<Window>(self);
+  get<Window>(self).opacity = LimitOpacityValue(NUM2INT(opacity));
+  return opacity;
 }
 VALUE ARGSS::AWindow::rback_opacity(VALUE self) {
-  ARGSS::AWindow::CheckDisposed(self);
-  return rb_iv_get(self, "@back_opacity");
+  check_disposed<Window>(self);
+  return INT2NUM(get<Window>(self).back_opacity);
 }
 VALUE ARGSS::AWindow::rback_opacityE(VALUE self, VALUE back_opacity) {
-  ARGSS::AWindow::CheckDisposed(self);
-  back_opacity = LimitOpacityValue(NUM2INT(back_opacity));
-  Window::Get(self)->SetBackOpacity(back_opacity);
-  return rb_iv_set(self, "@back_opacity", INT2NUM(back_opacity));
+  check_disposed<Window>(self);
+  return INT2NUM(get<Window>(self).back_opacity
+                 = LimitOpacityValue(NUM2INT(back_opacity)));
 }
 VALUE ARGSS::AWindow::rcontents_opacity(VALUE self) {
-  ARGSS::AWindow::CheckDisposed(self);
-  return rb_iv_get(self, "@contents_opacity");
+  check_disposed<Window>(self);
+  return INT2NUM(get<Window>(self).contents_opacity);
 }
 VALUE ARGSS::AWindow::rcontents_opacityE(VALUE self, VALUE contents_opacity) {
-  ARGSS::AWindow::CheckDisposed(self);
-  contents_opacity = LimitOpacityValue(NUM2INT(contents_opacity));
-  Window::Get(self)->SetContentsOpacity(contents_opacity);
-  return rb_iv_set(self, "@contents_opacity", INT2NUM(contents_opacity));
+  check_disposed<Window>(self);
+  return INT2NUM(get<Window>(self).contents_opacity
+                 = LimitOpacityValue(NUM2INT(contents_opacity)));
 }
 
 ///////////////////////////////////////////////////////////
 // ARGSS Window initialize
 ///////////////////////////////////////////////////////////
 void ARGSS::AWindow::Init() {
-  id = rb_define_class("Window", rb_cObject);
-  rb_define_method(id, "initialize", (rubyfunc)rinitialize, -1);
-  rb_define_method(id, "dispose", (rubyfunc)rdispose, 0);
-  rb_define_method(id, "disposed?", (rubyfunc)rdisposedQ, 0);
-  rb_define_method(id, "update", (rubyfunc)rupdate, 0);
-  rb_define_method(id, "viewport", (rubyfunc)rviewport, 0);
-  rb_define_method(id, "viewport=", (rubyfunc)rviewportE, 1);
-  rb_define_method(id, "windowskin", (rubyfunc)rwindowskin, 0);
-  rb_define_method(id, "windowskin=", (rubyfunc)rwindowskinE, 1);
-  rb_define_method(id, "contents", (rubyfunc)rcontents, 0);
-  rb_define_method(id, "contents=", (rubyfunc)rcontentsE, 1);
-  rb_define_method(id, "stretch", (rubyfunc)rstretch, 0);
-  rb_define_method(id, "stretch=", (rubyfunc)rstretchE, 1);
-  rb_define_method(id, "cursor_rect", (rubyfunc)rcursor_rect, 0);
-  rb_define_method(id, "cursor_rect=", (rubyfunc)rcursor_rectE, 1);
-  rb_define_method(id, "active", (rubyfunc)ractive, 0);
-  rb_define_method(id, "active=", (rubyfunc)ractiveE, 1);
-  rb_define_method(id, "visible", (rubyfunc)rvisible, 0);
-  rb_define_method(id, "visible=", (rubyfunc)rvisibleE, 1);
-  rb_define_method(id, "pause", (rubyfunc)rpause, 0);
-  rb_define_method(id, "pause=", (rubyfunc)rpauseE, 1);
-  rb_define_method(id, "x", (rubyfunc)rx, 0);
-  rb_define_method(id, "fx", (rubyfunc)rx, 0);
-  rb_define_method(id, "x=", (rubyfunc)rxE, 1);
-  rb_define_method(id, "y", (rubyfunc)ry, 0);
-  rb_define_method(id, "fy", (rubyfunc)ry, 0);
-  rb_define_method(id, "y=", (rubyfunc)ryE, 1);
-  rb_define_method(id, "width", (rubyfunc)rwidth, 0);
-  rb_define_method(id, "width=", (rubyfunc)rwidthE, 1);
-  rb_define_method(id, "height", (rubyfunc)rheight, 0);
-  rb_define_method(id, "height=", (rubyfunc)rheightE, 1);
-  rb_define_method(id, "z", (rubyfunc)rz, 0);
-  rb_define_method(id, "z=", (rubyfunc)rzE, 1);
-  rb_define_method(id, "ox", (rubyfunc)rox, 0);
-  rb_define_method(id, "ox=", (rubyfunc)roxE, 1);
-  rb_define_method(id, "oy", (rubyfunc)roy, 0);
-  rb_define_method(id, "oy=", (rubyfunc)royE, 1);
-  rb_define_method(id, "opacity", (rubyfunc)ropacity, 0);
-  rb_define_method(id, "opacity=", (rubyfunc)ropacityE, 1);
-  rb_define_method(id, "back_opacity", (rubyfunc)rback_opacity, 0);
-  rb_define_method(id, "back_opacity=", (rubyfunc)rback_opacityE, 1);
-  rb_define_method(id, "contents_opacity", (rubyfunc)rcontents_opacity, 0);
-  rb_define_method(id, "contents_opacity=", (rubyfunc)rcontents_opacityE, 1);
-}
-
-///////////////////////////////////////////////////////////
-// CheckDisposed
-///////////////////////////////////////////////////////////
-void ARGSS::AWindow::CheckDisposed(VALUE id) {
-  if (Window::IsDisposed(id)) {
-    rb_raise(ARGSS::AError::id, "disposed window <%i>", id);
-  }
+  rb_method const methods[] = {
+    rb_method("initialize", rinitialize),
+    rb_method("dispose", rdispose),
+    rb_method("disposed?", rdisposedQ),
+    rb_method("update", rupdate),
+    rb_method("viewport", rviewport),
+    rb_method("viewport=", rviewportE),
+    rb_method("windowskin", rwindowskin),
+    rb_method("windowskin=", rwindowskinE),
+    rb_method("contents", rcontents),
+    rb_method("contents=", rcontentsE),
+    rb_method("stretch", rstretch),
+    rb_method("stretch=", rstretchE),
+    rb_method("cursor_rect", rcursor_rect),
+    rb_method("cursor_rect=", rcursor_rectE),
+    rb_method("active", ractive),
+    rb_method("active=", ractiveE),
+    rb_method("visible", rvisible),
+    rb_method("visible=", rvisibleE),
+    rb_method("pause", rpause),
+    rb_method("pause=", rpauseE),
+    rb_method("x", rx),
+    rb_method("fx", rx),
+    rb_method("x=", rxE),
+    rb_method("y", ry),
+    rb_method("fy", ry),
+    rb_method("y=", ryE),
+    rb_method("width", rwidth),
+    rb_method("width=", rwidthE),
+    rb_method("height", rheight),
+    rb_method("height=", rheightE),
+    rb_method("z", rz),
+    rb_method("z=", rzE),
+    rb_method("ox", rox),
+    rb_method("ox=", roxE),
+    rb_method("oy", roy),
+    rb_method("oy=", royE),
+    rb_method("opacity", ropacity),
+    rb_method("opacity=", ropacityE),
+    rb_method("back_opacity", rback_opacity),
+    rb_method("back_opacity=", rback_opacityE),
+    rb_method("contents_opacity", rcontents_opacity),
+    rb_method("contents_opacity=", rcontents_opacityE),
+    rb_method() };
+  define_class<Window>("Window", methods);
 }

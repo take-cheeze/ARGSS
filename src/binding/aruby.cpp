@@ -53,7 +53,7 @@ static VALUE eval_wrap(VALUE arg) {
   return rb_funcall(rb_cObject, rb_intern("eval"), 2, rb_ary_entry(arg, 0), rb_ary_entry(arg, 1));
 }
 #else
-static VALUE require_wrap(VALUE arg) {
+static VALUE require_wrap(VALUE /* arg */) {
   return rb_require(Config::ScriptsPath.c_str());
 }
 #endif
@@ -170,13 +170,13 @@ void ARuby::RemoveObject(VALUE id) {
 ///////////////////////////////////////////////////////////
 // Global ruby functions
 ///////////////////////////////////////////////////////////
-VALUE ARuby::rload_data(VALUE self, VALUE filename) {
+VALUE ARuby::rload_data(VALUE /* self */, VALUE filename) {
   VALUE file = rb_file_open(StringValuePtr(filename), "rb");
   VALUE obj = rb_marshal_load(file);
   rb_io_close(file);
   return obj;
 }
-VALUE ARuby::rsave_data(VALUE self, VALUE obj, VALUE filename) {
+VALUE ARuby::rsave_data(VALUE /* self */, VALUE obj, VALUE filename) {
   VALUE file = rb_file_open(StringValuePtr(filename), "wb");
   rb_marshal_dump(obj, file);
   rb_io_close(file);
@@ -260,4 +260,23 @@ void Check_Class(VALUE x, VALUE c) {
 void Check_Classes_N(VALUE x, VALUE c) {
   if (x == Qnil) return;
   Check_Class(x, c);
+}
+
+
+VALUE ARGSS::define_module(char const* name, rb_method const* meth) {
+  VALUE const c = rb_define_module(name);
+  for(rb_method const* i = meth; i->function != NULL; ++i) {
+    (i->is_singletone? rb_define_singleton_method : rb_define_method)
+        (c, i->name, i->function, i->arg_num);
+  }
+  return c;
+}
+
+VALUE ARGSS::define_module_under(VALUE const parent, char const* name, rb_method const* meth) {
+  VALUE const c = rb_define_module_under(parent, name);
+  for(rb_method const* i = meth; i->function != NULL; ++i) {
+    (i->is_singletone? rb_define_singleton_method : rb_define_method)
+        (c, i->name, i->function, i->arg_num);
+  }
+  return c;
 }

@@ -34,9 +34,12 @@
 #include <list>
 #include <map>
 
+#include "bitmap_fwd.h"
+
 class Color;
 class ZObj;
 class Drawable;
+struct Texture;
 
 ///////////////////////////////////////////////////////////
 /// Graphics namespace
@@ -56,40 +59,29 @@ namespace Graphics {
   void FrameReset();
   void Wait(int duration);
   void ResizeScreen(int width, int height);
-  unsigned long SnapToBitmap();
+  BitmapRef SnapToBitmap();
   void FadeOut(int duration);
   void FadeIn(int duration);
   int GetFrameRate();
   void SetFrameRate(int nframerate);
   int GetFrameCount();
   void SetFrameCount(int nframecount);
-  unsigned long GetBackColor();
-  void SetBackColor(unsigned long nbackcolor);
+  ColorRef const& GetBackColor();
+  void SetBackColor(ColorRef const& nbackcolor);
   int GetBrightness();
   void SetBrightness(int nbrightness);
 
   bool SortZObj(ZObj &first, ZObj &second);
-  void RegisterZObj(long z, unsigned long id);
-  void RegisterZObj(long z, unsigned long id, bool multiz);
-  void RemoveZObj(unsigned long id);
-  void UpdateZObj(unsigned long id, long z);
+  void RegisterZObj(long z, Drawable& d);
+  void RegisterZObj(long z, Drawable& id, bool multiz);
+  void RemoveZObj(Drawable& id);
+  void UpdateZObj(Drawable& id, long z);
 
-  extern int fps;
-  extern int framerate;
-  extern int framecount;
-  extern Color backcolor;
-  extern int brightness;
-  extern double framerate_interval;
-  extern long creation;
-  extern long last_tics;
-  extern long last_tics_wait;
-  extern long next_tics_fps;
+  Texture const& GetTexture(BitmapRef const& bmp);
 
-  extern std::map<unsigned long, Drawable*> drawable_map;
-  extern std::map<unsigned long, Drawable*>::iterator it_drawable_map;
+  int get_creation_id();
 
-  extern std::list<ZObj> zlist;
-  extern std::list<ZObj>::iterator it_zlist;
+  int GetFPS();
 };
 
 #endif

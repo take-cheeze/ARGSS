@@ -15,7 +15,7 @@
 #include "options.h"
 #include "SDL.h"
 #include "binding/argss.h"
-#include "aruby.h"
+#include "binding/aruby.h"
 
 ////////////////////////////////////////////////////////////
 /// Definitions
@@ -41,7 +41,7 @@
 ////////////////////////////////////////////////////////////
 /// Constructor
 ////////////////////////////////////////////////////////////
-WindowUi::WindowUi(long iwidth, long iheight, std::string title, bool center, bool fs_flag) {
+WindowUi::WindowUi(long iwidth, long iheight, std::string /* title */, bool /* center */, bool fs_flag) {
   keys.resize(Input::Keys::KEYS_COUNT, false);
   mouse_focus = false;
   mouse_wheel = 0;
@@ -55,7 +55,6 @@ WindowUi::WindowUi(long iwidth, long iheight, std::string title, bool center, bo
   Uint8  video_bpp = 32;
   Uint32 videoflags = SDL_SWSURFACE | SDL_RESIZABLE | SDL_OPENGL;
   int done;
-  SDL_Event event;
 
   // Initialize the SDL library
   if(SDL_Init(SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_VIDEO) < 0) {
@@ -181,16 +180,17 @@ bool WindowUi::GetEvent(Event& evnt) {
       // When a key is pressed on the keyboard
       SDL_KeyboardEvent tmpEvt = evt.key;
       evnt.type = Event::KeyDown;
-      switch (tmpEvt.keysym.mod) {
-        case KMOD_SHIFT:
-          evnt.param1 = Input::Keys::SHIFT;
-          events.push(evnt);
-        case KMOD_CTRL:
-          evnt.param1 = Input::Keys::CTRL;
-          events.push(evnt);
-        case KMOD_ALT:
-          evnt.param1 = Input::Keys::ALT;
-          events.push(evnt);
+      if(tmpEvt.keysym.mod & KMOD_SHIFT){
+        evnt.param1 = Input::Keys::SHIFT;
+        events.push(evnt);
+      }
+      if(tmpEvt.keysym.mod & KMOD_CTRL) {
+        evnt.param1 = Input::Keys::CTRL;
+        events.push(evnt);
+      }
+      if(tmpEvt.keysym.mod & KMOD_ALT) {
+        evnt.param1 = Input::Keys::ALT;
+        events.push(evnt);
       }
       evnt.param1 = VK2IK(tmpEvt.keysym.sym);
       events.push(evnt);
@@ -201,16 +201,17 @@ bool WindowUi::GetEvent(Event& evnt) {
       // When a key is pressed on the keyboard
       SDL_KeyboardEvent tmpEvt = evt.key;
       evnt.type = Event::KeyUp;
-      switch (tmpEvt.keysym.mod) {
-        case KMOD_SHIFT:
-          evnt.param1 = Input::Keys::SHIFT;
-          events.push(evnt);
-        case KMOD_CTRL:
-          evnt.param1 = Input::Keys::CTRL;
-          events.push(evnt);
-        case KMOD_ALT:
-          evnt.param1 = Input::Keys::ALT;
-          events.push(evnt);
+      if(tmpEvt.keysym.mod & KMOD_SHIFT){
+        evnt.param1 = Input::Keys::SHIFT;
+        events.push(evnt);
+      }
+      if(tmpEvt.keysym.mod & KMOD_CTRL) {
+        evnt.param1 = Input::Keys::CTRL;
+        events.push(evnt);
+      }
+      if(tmpEvt.keysym.mod & KMOD_ALT) {
+        evnt.param1 = Input::Keys::ALT;
+        events.push(evnt);
       }
       evnt.param1 = VK2IK(tmpEvt.keysym.sym);
       events.push(evnt);
@@ -390,9 +391,8 @@ Input::Keys::InputKey WindowUi::VK2IK(SDLKey key) {
     case SDLK_CAPSLOCK : return Input::Keys::CAPS_LOCK;
     case SDLK_NUMLOCK : return Input::Keys::NUM_LOCK;
     case SDLK_SCROLLOCK : return Input::Keys::SCROLL_LOCK;
+    default: return Input::Keys::InputKey(0);
   }
-
-  return Input::Keys::InputKey(0);
 }
 
 ////////////////////////////////////////////////////////////

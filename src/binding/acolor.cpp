@@ -29,12 +29,8 @@
 ///////////////////////////////////////////////////////////
 #include "binding/acolor.h"
 #include "color.h"
+#include "bitmap_fwd.h"
 #include <algorithm>
-
-///////////////////////////////////////////////////////////
-// Global Variables
-///////////////////////////////////////////////////////////
-VALUE ARGSS::AColor::id;
 
 ///////////////////////////////////////////////////////////
 // Limit color value between 0 and 255
@@ -49,110 +45,93 @@ static double LimitColorValue(double v) {
 VALUE ARGSS::AColor::rinitialize(int argc, VALUE* argv, VALUE self) {
   if (argc < 3) raise_argn(argc, 3);
   else if (argc > 4) raise_argn(argc, 4);
-  rb_iv_set(self, "@red", rb_float_new(LimitColorValue(NUM2DBL(argv[0]))));
-  rb_iv_set(self, "@green", rb_float_new(LimitColorValue(NUM2DBL(argv[1]))));
-  rb_iv_set(self, "@blue", rb_float_new(LimitColorValue(NUM2DBL(argv[2]))));
-  if (argc == 4)
-    rb_iv_set(self, "@alpha", rb_float_new(LimitColorValue(NUM2DBL(argv[3]))));
-  else
-    rb_iv_set(self, "@alpha", rb_float_new(255));
+  set_ptr(self, boost::make_shared<Color>(LimitColorValue(NUM2DBL(argv[0])),
+                                          LimitColorValue(NUM2DBL(argv[1])),
+                                          LimitColorValue(NUM2DBL(argv[2])), 255));
+  if (argc == 4) get<Color>(self).alpha = NUM2DBL(argv[3]);
   return self;
 }
 VALUE ARGSS::AColor::rset(int argc, VALUE* argv, VALUE self) {
   if (argc < 3) raise_argn(argc, 3);
   else if (argc > 4) raise_argn(argc, 4);
-  rb_iv_set(self, "@red", rb_float_new(LimitColorValue(NUM2DBL(argv[0]))));
-  rb_iv_set(self, "@green", rb_float_new(LimitColorValue(NUM2DBL(argv[1]))));
-  rb_iv_set(self, "@blue", rb_float_new(LimitColorValue(NUM2DBL(argv[2]))));
+  get<Color>(self).red = LimitColorValue(NUM2DBL(argv[0]));
+  get<Color>(self).green = LimitColorValue(NUM2DBL(argv[1]));
+  get<Color>(self).blue = LimitColorValue(NUM2DBL(argv[2]));
   if (argc == 4)
-    rb_iv_set(self, "@alpha", rb_float_new(LimitColorValue(NUM2DBL(argv[3]))));
+    get<Color>(self).alpha = NUM2DBL(argv[3]);
   else
-    rb_iv_set(self, "@alpha", rb_float_new(255));
+    get<Color>(self).alpha = 255;
   return self;
 }
 VALUE ARGSS::AColor::rred(VALUE self) {
-  return rb_iv_get(self, "@red");
+  return rb_float_new(get<Color>(self).red);
 }
 VALUE ARGSS::AColor::rredE(VALUE self, VALUE red) {
-  return rb_iv_set(self, "@red", rb_float_new(LimitColorValue(NUM2DBL(red))));
+  return rb_float_new(get<Color>(self).red = LimitColorValue(NUM2DBL(red)));
 }
 VALUE ARGSS::AColor::rgreen(VALUE self) {
-  return rb_iv_get(self, "@green");
+  return rb_float_new(get<Color>(self).green);
 }
 VALUE ARGSS::AColor::rgreenE(VALUE self, VALUE green) {
-  return rb_iv_set(self, "@green", rb_float_new(LimitColorValue(NUM2DBL(green))));
+  return rb_float_new(get<Color>(self).green = LimitColorValue(NUM2DBL(green)));
 }
 VALUE ARGSS::AColor::rblue(VALUE self) {
-  return rb_iv_get(self, "@blue");
+  return rb_float_new(get<Color>(self).blue);
 }
 VALUE ARGSS::AColor::rblueE(VALUE self, VALUE blue) {
-  return rb_iv_set(self, "@blue", rb_float_new(LimitColorValue(NUM2DBL(blue))));
+ return rb_float_new(get<Color>(self).blue = LimitColorValue(NUM2DBL(blue)));
 }
 VALUE ARGSS::AColor::ralpha(VALUE self) {
-  return rb_iv_get(self, "@alpha");
+  return rb_float_new(get<Color>(self).alpha);
 }
 VALUE ARGSS::AColor::ralphaE(VALUE self, VALUE alpha) {
-  return rb_iv_set(self, "@alpha", rb_float_new(LimitColorValue(NUM2DBL(alpha))));
+ return rb_float_new(get<Color>(self).alpha = LimitColorValue(NUM2DBL(alpha)));
 }
 VALUE ARGSS::AColor::rinspect(VALUE self) {
   char str[255];
+  Color const& col = get<Color>(self);
   long str_size = sprintf(
-    str,
-    "(%f, %f, %f, %f)",
-    NUM2DBL(rb_iv_get(self, "@red")),
-    NUM2DBL(rb_iv_get(self, "@green")),
-    NUM2DBL(rb_iv_get(self, "@blue")),
-    NUM2DBL(rb_iv_get(self, "@alpha"))
-  );
+    str, "(%f, %f, %f, %f)",
+    col.red, col.green, col.blue, col.alpha);
   return rb_str_new(str, str_size);
 }
-VALUE ARGSS::AColor::rdump(int argc, VALUE* argv, VALUE self) {
+VALUE ARGSS::AColor::rdump(int argc, VALUE* /* argv */, VALUE self) {
   if (argc > 1) raise_argn(argc, 1);
-  VALUE arr = rb_ary_new3(4, rb_iv_get(self, "@red"), rb_iv_get(self, "@green"), rb_iv_get(self, "@blue"), rb_iv_get(self, "@alpha"));
-  return rb_funcall(arr, rb_intern("pack"), 1, rb_str_new2("d4"));
+  Color const& c = get<Color>(self);
+  return rb_funcall(rb_ary_new3(4, rb_float_new(c.red), rb_float_new(c.green),
+                                rb_float_new(c.blue), rb_float_new(c.alpha)),
+                    rb_intern("pack"), 1, rb_str_new2("E4"));
 }
 
 ///////////////////////////////////////////////////////////
 // ARGSS Color class methods
 ///////////////////////////////////////////////////////////
-VALUE ARGSS::AColor::rload(VALUE self, VALUE str) {
-  VALUE arr = rb_funcall(str, rb_intern("unpack"), 1, rb_str_new2("d4"));
-  VALUE args[4] = {rb_ary_entry(arr, 0), rb_ary_entry(arr, 1), rb_ary_entry(arr, 2), rb_ary_entry(arr, 3)};
-  return rb_class_new_instance(4, args, ARGSS::AColor::id);
+VALUE ARGSS::AColor::rload(VALUE /* self */, VALUE str) {
+  VALUE arr = rb_funcall(str, rb_intern("unpack"), 1, rb_str_new2("E4"));
+  assert(RARRAY_LEN(arr) == 4);
+  return create(boost::make_shared<Color>
+                (RFLOAT_VALUE(rb_ary_entry(arr, 0)), RFLOAT_VALUE(rb_ary_entry(arr, 1)),
+                 RFLOAT_VALUE(rb_ary_entry(arr, 2)), RFLOAT_VALUE(rb_ary_entry(arr, 3))));
 }
 
 ///////////////////////////////////////////////////////////
 // ARGSS Color initialize
 ///////////////////////////////////////////////////////////
 void ARGSS::AColor::Init() {
-  id = rb_define_class("Color", rb_cObject);
-  rb_define_method(id, "initialize", (rubyfunc)rinitialize, -1);
-  rb_define_method(id, "set", (rubyfunc)rset, -1);
-  rb_define_method(id, "red", (rubyfunc)rred, 0);
-  rb_define_method(id, "red=", (rubyfunc)rredE, 1);
-  rb_define_method(id, "green", (rubyfunc)rgreen, 0);
-  rb_define_method(id, "green=", (rubyfunc)rgreenE, 1);
-  rb_define_method(id, "blue", (rubyfunc)rblue, 0);
-  rb_define_method(id, "blue=", (rubyfunc)rblueE, 1);
-  rb_define_method(id, "alpha", (rubyfunc)ralpha, 0);
-  rb_define_method(id, "alpha=", (rubyfunc)ralphaE, 1);
-  rb_define_method(id, "inspect", (rubyfunc)rinspect, 0);
-  rb_define_method(id, "_dump", (rubyfunc)rdump, -1);
-  rb_define_singleton_method(id, "_load", (rubyfunc)rload, 1);
-}
-
-///////////////////////////////////////////////////////////
-// ARGSS Color create new instance
-///////////////////////////////////////////////////////////
-VALUE ARGSS::AColor::New() {
-  VALUE args[4] = {rb_float_new(0), rb_float_new(0), rb_float_new(0), rb_float_new(255)};
-  return rb_class_new_instance(4, args, id);
-}
-VALUE ARGSS::AColor::New(VALUE color) {
-  VALUE args[4] = {rb_iv_get(color, "@red"), rb_iv_get(color, "@green"), rb_iv_get(color, "@blue"), rb_iv_get(color, "@alpha")};
-  return rb_class_new_instance(4, args, id);
-}
-VALUE ARGSS::AColor::New(double r, double g, double b, double a) {
-  VALUE args[4] = {rb_float_new(r), rb_float_new(g), rb_float_new(b), rb_float_new(a)};
-  return rb_class_new_instance(4, args, id);
+  rb_method const methods[] = {
+    rb_method("initialize", rinitialize),
+    rb_method("set", rset),
+    rb_method("red", rred),
+    rb_method("red=", rredE),
+    rb_method("green", rgreen),
+    rb_method("green=", rgreenE),
+    rb_method("blue", rblue),
+    rb_method("blue=", rblueE),
+    rb_method("alpha", ralpha),
+    rb_method("alpha=", ralphaE),
+    rb_method("inspect", rinspect),
+    rb_method("_dump", rdump),
+    rb_method("_load", rload, true),
+    rb_method() };
+  define_class<Color, true>("Color", methods);
 }

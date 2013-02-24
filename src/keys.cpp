@@ -28,13 +28,13 @@
 // Headers
 ///////////////////////////////////////////////////////////
 #include "keys.h"
-#include "aruby.h"
+#include <cassert>
 
 ///////////////////////////////////////////////////////////
 /// VALUE to key
 ///////////////////////////////////////////////////////////
-Input::Keys::InputKey Input::NUM2KEY(VALUE num) {
-  switch (NUM2INT(num)) {
+Input::Keys::InputKey Input::NUM2KEY(rgss_key num) {
+  switch (num.value) {
   case 1001 : return Keys::BACKSPACE;
   case 1002 : return Keys::TAB;
   case 1003 : return Keys::CLEAR;
@@ -178,6 +178,12 @@ Input::Keys::InputKey Input::NUM2KEY(VALUE num) {
 ///////////////////////////////////////////////////////////
 /// Key to VALUE
 ///////////////////////////////////////////////////////////
-VALUE Input::KEY2NUM(int key) {
-  return INT2NUM(key + 1000);
+Input::rgss_key Input::KEY2NUM(int key) {
+  return rgss_key(key + 1000);
+}
+
+Input::rgss_key::rgss_key(int const k)
+    : value(k)
+{
+  assert(k > 1000);
 }

@@ -44,14 +44,6 @@ namespace ARGSS {
     void Init();
 
     /// Error class id.
-    extern VALUE id;
-
-    void FileNotFound(std::string file);
-
-    void AudioNotLoad(std::string type, std::string file);
-    void AudioNotLoad(std::string type, std::string file, std::string description);
-    void AudioNotPlay(std::string type, std::string file);
-    void AudioNotPlay(std::string type, std::string file, std::string description);
   };
 };
 

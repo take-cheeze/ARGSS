@@ -30,15 +30,10 @@
 #include "binding/akeys.h"
 
 ///////////////////////////////////////////////////////////
-// Global Variables
-///////////////////////////////////////////////////////////
-VALUE ARGSS::AKeys::id;
-
-///////////////////////////////////////////////////////////
 // ARGSS Keys initialize
 ///////////////////////////////////////////////////////////
 void ARGSS::AKeys::Init() {
-  id = rb_define_module("Keys");
+  VALUE const id = rb_define_module("Keys");
   rb_define_const(id, "BACKSPACE",  INT2FIX(1001));
   rb_define_const(id, "TAB",      INT2FIX(1002));
   rb_define_const(id, "CLEAR",    INT2FIX(1003));

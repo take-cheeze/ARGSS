@@ -28,7 +28,6 @@
 // Headers
 ///////////////////////////////////////////////////////////
 #include "player.h"
-#include "aruby.h"
 #include "options.h"
 #include "output.h"
 #include "config.h"
@@ -64,7 +63,7 @@ void Player::Update() {
   do {
     result = main_window->GetEvent(evnt);
     if (evnt.type == Event::Quit) {
-      ARuby::Exit();
+      // ARuby::Exit();
       Player::Exit();
       exit(0);
       return;

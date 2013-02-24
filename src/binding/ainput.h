@@ -43,7 +43,6 @@ namespace ARGSS {
     void Init();
 
     /// Input module id.
-    extern VALUE id;
 
     ///////////////////////////////////////////////////
     /// Input module methods.

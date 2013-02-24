@@ -31,12 +31,12 @@
 #include <cmath>
 #include <algorithm>
 #include "window_xp.h"
-#include "aruby.h"
-#include "binding/awindow.h"
 #include "graphics.h"
 #include "viewport.h"
 #include "player.h"
 #include "rect.h"
+#include "texture.h"
+#include "bitmap.h"
 
 using std::max;
 using std::min;
@@ -44,13 +44,9 @@ using std::min;
 ///////////////////////////////////////////////////////////
 /// Constructor
 ///////////////////////////////////////////////////////////
-Window::Window(VALUE iid) {
-  id = iid;
-  viewport = rb_iv_get(id, "@viewport");
-  windowskin = Qnil;
-  contents = Qnil;
+Window::Window() {
   stretch = true;
-  cursor_rect = rb_iv_get(id, "@cursor_rect");
+  cursor_rect = boost::make_shared<Rect>(0, 0, 0, 0);
   active = true;
   visible = true;
   pause = false;
@@ -58,7 +54,7 @@ Window::Window(VALUE iid) {
   y = 0;
   width = 0;
   height = 0;
-  z = 0;
+  z_ = 0;
   ox = 0;
   oy = 0;
   opacity = 255;
@@ -68,59 +64,28 @@ Window::Window(VALUE iid) {
   pause_frame = 0;
   pause_id = 0;
 
-  if (viewport != Qnil) {
-    Viewport::Get(viewport)->RegisterZObj(0, id);
+  if (viewport_) {
+    viewport_->RegisterZObj(0, *this);
   } else {
-    Graphics::RegisterZObj(0, id);
+    Graphics::RegisterZObj(0, *this);
   }
-}
-
-///////////////////////////////////////////////////////////
-/// Class Is Window Disposed?
-///////////////////////////////////////////////////////////
-bool Window::IsDisposed(VALUE id) {
-  return Graphics::drawable_map.count(id) == 0;
-}
-
-///////////////////////////////////////////////////////////
-/// Class New Window
-///////////////////////////////////////////////////////////
-void Window::New(VALUE id) {
-  Graphics::drawable_map[id] = new Window(id);
-}
-
-///////////////////////////////////////////////////////////
-/// Class Get Window
-///////////////////////////////////////////////////////////
-Window* Window::Get(VALUE id) {
-  return (Window*)Graphics::drawable_map[id];
 }
 
 ///////////////////////////////////////////////////////////
 /// Class Dispose Window
 ///////////////////////////////////////////////////////////
-void Window::Dispose(unsigned long id) {
-  if (Window::Get(id)->viewport != Qnil) {
-    Viewport::Get(Window::Get(id)->viewport)->RemoveZObj(id);
+Window::~Window() {
+  if (viewport_) {
+    viewport_->RemoveZObj(*this);
   } else {
-    Graphics::RemoveZObj(id);
+    Graphics::RemoveZObj(*this);
   }
-  delete Graphics::drawable_map[id];
-  std::map<unsigned long, Drawable*>::iterator it = Graphics::drawable_map.find(id);
-  Graphics::drawable_map.erase(it);
-}
-
-///////////////////////////////////////////////////////////
-/// Refresh Bitmaps
-///////////////////////////////////////////////////////////
-void Window::RefreshBitmaps() {
-
 }
 
 ///////////////////////////////////////////////////////////
 /// Draw
 ///////////////////////////////////////////////////////////
-void Window::Draw(long z) {
+void Window::Draw(long /* z */) {
   if (!visible) return;
   if (width <= 0 || height <= 0) return;
   if (x < -width || x > Player::GetWidth() || y < -height || y > Player::GetHeight()) return;
@@ -133,8 +98,8 @@ void Window::Draw(long z) {
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 
-  if (viewport != Qnil) {
-    Rect rect = Viewport::Get(viewport)->GetViewportRect();
+  if (viewport_) {
+    Rect rect = viewport_->GetViewportRect();
 
     glEnable(GL_SCISSOR_TEST);
     glScissor(rect.x, Player::GetHeight() - (rect.y + rect.height), rect.width, rect.height);
@@ -144,13 +109,12 @@ void Window::Draw(long z) {
 
   glTranslatef((GLfloat)x, (GLfloat)y, 0.0f);
 
-  if (windowskin != Qnil) {
-    Bitmap* bmp = Bitmap::Get(windowskin);
+  if (windowskin) {
+    Bitmap* bmp = windowskin.get();
 
     glPushMatrix();
 
-    bmp->Refresh();
-    bmp->BindBitmap();
+    Graphics::GetTexture(windowskin).Bind();
 
     glMatrixMode(GL_MODELVIEW);
     glPopMatrix();
@@ -175,8 +139,8 @@ void Window::Draw(long z) {
 
         Rect dstrect(x + 2, y + 2, width - 4, height - 4);
 
-        if (viewport != Qnil) {
-          Rect rect = Viewport::Get(viewport)->GetViewportRect();
+        if (viewport_) {
+          Rect rect = viewport_->GetViewportRect();
 
           dstrect.x -= rect.x;
           dstrect.y -= rect.y;
@@ -198,7 +162,7 @@ void Window::Draw(long z) {
             glEnd();
           }
         }
-        if (viewport == Qnil) glDisable(GL_SCISSOR_TEST);
+        if (viewport_) glDisable(GL_SCISSOR_TEST);
       }
     }
 
@@ -252,7 +216,7 @@ void Window::Draw(long z) {
 
     // Cursor
     if (width > 32 && height > 32) {
-      Rect rect(cursor_rect);
+      Rect rect(*cursor_rect);
       if (rect.width > 0 && rect.height > 0) {
         float cursor_opacity = 255.0f;
         if (cursor_frame <= 16) {
@@ -352,14 +316,13 @@ void Window::Draw(long z) {
     }
   }
 
-  if (contents != Qnil) {
+  if (contents) {
     if (width > 32 && height > 32 && -ox < width - 32 && -oy < height - 32 && contents_opacity > 0) {
-      Bitmap* bmp = Bitmap::Get(contents);
+      Bitmap* bmp = contents.get();
 
       glPushMatrix();
 
-      bmp->Refresh();
-      bmp->BindBitmap();
+      Graphics::GetTexture(contents).Bind();
 
       glMatrixMode(GL_MODELVIEW);
       glPopMatrix();
@@ -367,8 +330,8 @@ void Window::Draw(long z) {
       Rect dstrect(x + 16, y + 16, width - 32, height - 32);
 
       glEnable(GL_SCISSOR_TEST);
-      if (viewport != Qnil) {
-        Rect rect = Viewport::Get(viewport)->GetViewportRect();
+      if (viewport_) {
+        Rect rect = viewport_->GetViewportRect();
 
         dstrect.x -= rect.x;
         dstrect.y -= rect.y;
@@ -389,18 +352,18 @@ void Window::Draw(long z) {
 
       glViewport(0, 0, Player::GetWidth(), Player::GetHeight());
 
-      if (viewport == Qnil) glDisable(GL_SCISSOR_TEST);
+      if (viewport_) glDisable(GL_SCISSOR_TEST);
     }
 
-    if (windowskin != Qnil) {
-      Bitmap* bmp = Bitmap::Get(windowskin);
+    if (windowskin) {
+      Bitmap* bmp = windowskin.get();
 
       float bmpw = (float)bmp->GetWidth();
       float bmph = (float)bmp->GetHeight();
       float widthf = (float)width;
       float heightf = (float)height;
 
-      bmp->BindBitmap();
+      Graphics::GetTexture(windowskin).Bind();
 
       glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -417,13 +380,13 @@ void Window::Draw(long z) {
           glTexCoord2f(168.0f / bmpw, 24.0f / bmph);  glVertex2f(widthf / 2.0f + 8.0f, 12.0f);
           glTexCoord2f(152.0f / bmpw, 24.0f / bmph);  glVertex2f(widthf / 2.0f - 8.0f, 12.0f);
         }
-        if (Bitmap::Get(contents)->GetWidth() - ox > width - 32) {
+        if (contents->GetWidth() - ox > width - 32) {
           glTexCoord2f(168.0f / bmpw, 24.0f / bmph);  glVertex2f(widthf - 12.0f, heightf / 2.0f - 8.0f);
           glTexCoord2f(176.0f / bmpw, 24.0f / bmph);  glVertex2f(widthf - 4.0f, heightf / 2.0f - 8.0f);
           glTexCoord2f(176.0f / bmpw, 40.0f / bmph);  glVertex2f(widthf - 4.0f, heightf / 2.0f + 8.0f);
           glTexCoord2f(168.0f / bmpw, 40.0f / bmph);  glVertex2f(widthf - 12.0f, heightf / 2.0f + 8.0f);
         }
-        if (Bitmap::Get(contents)->GetHeight() - oy > height - 32) {
+        if (contents->GetHeight() - oy > height - 32) {
           glTexCoord2f(152.0f / bmpw, 40.0f / bmph);  glVertex2f(widthf / 2.0f - 8.0f, heightf - 12.0f);
           glTexCoord2f(168.0f / bmpw, 40.0f / bmph);  glVertex2f(widthf / 2.0f + 8.0f, heightf - 12.0f);
           glTexCoord2f(168.0f / bmpw, 48.0f / bmph);  glVertex2f(widthf / 2.0f + 8.0f, heightf - 4.0f);
@@ -434,9 +397,6 @@ void Window::Draw(long z) {
   }
 
   glDisable(GL_SCISSOR_TEST);
-}
-void Window::Draw(long z, Bitmap* dst_bitmap) {
-
 }
 
 ///////////////////////////////////////////////////////////
@@ -464,127 +424,25 @@ void Window::Update() {
 ///////////////////////////////////////////////////////////
 /// Properties
 ///////////////////////////////////////////////////////////
-VALUE Window::GetViewport() {
-  return viewport;
-}
-void Window::SetViewport(VALUE nviewport) {
-  if (viewport != nviewport) {
-    if (nviewport != Qnil) {
-      Graphics::RemoveZObj(id);
-      Viewport::Get(nviewport)->RegisterZObj(0, id);
+void Window::viewport(ViewportRef const& nviewport) {
+  if (viewport_ != nviewport) {
+    if (nviewport) {
+      Graphics::RemoveZObj(*this);
+      nviewport->RegisterZObj(0, *this);
     } else {
-      if (viewport != Qnil) Viewport::Get(viewport)->RemoveZObj(id);
-      Graphics::RegisterZObj(0, id);
+      if (viewport_) viewport_->RemoveZObj(*this);
+      Graphics::RegisterZObj(0, *this);
     }
   }
-  viewport = nviewport;
+  viewport_ = nviewport;
 }
-VALUE Window::GetWindowskin() {
-  return windowskin;
-}
-void Window::SetWindowskin(VALUE nwindowskin) {
-  windowskin = nwindowskin;
-}
-VALUE Window::GetContents() {
-  return contents;
-}
-void Window::SetContents(VALUE ncontents) {
-  contents = ncontents;
-}
-bool Window::GetStretch() {
-  return stretch;
-}
-void Window::SetStretch(bool nstretch) {
-  stretch = nstretch;
-}
-VALUE Window::GetCursorRect() {
-  return cursor_rect;
-}
-void Window::SetCursorRect(VALUE ncursor_rect) {
-  cursor_rect = ncursor_rect;
-}
-bool Window::GetActive() {
-  return active;
-}
-void Window::SetActive(bool nactive) {
-  active = nactive;
-}
-bool Window::GetVisible() {
-  return visible;
-}
-void Window::SetVisible(bool nvisible) {
-  visible = nvisible;
-}
-bool Window::GetPause() {
-  return pause;
-}
-void Window::SetPause(bool npause) {
-  pause = npause;
-}
-int Window::GetX() {
-  return x;
-}
-void Window::SetX(int nx) {
-  x = nx;
-}
-int Window::GetY() {
-  return y;
-}
-void Window::SetY(int ny) {
-  y = ny;
-}
-int Window::GetWidth() {
-  return width;
-}
-void Window::SetWidth(int nwidth) {
-  width = nwidth;
-}
-int Window::GetHeight() {
-  return height;
-}
-void Window::SetHeight(int nheight) {
-  height = nheight;
-}
-int Window::GetZ() {
-  return z;
-}
-void Window::SetZ(int nz) {
-  if (z != nz) {
-    if (viewport != Qnil) {
-      Viewport::Get(viewport)->UpdateZObj(id, nz);
+void Window::z(int nz) {
+  if (z_ != nz) {
+    if (viewport_) {
+      viewport_->UpdateZObj(*this, nz);
     } else {
-      Graphics::UpdateZObj(id, nz);
+      Graphics::UpdateZObj(*this, nz);
     }
   }
-  z = nz;
-}
-int Window::GetOx() {
-  return ox;
-}
-void Window::SetOx(int nox) {
-  ox = nox;
-}
-int Window::GetOy() {
-  return oy;
-}
-void Window::SetOy(int noy) {
-  oy = noy;
-}
-int Window::GetOpacity() {
-  return opacity;
-}
-void Window::SetOpacity(int nopacity) {
-  opacity = nopacity;
-}
-int Window::GetBackOpacity() {
-  return back_opacity;
-}
-void Window::SetBackOpacity(int nback_opacity) {
-  back_opacity = nback_opacity;
-}
-int Window::GetContentsOpacity() {
-  return contents_opacity;
-}
-void Window::SetContentsOpacity(int ncontents_opacity) {
-  contents_opacity = ncontents_opacity;
+  z_ = nz;
 }

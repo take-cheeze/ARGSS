@@ -37,20 +37,15 @@
 #include "tone.h"
 #include "drawable.h"
 #include "zobj.h"
-
-class Bitmap;
+#include "bitmap_fwd.h"
 
 ///////////////////////////////////////////////////////////
 /// Viewport class
 ///////////////////////////////////////////////////////////
 class Viewport : public Drawable {
 public:
-  Viewport(unsigned long iid);
-
-  static bool IsDisposed(unsigned long id);
-  static void New(unsigned long id);
-  static Viewport* Get(unsigned long id);
-  static void Dispose(unsigned long id);
+  Viewport();
+  ~Viewport();
 
   void RefreshBitmaps();
   void Draw(long z);
@@ -59,49 +54,33 @@ public:
   void Flash(int duration);
   void Flash(Color const& color, int duration);
   void Update();
-  unsigned long GetRect();
-  void SetRect(unsigned long nrect);
-  bool GetVisible();
-  void SetVisible(bool nvisible);
-  int GetZ();
-  void SetZ(int nz);
-  int GetOx();
-  void SetOx(int nox);
-  int GetOy();
-  void SetOy(int noy);
-  unsigned long GetColor();
-  void SetColor(unsigned long ncolor);
-  unsigned long GetTone();
-  void SetTone(unsigned long ntone);
 
-  void RegisterZObj(long z, unsigned long id);
-  void RegisterZObj(long z, unsigned long id, bool multiz);
-  void RemoveZObj(unsigned long id);
-  void UpdateZObj(unsigned long id, long z);
+  void RegisterZObj(long z, Drawable& id);
+  void RegisterZObj(long z, Drawable& id, bool multiz);
+  void RemoveZObj(Drawable& id);
+  void UpdateZObj(Drawable& id, long z);
 
   Rect GetViewportRect();
 
-private:
-  std::list<ZObj> zlist;
-  std::list<ZObj>::iterator it_zlist;
-
-  unsigned long id;
-  unsigned long rect;
+  RectRef rect;
   bool visible;
-  int z;
   int ox;
   int oy;
-  unsigned long color;
-  unsigned long tone;
+  ColorRef color;
+  ToneRef tone;
+
+  int z() const { return z_; }
+  void z(int nz);
+
+ private:
+  std::list<ZObj> zlist;
+
+  int z_;
 
   Color flash_color;
   int flash_duration;
   int flash_frame;
-  Color color_viewport;
-  Tone tone_viewport;
   bool disposing;
-
-  Bitmap* viewport;
 
   Rect dst_rect;
 };

@@ -33,11 +33,10 @@
 #include "binding/abitmap.h"
 #include "binding/arect.h"
 #include "binding/asprite.h"
+#include "bitmap.h"
+#include "color.h"
 
-///////////////////////////////////////////////////////////
-// Global Variables
-///////////////////////////////////////////////////////////
-VALUE ARGSS::ARPG::AWeather::id;
+class Sprite;
 
 ///////////////////////////////////////////////////////////
 // ARGSS RPG::Weather instance methods
@@ -50,17 +49,17 @@ VALUE ARGSS::ARPG::AWeather::rinitialize(int argc, VALUE* argv, VALUE self) {
   rb_iv_set(self, "@max", INT2NUM(0));
   rb_iv_set(self, "@ox", INT2NUM(0));
   rb_iv_set(self, "@oy", INT2NUM(0));
-  VALUE color1 = ARGSS::AColor::New(255, 255, 255, 255);
-  VALUE color2 = ARGSS::AColor::New(255, 255, 255, 128);
+  VALUE color1 = create(boost::make_shared<Color>(255, 255, 255, 255));
+  VALUE color2 = create(boost::make_shared<Color>(255, 255, 255, 128));
   VALUE args[2] = {INT2NUM(7), INT2NUM(56)};
-  VALUE rain_bitmap = rb_iv_set(self, "@rain_bitmap", rb_class_new_instance(2, args, ARGSS::ABitmap::id));
+  VALUE rain_bitmap = rb_iv_set(self, "@rain_bitmap", rb_class_new_instance(2, args, ruby_class<Bitmap>()));
   for (int i = 0; i < 7; i++) {
     {VALUE args[5] = {INT2NUM(6 - i), INT2NUM(i * 8), INT2NUM(1), INT2NUM(8), color1};
     ARGSS::ABitmap::rfill_rect(5, args, rain_bitmap);}
   }
   args[0] = INT2NUM(34);
   args[1] = INT2NUM(64);
-  VALUE storm_bitmap = rb_iv_set(self, "@storm_bitmap", rb_class_new_instance(2, args, ARGSS::ABitmap::id));
+  VALUE storm_bitmap = rb_iv_set(self, "@storm_bitmap", rb_class_new_instance(2, args, ruby_class<Bitmap>()));
   for (int i = 0; i < 32; i++) {
     {VALUE args[5] = {INT2NUM(33 - i), INT2NUM(i * 2), INT2NUM(1), INT2NUM(2), color2};
     ARGSS::ABitmap::rfill_rect(5, args, storm_bitmap);}
@@ -71,7 +70,7 @@ VALUE ARGSS::ARPG::AWeather::rinitialize(int argc, VALUE* argv, VALUE self) {
   }
   args[0] = INT2NUM(6);
   args[1] = INT2NUM(6);
-  VALUE snow_bitmap = rb_iv_set(self, "@snow_bitmap", rb_class_new_instance(2, args, ARGSS::ABitmap::id));
+  VALUE snow_bitmap = rb_iv_set(self, "@snow_bitmap", rb_class_new_instance(2, args, ruby_class<Bitmap>()));
   {VALUE args[5] = {INT2NUM(0), INT2NUM(1), INT2NUM(6), INT2NUM(4), color2};
   ARGSS::ABitmap::rfill_rect(5, args, snow_bitmap);}
   {VALUE args[5] = {INT2NUM(1), INT2NUM(0), INT2NUM(4), INT2NUM(6), color2};
@@ -82,7 +81,7 @@ VALUE ARGSS::ARPG::AWeather::rinitialize(int argc, VALUE* argv, VALUE self) {
   ARGSS::ABitmap::rfill_rect(5, args, snow_bitmap);}
   VALUE sprites = rb_iv_set(self, "@sprites", rb_ary_new());
   for (int i = 0; i < 40; i++) {
-    VALUE sprite = rb_class_new_instance(1, &viewport, ARGSS::ASprite::id);
+    VALUE sprite = rb_class_new_instance(1, &viewport, ruby_class<Sprite>());
     ARGSS::ASprite::rzE(sprite, INT2NUM(1000));
     ARGSS::ASprite::rvisibleE(sprite, Qfalse);
     ARGSS::ASprite::ropacityE(sprite, INT2NUM(0));
@@ -203,14 +202,20 @@ VALUE ARGSS::ARPG::AWeather::rupdate(VALUE self) {
 // ARGSS RPG::Weather initialize
 ///////////////////////////////////////////////////////////
 void ARGSS::ARPG::AWeather::Init() {
-  id = rb_define_class_under(ARGSS::ARPG::id, "Weather", rb_cObject);
-  rb_define_method(id, "initialize", (rubyfunc)rinitialize, -1);
-  rb_define_method(id, "dispose", (rubyfunc)rdispose, 0);
-  rb_define_method(id, "type=", (rubyfunc)rtypeE, 1);
-  rb_define_method(id, "ox=", (rubyfunc)roxE, 1);
-  rb_define_method(id, "oy=", (rubyfunc)royE, 1);
-  rb_define_method(id, "max=", (rubyfunc)rmaxE, 1);
-  rb_define_method(id, "update", (rubyfunc)rupdate, 0);
+  rb_method const methods[] = {
+    rb_method("initialize", rinitialize),
+    rb_method("dispose", rdispose),
+    rb_method("type=", rtypeE),
+    rb_method("ox=", roxE),
+    rb_method("oy=", royE),
+    rb_method("max=", rmaxE),
+    rb_method("update", rupdate),
+    rb_method() };
+
+  id = rb_define_class_under(ARPG::id, "Weather", rb_cObject);
+  for(rb_method const* i = methods; i->function != NULL; ++i) {
+    rb_define_method(id, i->name, i->function, i->arg_num);
+  }
 
   rb_define_attr(id, "type", 1, 0);
   rb_define_attr(id, "ox", 1, 0);

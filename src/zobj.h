@@ -32,17 +32,18 @@
 ///////////////////////////////////////////////////////////
 class ZObj {
 public:
-  ZObj(long iz, unsigned long icreation, unsigned long iid);
+  ZObj(long iz, unsigned icreation, Drawable& iid)
+      : z(iz), creation(icreation), id(&iid) {}
 
-  void SetZ(long n);
-  long GetZ();
-  unsigned long GetCreation();
-  unsigned long GetId();
+  void SetZ(long n) { z = n; }
+  long GetZ() const { return z; }
+  unsigned GetCreation() const { return creation; }
+  Drawable* GetId() const { return id; }
 
 private:
   long z;
-  unsigned long creation;
-  unsigned long id;
+  unsigned const creation;
+  Drawable* const id;
 };
 
 #endif

@@ -36,7 +36,7 @@ public:
 
   virtual void Draw(long z) = 0;
 
-  virtual void RefreshBitmaps() = 0;
+  // virtual void RefreshBitmaps() = 0;
 };
 
 #endif

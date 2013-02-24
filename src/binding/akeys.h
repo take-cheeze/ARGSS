@@ -43,7 +43,6 @@ namespace ARGSS {
     void Init();
 
     /// Keys module id.
-    extern VALUE id;
   };
 };
 

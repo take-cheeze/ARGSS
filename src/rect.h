@@ -37,14 +37,12 @@
 class Rect {
 public:
   Rect();
-  Rect(unsigned long rect);
   Rect(int ix, int iy, int iwidth, int iheight);
 
   bool operator!=(const Rect& other) const;
 
   void Set(int nx, int ny, int nwidth, int nheight);
 
-  unsigned long GetARGSS();
   void Adjust(int awidth, int aheight);
   bool IsOutOfBounds(int awidth, int aheight) const;
 
@@ -53,5 +51,9 @@ public:
   int width;
   int height;
 };
+
+inline bool operator==(Rect const& lhs, Rect const& rhs) {
+  return not(lhs != rhs);
+}
 
 #endif

@@ -28,11 +28,7 @@
 // Headers
 ///////////////////////////////////////////////////////////
 #include "binding/atable.h"
-
-///////////////////////////////////////////////////////////
-// Global Variables
-///////////////////////////////////////////////////////////
-VALUE ARGSS::ATable::id;
+#include "table.h"
 
 ///////////////////////////////////////////////////////////
 // ARGSS Table instance methods
@@ -40,7 +36,6 @@ VALUE ARGSS::ATable::id;
 VALUE ARGSS::ATable::rinitialize(int argc, VALUE* argv, VALUE self) {
   if (argc < 1) raise_argn(argc, 1);
   else if (argc > 3) raise_argn(argc, 3);
-  rb_iv_set(self, "@dim", INT2NUM(argc));
   int xsize = 1;
   int ysize = 1;
   int zsize = 1;
@@ -52,12 +47,7 @@ VALUE ARGSS::ATable::rinitialize(int argc, VALUE* argv, VALUE self) {
   case 1:
     xsize = NUM2INT(argv[0]);
   }
-  rb_iv_set(self, "@xsize", INT2NUM(xsize));
-  rb_iv_set(self, "@ysize", INT2NUM(ysize));
-  rb_iv_set(self, "@zsize", INT2NUM(zsize));
-  VALUE arr = rb_ary_new3(xsize * ysize * zsize, INT2NUM(0));
-  rb_iv_set(self, "@data", arr);
-  rb_iv_set(self, "@modified", Qtrue);
+  set_ptr(self, boost::make_shared<Table>(xsize, ysize, zsize));
   return self;
 }
 VALUE ARGSS::ATable::rresize(int argc, VALUE* argv, VALUE self) {
@@ -72,35 +62,20 @@ VALUE ARGSS::ATable::rresize(int argc, VALUE* argv, VALUE self) {
   case 1:
     xsize = NUM2INT(argv[0]);
   }
-  int nsize = xsize * ysize * zsize;
-  int osize;
-  osize = NUM2INT(rb_iv_get(self, "@xsize")) * NUM2INT(rb_iv_get(self, "@xsize")) *
-      NUM2INT(rb_iv_get(self, "@xsize"));
-  if (nsize != osize) {
-    if (nsize > osize) {
-      VALUE arr = rb_ary_new3(nsize - osize, INT2NUM(0));
-      rb_ary_concat(rb_iv_get(self, "@data"), arr);
-    } else {
-      VALUE slice_argv[2];
-      slice_argv[0] = INT2NUM(nsize);
-      slice_argv[1] = INT2NUM(osize);
-      rb_funcall2(rb_iv_get(self, "@data"), rb_intern("slice!"), 2, slice_argv);
-    }
-    rb_iv_set(self, "@modified", Qtrue);
-  }
+  get<Table>(self).resize(xsize, ysize, zsize);
   return self;
 }
 VALUE ARGSS::ATable::rxsize(VALUE self) {
-  return rb_iv_get(self, "@xsize");
+  return INT2NUM(get<Table>(self).xsize());
 }
 VALUE ARGSS::ATable::rysize(VALUE self) {
-  return rb_iv_get(self, "@ysize");
+  return INT2NUM(get<Table>(self).ysize());
 }
 VALUE ARGSS::ATable::rzsize(VALUE self) {
-  return rb_iv_get(self, "@zsize");
+  return INT2NUM(get<Table>(self).zsize());
 }
 VALUE ARGSS::ATable::raref(int argc, VALUE* argv, VALUE self) {
-  int dim = NUM2INT(rb_iv_get(self, "@dim"));
+  int dim = get<Table>(self).dim();
   if (argc != dim) raise_argn(argc, dim);
   int x = 0;
   int y = 0;
@@ -113,18 +88,17 @@ VALUE ARGSS::ATable::raref(int argc, VALUE* argv, VALUE self) {
   case 1:
     x = NUM2INT(argv[0]);
   }
-  VALUE data = rb_iv_get(self, "@data");
-  int xsize = NUM2INT(rb_iv_get(self, "@xsize"));
-  int ysize = NUM2INT(rb_iv_get(self, "@ysize"));
-  int zsize = NUM2INT(rb_iv_get(self, "@zsize"));
+  int xsize = get<Table>(self).xsize();
+  int ysize = get<Table>(self).ysize();
+  int zsize = get<Table>(self).zsize();
   if (x >= xsize || y >= ysize || z >= zsize) {
     return Qnil;
   } else {
-    return rb_ary_entry(data, x + y * xsize + z * xsize * ysize);
+    return INT2NUM(get<Table>(self)(x, y, z));
   }
 }
 VALUE ARGSS::ATable::raset(int argc, VALUE* argv, VALUE self) {
-  int dim = NUM2INT(rb_iv_get(self, "@dim"));
+  int dim = get<Table>(self).dim();
   if (argc != (dim + 1)) raise_argn(argc, dim + 1);
   int x = 0;
   int y = 0;
@@ -137,76 +111,72 @@ VALUE ARGSS::ATable::raset(int argc, VALUE* argv, VALUE self) {
   case 1:
     x = NUM2INT(argv[0]);
   }
-  int val = NUM2INT(argv[argc - 1]);
-  if (val > 65535) val = 65535;
-  else if (val < 0) val = 0;
-  VALUE data = rb_iv_get(self, "@data");
-  int xsize = NUM2INT(rb_iv_get(self, "@xsize"));
-  int ysize = NUM2INT(rb_iv_get(self, "@ysize"));
-  int zsize = NUM2INT(rb_iv_get(self, "@zsize"));
+  int val = std::min<int>(std::numeric_limits<int16_t>::max(),
+                     std::max<int>(std::numeric_limits<int16_t>::min(),
+                              NUM2INT(argv[argc - 1])));
+  int xsize = get<Table>(self).xsize();
+  int ysize = get<Table>(self).ysize();
+  int zsize = get<Table>(self).zsize();
   if (x < xsize && y < ysize && z < zsize) {
-    if (INT2NUM(val) != rb_ary_entry(data, x + y * xsize + z * xsize * ysize)) {
-      rb_iv_set(self, "@modified", Qtrue);
-    }
-    rb_ary_store(data, x + y * xsize + z * xsize * ysize, INT2NUM(val));
+    get<Table>(self)(x, y, z) = val;
   }
   return argv[argc - 1];
 }
-VALUE ARGSS::ATable::rdump(int argc, VALUE* argv, VALUE self) {
+
+static VALUE to_ruby(uint16_t v) {
+  return INT2NUM(v);
+}
+
+VALUE ARGSS::ATable::rdump(int argc, VALUE* /* argv */, VALUE self) {
   if (argc > 1) raise_argn(argc, 1);
-  VALUE str = rb_str_new2("");
-  VALUE xsize = rb_iv_get(self, "@xsize");
-  VALUE ysize = rb_iv_get(self, "@ysize");
-  VALUE zsize = rb_iv_get(self, "@zsize");
-  unsigned long items = NUM2INT(xsize) * NUM2INT(ysize) * NUM2INT(zsize);
-  VALUE arr = rb_ary_new3(5, rb_iv_get(self, "@dim"), xsize, ysize, zsize, INT2NUM(items));
-  rb_str_concat(str, rb_funcall(arr, rb_intern("pack"), 1, rb_str_new2("L5")));
-  rb_str_concat(str, rb_funcall(rb_iv_get(self, "@data"), rb_intern("pack"), 1, rb_str_times(rb_str_new2("S"), INT2NUM(items))));
+  Table const& t = get<Table>(self);
+  VALUE arr = rb_ary_new3(5, INT2NUM(t.dim()), INT2NUM(t.xsize()), INT2NUM(t.ysize()),
+                          INT2NUM(t.zsize()), INT2NUM(t.num_elements()));
+  VALUE const str = rb_funcall(arr, rb_intern("pack"), 1, rb_str_new2("V5"));
+
+  std::vector<VALUE> data(t.num_elements());
+  std::transform(t.data(), t.data() + t.num_elements(), data.begin(), to_ruby);
+  rb_str_concat(str, rb_funcall(rb_ary_new4(data.size(), &data.front()),
+                                rb_intern("pack"), 1, rb_str_new2("v*")));
   return str;
 }
 
 ///////////////////////////////////////////////////////////
 // ARGSS Table class methods
 ///////////////////////////////////////////////////////////
-VALUE ARGSS::ATable::rload(VALUE self, VALUE str) {
-  VALUE arr = rb_funcall(str, rb_intern("unpack"), 1, rb_str_new2("L5"));
-  int dim = NUM2INT(rb_ary_entry(arr, 0));
-  unsigned long items = NUM2INT(rb_ary_entry(arr, 4));
-  VALUE args[3] = {rb_ary_entry(arr, 1), rb_ary_entry(arr, 2), rb_ary_entry(arr, 3)};
-  VALUE table = rb_class_new_instance(dim, args, ARGSS::ATable::id);
-  VALUE data = rb_funcall(rb_str_substr(str, 20, items * 2), rb_intern("unpack"), 1, rb_str_times(rb_str_new2("S"), INT2NUM(items)));
-  rb_iv_set(table, "@data", data);
-  return table;
+VALUE ARGSS::ATable::rload(VALUE /* self */, VALUE str) {
+  VALUE arr = rb_funcall(str, rb_intern("unpack"), 1, rb_str_new2("V5"));
+  int const dim = NUM2INT(rb_ary_entry(arr, 0));
+  boost::shared_ptr<Table> const tbl =
+      dim == 3? boost::make_shared<Table>(NUM2INT(rb_ary_entry(arr, 1)),
+                                          NUM2INT(rb_ary_entry(arr, 2)),
+                                          NUM2INT(rb_ary_entry(arr, 3))):
+      dim == 2? boost::make_shared<Table>(NUM2INT(rb_ary_entry(arr, 1)),
+                                          NUM2INT(rb_ary_entry(arr, 2))):
+      dim == 1? boost::make_shared<Table>(NUM2INT(rb_ary_entry(arr, 1))):
+      boost::shared_ptr<Table>();
+  VALUE data = rb_funcall(rb_str_substr(str, 20, tbl->num_elements() * 2),
+                          rb_intern("unpack"), 1, rb_str_new2("v*"));
+  for(size_t i = 0; i < size_t(RARRAY_LEN(data)); ++i) {
+    tbl->data()[i] = NUM2INT(rb_ary_entry(data, i));
+  }
+  return create(tbl);
 }
 
 ///////////////////////////////////////////////////////////
 // ARGSS Table initialize
 ///////////////////////////////////////////////////////////
 void ARGSS::ATable::Init() {
-  id = rb_define_class("Table", rb_cObject);
-  rb_define_method(id, "initialize", (rubyfunc)rinitialize, -1);
-  rb_define_method(id, "resize", (rubyfunc)rresize, -1);
-  rb_define_method(id, "xsize", (rubyfunc)rxsize, 0);
-  rb_define_method(id, "ysize", (rubyfunc)rysize, 0);
-  rb_define_method(id, "zsize", (rubyfunc)rzsize, 0);
-  rb_define_method(id, "[]", (rubyfunc)raref, -1);
-  rb_define_method(id, "[]=", (rubyfunc)raset, -1);
-  rb_define_method(id, "_dump", (rubyfunc)rdump, -1);
-  rb_define_singleton_method(id, "_load", (rubyfunc)rload, 1);
-}
-
-///////////////////////////////////////////////////////////
-// ARGSS Table create instance
-///////////////////////////////////////////////////////////
-VALUE ARGSS::ATable::New(int xsize) {
-  VALUE args[1] = {INT2NUM(xsize)};
-  return rb_class_new_instance(1, args, id);
-}
-VALUE ARGSS::ATable::New(int xsize, int ysize) {
-  VALUE args[2] = {INT2NUM(xsize), INT2NUM(ysize)};
-  return rb_class_new_instance(2, args, id);
-}
-VALUE ARGSS::ATable::New(int xsize, int ysize, int zsize) {
-  VALUE args[3] = {INT2NUM(xsize), INT2NUM(ysize), INT2NUM(zsize)};
-  return rb_class_new_instance(3, args, id);
+  rb_method const methods[] = {
+    rb_method("initialize", rinitialize),
+    rb_method("resize", rresize),
+    rb_method("xsize", rxsize),
+    rb_method("ysize", rysize),
+    rb_method("zsize", rzsize),
+    rb_method("[]", raref),
+    rb_method("[]=", raset),
+    rb_method("_dump", rdump),
+    rb_method("_load", rload, true),
+    rb_method() };
+  define_class<Table>("Table", methods);
 }

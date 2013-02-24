@@ -43,7 +43,6 @@ namespace ARGSS {
     void Init();
 
     /// Output module id.
-    extern VALUE id;
 
     /// Ruby stdout id.
     extern VALUE stdout_id;

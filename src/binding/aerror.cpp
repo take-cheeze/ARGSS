@@ -28,45 +28,25 @@
 // Headers
 ///////////////////////////////////////////////////////////
 #include "binding/aerror.h"
+#include "output.h"
 
 ///////////////////////////////////////////////////////////
 // Global Variables
 ///////////////////////////////////////////////////////////
-VALUE ARGSS::AError::id;
+static VALUE rgss_error;
 
 ///////////////////////////////////////////////////////////
 // ARGSS Error initialize
 ///////////////////////////////////////////////////////////
 void ARGSS::AError::Init() {
-  id = rb_define_class("ARGSSError", rb_eStandardError);
+  rgss_error = rb_define_class("RGSSError", rb_eStandardError);
 }
 
-///////////////////////////////////////////////////////////
-// FileNotFound
-///////////////////////////////////////////////////////////
-void ARGSS::AError::FileNotFound(std::string file) {
+void Output::raise(std::string const& str) {
+  rb_raise(rgss_error, str.c_str());
+}
+
+void Output::FileNotFound(std::string const& file) {
   VALUE enoent = rb_const_get(rb_mErrno, rb_intern("ENOENT"));
   rb_raise(enoent, "No such file or directory - %s", file.c_str());
-}
-
-///////////////////////////////////////////////////////////
-// AudioNotLoad
-///////////////////////////////////////////////////////////
-void ARGSS::AError::AudioNotLoad(std::string type, std::string file) {
-  rb_raise(ARGSS::AError::id, "couldn't load %s %s.\n", file.c_str(), type.c_str());
-}
-
-void ARGSS::AError::AudioNotLoad(std::string type, std::string file, std::string description) {
-  rb_raise(ARGSS::AError::id, "couldn't load %s %s.\n%s\n", file.c_str(), type.c_str(), description.c_str());
-}
-
-///////////////////////////////////////////////////////////
-// AudioNotPlay
-///////////////////////////////////////////////////////////
-void ARGSS::AError::AudioNotPlay(std::string type, std::string file) {
-  rb_raise(ARGSS::AError::id, "couldn't play %s %s.\n", file.c_str(), type.c_str());
-}
-
-void ARGSS::AError::AudioNotPlay(std::string type, std::string file, std::string description) {
-  rb_raise(ARGSS::AError::id, "couldn't play %s %s.\n%s\n", file.c_str(), type.c_str(), description.c_str());
 }

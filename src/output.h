@@ -31,6 +31,8 @@
 // Headers
 ///////////////////////////////////////////////////////////
 #include <string>
+#include <locale>
+#include <boost/format.hpp>
 
 ///////////////////////////////////////////////////////////
 /// Output Namespace
@@ -38,12 +40,12 @@
 namespace Output {
   void Init();
 
-  void PostStr(std::string msg);
+  void PostStr(std::string const& msg);
   void Post(const char* fmt, ...);
-  void PostFile(std::string msg);
-  void WarningStr(std::string warn);
+  void PostFile(std::string const& msg);
+  void WarningStr(std::string const& warn);
   void Warning(const char* fmt, ...);
-  void ErrorStr(std::string err);
+  void ErrorStr(std::string const& err);
   void Error(const char* fmt, ...);
 
   void Console();
@@ -56,6 +58,18 @@ namespace Output {
 
   extern int output_type;
   extern std::string filename;
+
+  // binding must implement this
+  void raise(std::string const& str);
+
+  void raise(boost::format const& f);
+
+  void FileNotFound(std::string const& file);
+
+  void AudioNotLoad(std::string const& type, std::string const& file);
+  void AudioNotLoad(std::string const& type, std::string const& file, std::string const& description);
+  void AudioNotPlay(std::string const& type, std::string const& file);
+  void AudioNotPlay(std::string const& type, std::string const& file, std::string const& description);
 };
 
 #endif

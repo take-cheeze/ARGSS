@@ -42,19 +42,7 @@ namespace ARGSS {
     ///////////////////////////////////////////////////
     void Init();
 
-    ///////////////////////////////////////////////////
-    /// Create Tone instance.
-    ///////////////////////////////////////////////////
-    //@{
-
-    VALUE New();
-    VALUE New(VALUE tone);
-    VALUE New(double r, double g, double b, double gray);
-
-    //@}
-
     /// Tone class id.
-    extern VALUE id;
 
     ///////////////////////////////////////////////////
     /// Tone instance methods.
@@ -73,7 +61,7 @@ namespace ARGSS {
     VALUE rgrayE(VALUE self, VALUE g);
     VALUE rinspect(VALUE self);
     VALUE rdump(int argc, VALUE* argv, VALUE self);
-    
+
     //@}
 
     ///////////////////////////////////////////////////

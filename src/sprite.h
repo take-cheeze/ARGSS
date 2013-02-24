@@ -36,95 +36,61 @@
 #include "rect.h"
 #include "drawable.h"
 #include "opengl.h"
-
-class Bitmap;
+#include "bitmap_fwd.h"
 
 ///////////////////////////////////////////////////////////
 /// Sprite class
 ///////////////////////////////////////////////////////////
 class Sprite : public Drawable {
 public:
-  Sprite(unsigned long iid);
+  Sprite();
   ~Sprite();
-
-  static bool IsDisposed(unsigned long id);
-  static void New(unsigned long id);
-  static Sprite* Get(unsigned long id);
-  static void Dispose(unsigned long id);
 
   void RefreshBitmaps();
   void Draw(long z);
-  void Draw(long z, Bitmap* dst_bitmap);
 
   void Flash(int duration);
   void Flash(Color color, int duration);
   void Update();
-  unsigned long GetViewport();
-  void SetViewport(unsigned long nviewport);
-  unsigned long GetBitmap();
-  void SetBitmap(unsigned long nbitmap);
-  unsigned long GetSrcRect();
-  void SetSrcRect(unsigned long nsrc_rect);
-  bool GetVisible();
-  void SetVisible(bool nvisible);
-  int GetX();
-  void SetX(int nx);
-  int GetY();
-  void SetY(int ny);
-  int GetZ();
-  void SetZ(int nz);
-  int GetOx();
-  void SetOx(int nox);
-  int GetOy();
-  void SetOy(int noy);
-  float GetZoomX();
-  void SetZoomX(float nzoom_x);
-  float GetZoomY();
-  void SetZoomY(float nzoom_y);
-  float GetAngle();
-  void SetAngle(float nangle);
-  bool GetFlipX();
-  void SetFlipX(bool nflipx);
-  bool GetFlipY();
-  void SetFlipY(bool nflipy);
-  int GetBushDepth();
-  void SetBushDepth(int nbush_depth);
-  int GetOpacity();
-  void SetOpacity(int nopacity);
-  int GetBlendType();
-  void SetBlendType(int nblend_type);
-  unsigned long GetColor();
-  void SetColor(unsigned long ncolor);
-  unsigned long GetTone();
-  void SetTone(unsigned long ntone);
 
-private:
-  unsigned long id;
-  unsigned long viewport;
-  unsigned long bitmap;
-  unsigned long src_rect;
+  RectRef src_rect;
   bool visible;
   int x;
   int y;
-  int z;
   int ox;
   int oy;
   float zoom_x;
   float zoom_y;
   float angle;
+  int bush_depth;
+  ColorRef color;
+  int blend_type;
+  int opacity;
+
   bool flipx;
   bool flipy;
-  int bush_depth;
-  int opacity;
-  int blend_type;
-  unsigned long color;
-  unsigned long tone;
+
+  ToneRef const& tone() const { return tone_; }
+  int z() const { return z_; }
+  ViewportRef const& viewport() const { return viewport_; }
+  BitmapRef const& bitmap() const { return bitmap_; }
+
+  void tone(ToneRef const& t);
+  void z(int nz);
+  void viewport(ViewportRef const& v);
+  void bitmap(BitmapRef const& bmp);
+
+ private:
+  ToneRef tone_;
+  int z_;
+  ViewportRef viewport_;
+  BitmapRef bitmap_;
 
   GLuint flash_texture;
   Color flash_color;
   int flash_duration;
   int flash_frame;
-  Bitmap* sprite;
+  BitmapRef sprite;
   Rect src_rect_sprite;
   Rect src_rect_last;
   bool needs_refresh;
@@ -132,8 +98,6 @@ private:
 
   void Refresh();
   void RefreshFlash();
-  int GetWidth();
-  int GetHeight();
 };
 
 #endif

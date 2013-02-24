@@ -42,19 +42,9 @@ namespace ARGSS {
     ///////////////////////////////////////////////////
     void Init();
 
-    ///////////////////////////////////////////////////
-    /// Create Color instance.
-    ///////////////////////////////////////////////////
-    //@{
-
-    VALUE New();
-    VALUE New(VALUE color);
-    VALUE New(double r, double g, double b, double a);
-
     //@}
 
     /// Color class id.
-    extern VALUE id;
 
     ///////////////////////////////////////////////////
     /// Color instance methods.

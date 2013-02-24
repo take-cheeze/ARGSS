@@ -28,20 +28,19 @@
 // Headers
 ///////////////////////////////////////////////////////////
 #include <string>
+#include <algorithm>
 #include "input.h"
 #include "buttons.h"
-#include "aruby.h"
-#include "binding/ainput.h"
 #include "player.h"
 #include "output.h"
 
 ///////////////////////////////////////////////////////////
 // Global Variables
 ///////////////////////////////////////////////////////////
-std::vector<int> Input::press_time;
-std::vector<bool> Input::triggered;
-std::vector<bool> Input::repeated;
-std::vector<bool> Input::released;
+boost::array<int, Input::Keys::KEYS_COUNT> Input::press_time;
+std::bitset<Input::Keys::KEYS_COUNT> Input::triggered;
+std::bitset<Input::Keys::KEYS_COUNT> Input::repeated;
+std::bitset<Input::Keys::KEYS_COUNT> Input::released;
 int Input::dir4;
 int Input::dir8;
 int Input::start_repeat_time;
@@ -52,10 +51,10 @@ std::vector< std::vector<int> > Input::dirkeys;
 /// Initialize
 ///////////////////////////////////////////////////////////
 void Input::Init() {
-  press_time.resize(Keys::KEYS_COUNT, 0);
-  triggered.resize(Keys::KEYS_COUNT, false);
-  repeated.resize(Keys::KEYS_COUNT, false);
-  released.resize(Keys::KEYS_COUNT, false);
+  std::fill(press_time.begin(), press_time.end(), 0);
+  triggered.reset();
+  repeated.reset();
+  released.reset();
 
   dir4 = 0;
   dir8 = 0;
@@ -174,72 +173,60 @@ void Input::ClearKeys() {
 ///////////////////////////////////////////////////////////
 /// Is pressed?
 ///////////////////////////////////////////////////////////
-bool Input::IsPressed(VALUE button) {
-  if (NUM2INT(button) < 1000) {
-    int key = NUM2INT(button);
-    if (buttons.count(key) == 0) return false;
-    for (unsigned int i = 0; i < buttons[key].size(); i++) {
-      if (press_time[buttons[key][i]] > 0) return true;
-    }
-    return false;
+bool Input::IsPressed(rgss_key button) {
+  int key = button.value;
+  if (buttons.count(key) == 0) return false;
+  for (unsigned int i = 0; i < buttons[key].size(); i++) {
+    if (press_time[buttons[key][i]] > 0) return true;
   }
-  return press_time[NUM2KEY(button)] > 0;
+  return false;
 }
 
 ///////////////////////////////////////////////////////////
 /// Is triggered?
 ///////////////////////////////////////////////////////////
-bool Input::IsTriggered(VALUE button) {
-  if (NUM2INT(button) < 1000) {
-    int key = NUM2INT(button);
-    if (buttons.count(key) == 0) return false;
-    for (unsigned int i = 0; i < buttons[key].size(); i++) {
-      if (triggered[buttons[key][i]]) return true;
-    }
-    return false;
+bool Input::IsTriggered(rgss_key button) {
+  int key = button.value;
+  if (buttons.count(key) == 0) return false;
+  for (unsigned int i = 0; i < buttons[key].size(); i++) {
+    if (triggered[buttons[key][i]]) return true;
   }
-  return triggered[NUM2KEY(button)];
+  return false;
 }
 
 ///////////////////////////////////////////////////////////
 /// Is repeated?
 ///////////////////////////////////////////////////////////
-bool Input::IsRepeated(VALUE button) {
-  if (NUM2INT(button) < 1000) {
-    int key = NUM2INT(button);
-    if (buttons.count(key) == 0) return false;
-    std::vector<int> a = buttons[key];
-    for (unsigned int i = 0; i < buttons[key].size(); i++) {
-      if (repeated[buttons[key][i]]) return true;
-    }
-    return false;
+bool Input::IsRepeated(rgss_key button) {
+  int key = button.value;
+  if (buttons.count(key) == 0) return false;
+  std::vector<int> a = buttons[key];
+  for (unsigned int i = 0; i < buttons[key].size(); i++) {
+    if (repeated[buttons[key][i]]) return true;
   }
-  return repeated[NUM2KEY(button)];
+  return false;
 }
 
 ///////////////////////////////////////////////////////////
 /// Is released?
 ///////////////////////////////////////////////////////////
-bool Input::IsReleased(VALUE button) {
-  if (NUM2INT(button) < 1000) {
-    int key = NUM2INT(button);
-    if (buttons.count(key) == 0) return false;
-    for (unsigned int i = 0; i < buttons[key].size(); i++) {
-      if (released[buttons[key][i]]) return true;
-    }
-    return false;
+bool Input::IsReleased(rgss_key button) {
+  int key = button.value;
+  if (buttons.count(key) == 0) return false;
+  for (unsigned int i = 0; i < buttons[key].size(); i++) {
+    if (released[buttons[key][i]]) return true;
   }
-  return released[NUM2KEY(button)];
+  return false;
 }
 
 ///////////////////////////////////////////////////////////
 /// Get pressed keys
 ///////////////////////////////////////////////////////////
-VALUE Input::GetPressed() {
-  VALUE arr = rb_ary_new();
+std::vector<Input::rgss_key> Input::GetPressed() {
+  std::vector<rgss_key> arr;
   for (unsigned int i = 0; i < press_time.size(); i++) {
     if (press_time[i] > 0) {
-      rb_ary_push(arr, KEY2NUM(i));
+      arr.push_back(KEY2NUM(i));
     }
   }
   return arr;
@@ -248,11 +235,11 @@ VALUE Input::GetPressed() {
 ///////////////////////////////////////////////////////////
 /// Get triggered keys
 ///////////////////////////////////////////////////////////
-VALUE Input::GetTriggered() {
-  VALUE arr = rb_ary_new();
+std::vector<Input::rgss_key> Input::GetTriggered() {
+  std::vector<rgss_key> arr;
   for (unsigned int i = 0; i < triggered.size(); i++) {
     if (triggered[i]) {
-      rb_ary_push(arr, KEY2NUM(i));
+      arr.push_back(KEY2NUM(i));
     }
   }
   return arr;
@@ -261,11 +248,11 @@ VALUE Input::GetTriggered() {
 ///////////////////////////////////////////////////////////
 /// Get repeated keys
 ///////////////////////////////////////////////////////////
-VALUE Input::GetRepeated() {
-  VALUE arr = rb_ary_new();
+std::vector<Input::rgss_key> Input::GetRepeated() {
+  std::vector<rgss_key> arr;
   for (unsigned int i = 0; i < repeated.size(); i++) {
     if (repeated[i]) {
-      rb_ary_push(arr, KEY2NUM(i));
+      arr.push_back(KEY2NUM(i));
     }
   }
   return arr;
@@ -274,11 +261,11 @@ VALUE Input::GetRepeated() {
 ///////////////////////////////////////////////////////////
 /// Get released keys
 ///////////////////////////////////////////////////////////
-VALUE Input::GetReleased() {
-  VALUE arr = rb_ary_new();
+std::vector<Input::rgss_key> Input::GetReleased() {
+  std::vector<rgss_key> arr;
   for (unsigned int i = 0; i < released.size(); i++) {
     if (released[i]) {
-      rb_ary_push(arr, KEY2NUM(i));
+      arr.push_back(KEY2NUM(i));
     }
   }
   return arr;

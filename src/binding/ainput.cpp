@@ -31,68 +31,75 @@
 #include "input.h"
 
 ///////////////////////////////////////////////////////////
-// Global Variables
-///////////////////////////////////////////////////////////
-VALUE ARGSS::AInput::id;
-
-///////////////////////////////////////////////////////////
 // ARGSS Input module methods
 ///////////////////////////////////////////////////////////
-VALUE ARGSS::AInput::rupdate(VALUE self) {
+VALUE ARGSS::AInput::rupdate(VALUE /* self */) {
   Input::Update();
   return Qnil;
 }
-VALUE ARGSS::AInput::rpressQ(VALUE self, VALUE button) {
+VALUE ARGSS::AInput::rpressQ(VALUE /* self */, VALUE button) {
   Check_Type(button, T_FIXNUM);
-  return BOOL2NUM(Input::IsPressed(button));
+  return BOOL2NUM(Input::IsPressed(NUM2INT(button)));
 }
-VALUE ARGSS::AInput::rtriggerQ(VALUE self, VALUE button) {
+VALUE ARGSS::AInput::rtriggerQ(VALUE /* self */, VALUE button) {
   Check_Type(button, T_FIXNUM);
-  return BOOL2NUM(Input::IsTriggered(button));
+  return BOOL2NUM(Input::IsTriggered(NUM2INT(button)));
 }
-VALUE ARGSS::AInput::rrepeatQ(VALUE self, VALUE button) {
+VALUE ARGSS::AInput::rrepeatQ(VALUE /* self */, VALUE button) {
   Check_Type(button, T_FIXNUM);
-  return BOOL2NUM(Input::IsRepeated(button));
+  return BOOL2NUM(Input::IsRepeated(NUM2INT(button)));
 }
-VALUE ARGSS::AInput::rreleaseQ(VALUE self, VALUE button) {
+VALUE ARGSS::AInput::rreleaseQ(VALUE /* self */, VALUE button) {
   Check_Type(button, T_FIXNUM);
-  return BOOL2NUM(Input::IsReleased(button));
+  return BOOL2NUM(Input::IsReleased(NUM2INT(button)));
 }
-VALUE ARGSS::AInput::rdir4(VALUE self) {
+VALUE ARGSS::AInput::rdir4(VALUE /* self */) {
   return INT2NUM(Input::dir4);
 }
-VALUE ARGSS::AInput::rdir8(VALUE self) {
+VALUE ARGSS::AInput::rdir8(VALUE /* self */) {
   return INT2NUM(Input::dir8);
 }
-VALUE ARGSS::AInput::rpressed(VALUE self) {
-  return Input::GetPressed();
+
+static VALUE to_ruby(std::vector<Input::rgss_key> const& key) {
+  VALUE ret = rb_ary_new2(key.size());
+  for(size_t i = 0; i < key.size(); ++i) {
+    rb_ary_store(ret, i, INT2NUM(key[i].value));
+  }
+  return ret;
 }
-VALUE ARGSS::AInput::rtriggered(VALUE self) {
-  return Input::GetTriggered();
+
+VALUE ARGSS::AInput::rpressed(VALUE /* self */) {
+  return to_ruby(Input::GetPressed());
 }
-VALUE ARGSS::AInput::rrepeated(VALUE self) {
-  return Input::GetRepeated();
+VALUE ARGSS::AInput::rtriggered(VALUE /* self */) {
+  return to_ruby(Input::GetTriggered());
 }
-VALUE ARGSS::AInput::rreleased(VALUE self) {
-  return Input::GetReleased();
+VALUE ARGSS::AInput::rrepeated(VALUE /* self */) {
+  return to_ruby(Input::GetRepeated());
+}
+VALUE ARGSS::AInput::rreleased(VALUE /* self */) {
+  return to_ruby(Input::GetReleased());
 }
 
 ///////////////////////////////////////////////////////////
 // ARGSS Input initialize
 ///////////////////////////////////////////////////////////
 void ARGSS::AInput::Init() {
-  id = rb_define_module("Input");
-  rb_define_singleton_method(id, "update", (rubyfunc)rupdate, 0);
-  rb_define_singleton_method(id, "press?", (rubyfunc)rpressQ, 1);
-  rb_define_singleton_method(id, "trigger?", (rubyfunc)rtriggerQ, 1);
-  rb_define_singleton_method(id, "repeat?", (rubyfunc)rrepeatQ, 1);
-  rb_define_singleton_method(id, "release?", (rubyfunc)rreleaseQ, 1);
-  rb_define_singleton_method(id, "dir4", (rubyfunc)rdir4, 0);
-  rb_define_singleton_method(id, "dir8", (rubyfunc)rdir8, 0);
-  rb_define_singleton_method(id, "pressed", (rubyfunc)rpressed, 0);
-  rb_define_singleton_method(id, "triggered", (rubyfunc)rtriggered, 0);
-  rb_define_singleton_method(id, "repeated", (rubyfunc)rrepeated, 0);
-  rb_define_singleton_method(id, "released", (rubyfunc)rreleased, 0);
+  rb_method const methods[] = {
+    rb_method("update", rupdate, true),
+    rb_method("press?", rpressQ, true),
+    rb_method("trigger?", rtriggerQ, true),
+    rb_method("repeat?", rrepeatQ, true),
+    rb_method("release?", rreleaseQ, true),
+    rb_method("dir4", rdir4, true),
+    rb_method("dir8", rdir8, true),
+    rb_method("pressed", rpressed, true),
+    rb_method("triggered", rtriggered, true),
+    rb_method("repeated", rrepeated, true),
+    rb_method("released", rreleased, true),
+    rb_method() };
+  VALUE const id = define_module("Input", methods);
+
   rb_define_const(id, "DOWN", INT2FIX(2));
   rb_define_const(id, "LEFT", INT2FIX(4));
   rb_define_const(id, "RIGHT", INT2FIX(6));

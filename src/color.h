@@ -35,11 +35,8 @@
 class Color {
 public:
   Color();
-  Color(unsigned long color);
   Color(int ired, int igreen, int iblue, int ialpha);
 
-  void Set(unsigned long color);
-  unsigned long GetARGSS() const;
   uint32_t GetUint32() const;
 
   float red;
@@ -49,5 +46,13 @@ public:
 
   static Color NewUint32(uint32_t color);
 };
+
+inline bool operator !=(Color const& lhs, Color const& rhs) {
+  return lhs.red != rhs.red or lhs.green != rhs.green
+      or lhs.blue != rhs.blue or lhs.alpha != rhs.alpha;
+}
+inline bool operator ==(Color const& lhs, Color const& rhs) {
+  return not(lhs != rhs);
+}
 
 #endif

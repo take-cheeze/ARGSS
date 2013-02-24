@@ -28,11 +28,7 @@
 // Headers
 ///////////////////////////////////////////////////////////
 #include "binding/arect.h"
-
-///////////////////////////////////////////////////////////
-// Global Variables
-///////////////////////////////////////////////////////////
-VALUE ARGSS::ARect::id;
+#include "rect.h"
 
 ///////////////////////////////////////////////////////////
 // ARGSS Rect instance methods
@@ -42,10 +38,7 @@ VALUE ARGSS::ARect::rinitialize(VALUE self, VALUE x, VALUE y, VALUE w, VALUE h) 
   Check_Kind(y, rb_cNumeric);
   Check_Kind(w, rb_cNumeric);
   Check_Kind(h, rb_cNumeric);
-  rb_iv_set(self, "@x", x);
-  rb_iv_set(self, "@y", y);
-  rb_iv_set(self, "@width", w);
-  rb_iv_set(self, "@height", h);
+  set_ptr(self, boost::make_shared<Rect>(NUM2INT(x), NUM2INT(y), NUM2INT(w), NUM2INT(h)));
   return self;
 }
 VALUE ARGSS::ARect::rset(VALUE self, VALUE x, VALUE y, VALUE w, VALUE h) {
@@ -53,100 +46,85 @@ VALUE ARGSS::ARect::rset(VALUE self, VALUE x, VALUE y, VALUE w, VALUE h) {
   Check_Kind(y, rb_cNumeric);
   Check_Kind(w, rb_cNumeric);
   Check_Kind(h, rb_cNumeric);
-  rb_iv_set(self, "@x", x);
-  rb_iv_set(self, "@y", y);
-  rb_iv_set(self, "@width", w);
-  rb_iv_set(self, "@height", h);
+  get<Rect>(self) = Rect(NUM2INT(x), NUM2INT(y), NUM2INT(w), NUM2INT(h));
   return self;
 }
 VALUE ARGSS::ARect::rx(VALUE self) {
-  return rb_iv_get(self, "@x");
+  return INT2NUM(get<Rect>(self).x);
 }
 VALUE ARGSS::ARect::rxE(VALUE self, VALUE x) {
   Check_Kind(x, rb_cNumeric);
-  return rb_iv_set(self, "@x", x);
+  return INT2NUM(get<Rect>(self).x = NUM2INT(x));
 }
 VALUE ARGSS::ARect::ry(VALUE self) {
-  return rb_iv_get(self, "@y");
+  return INT2NUM(get<Rect>(self).y);
 }
 VALUE ARGSS::ARect::ryE(VALUE self, VALUE y) {
   Check_Kind(y, rb_cNumeric);
-  return rb_iv_set(self, "@y", y);
+  return INT2NUM(get<Rect>(self).y = NUM2INT(y));
 }
 VALUE ARGSS::ARect::rwidth(VALUE self) {
-  return rb_iv_get(self, "@width");
+  return INT2NUM(get<Rect>(self).width);
 }
 VALUE ARGSS::ARect::rwidthE(VALUE self, VALUE w) {
   Check_Kind(w, rb_cNumeric);
-  return rb_iv_set(self, "@width", w);
+  return INT2NUM(get<Rect>(self).width = NUM2INT(w));
 }
 VALUE ARGSS::ARect::rheight(VALUE self) {
-  return rb_iv_get(self, "@height");
+  return INT2NUM(get<Rect>(self).height);
 }
 VALUE ARGSS::ARect::rheightE(VALUE self, VALUE h) {
   Check_Kind(h, rb_cNumeric);
-  return rb_iv_set(self, "@height", h);
+  return INT2NUM(get<Rect>(self).height = NUM2INT(h));
 }
 VALUE ARGSS::ARect::rempty(VALUE self) {
-  rb_iv_set(self, "@x", INT2NUM(0));
-  rb_iv_set(self, "@y", INT2NUM(0));
-  rb_iv_set(self, "@width", INT2NUM(0));
-  rb_iv_set(self, "@height", INT2NUM(0));
+  Rect& re = get<Rect>(self);
+  re.x = re.y = re.width = re.height = 0;
   return self;
 }
 VALUE ARGSS::ARect::rinspect(VALUE self) {
   char str[255];
-  long str_size = sprintf(
-    str,
-    "(%i, %i, %i, %i)",
-    NUM2INT(rb_iv_get(self, "@x")),
-    NUM2INT(rb_iv_get(self, "@y")),
-    NUM2INT(rb_iv_get(self, "@width")),
-    NUM2INT(rb_iv_get(self, "@height"))
-  );
+  Rect const& re = get<Rect>(self);
+  long str_size = sprintf(str, "(%i, %i, %i, %i)", re.x, re.y, re.width, re.height);
   return rb_str_new(str, str_size);
 }
-VALUE ARGSS::ARect::rdump(int argc, VALUE* argv, VALUE self) {
+
+VALUE ARGSS::ARect::rdump(int argc, VALUE* /* argv */, VALUE self) {
   if (argc > 1) raise_argn(argc, 1);
-  VALUE arr = rb_ary_new3(4, rb_iv_get(self, "@x"), rb_iv_get(self, "@y"), rb_iv_get(self, "@width"), rb_iv_get(self, "@height"));
-  return rb_funcall(arr, rb_intern("pack"), 1, rb_str_new2("l4"));
+  Rect const& re = get<Rect>(self);
+  VALUE arr = rb_ary_new3(4, INT2NUM(re.x), INT2NUM(re.y), INT2NUM(re.width), INT2NUM(re.height));
+  return rb_funcall(arr, rb_intern("pack"), 1, rb_str_new2("V4"));
 }
 
 ///////////////////////////////////////////////////////////
 // ARGSS Rect class methods
 ///////////////////////////////////////////////////////////
-VALUE ARGSS::ARect::rload(VALUE self, VALUE str) {
-  VALUE arr = rb_funcall(str, rb_intern("unpack"), 1, rb_str_new2("l4"));
-  VALUE args[4] = {rb_ary_entry(arr, 0), rb_ary_entry(arr, 1), rb_ary_entry(arr, 2), rb_ary_entry(arr, 3)};
-  VALUE rect = rb_class_new_instance(4, args, ARGSS::ARect::id);
-  return rect;
+VALUE ARGSS::ARect::rload(VALUE /* self */, VALUE str) {
+  VALUE arr = rb_funcall(str, rb_intern("unpack"), 1, rb_str_new2("V4"));
+  return create(boost::make_shared<Rect>
+                (NUM2INT(rb_ary_entry(arr, 0)), NUM2INT(rb_ary_entry(arr, 1)),
+                 NUM2INT(rb_ary_entry(arr, 2)), NUM2INT(rb_ary_entry(arr, 3))));
 }
 
 ///////////////////////////////////////////////////////////
 // ARGSS Rect initialize
 ///////////////////////////////////////////////////////////
 void ARGSS::ARect::Init() {
-  id = rb_define_class("Rect", rb_cObject);
-  rb_define_method(id, "initialize", (rubyfunc)rinitialize, 4);
-  rb_define_method(id, "set", (rubyfunc)rset, 4);
-  rb_define_method(id, "x", (rubyfunc)rx, 0);
-  rb_define_method(id, "x=", (rubyfunc)rxE, 1);
-  rb_define_method(id, "y", (rubyfunc)ry, 0);
-  rb_define_method(id, "y=", (rubyfunc)ryE, 1);
-  rb_define_method(id, "width", (rubyfunc)rwidth, 0);
-  rb_define_method(id, "width=", (rubyfunc)rwidthE, 1);
-  rb_define_method(id, "height", (rubyfunc)rheight, 0);
-  rb_define_method(id, "height=", (rubyfunc)rheightE, 1);
-  rb_define_method(id, "empty", (rubyfunc)rempty, 0);
-  rb_define_method(id, "inspect", (rubyfunc)rinspect, 0);
-  rb_define_method(id, "_dump", (rubyfunc)rdump, -1);
-  rb_define_singleton_method(id, "_load", (rubyfunc)rload, 1);
-}
-
-///////////////////////////////////////////////////////////
-// ARGSS Rect new instance
-///////////////////////////////////////////////////////////
-VALUE ARGSS::ARect::New(double x, double y, double width, double height) {
-  VALUE args[4] = {rb_float_new(x), rb_float_new(y), rb_float_new(width), rb_float_new(height)};
-  return rb_class_new_instance(4, args, id);
+  rb_method const methods[] = {
+    rb_method("initialize", rinitialize),
+    rb_method("set", rset),
+    rb_method("x", rx),
+    rb_method("x=", rxE),
+    rb_method("y", ry),
+    rb_method("y=", ryE),
+    rb_method("width", rwidth),
+    rb_method("width=", rwidthE),
+    rb_method("height", rheight),
+    rb_method("height=", rheightE),
+    rb_method("empty", rempty),
+    rb_method("inspect", rinspect),
+    rb_method("_dump", rdump),
+    rb_method("_load", rload, true),
+    rb_method() };
+  define_class<Rect, true>("Rect", methods);
 }

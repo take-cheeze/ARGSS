@@ -30,43 +30,45 @@
 #include "binding/rpg.h"
 #include "binding/atable.h"
 #include "binding/acolor.h"
+#include "table.h"
+#include "color.h"
 
 ///////////////////////////////////////////////////////////
 // Global Variables
 ///////////////////////////////////////////////////////////
-VALUE ARGSS::ARPG::id;
-VALUE ARGSS::ARPG::Map_id;
-VALUE ARGSS::ARPG::MapInfo_id;
-VALUE ARGSS::ARPG::Event_id;
-VALUE ARGSS::ARPG::EventPage_id;
-VALUE ARGSS::ARPG::EventPageCondition_id;
-VALUE ARGSS::ARPG::EventPageGraphic_id;
-VALUE ARGSS::ARPG::EventCommand_id;
-VALUE ARGSS::ARPG::MoveRoute_id;
-VALUE ARGSS::ARPG::MoveCommand_id;
-VALUE ARGSS::ARPG::Actor_id;
-VALUE ARGSS::ARPG::Class_id;
-VALUE ARGSS::ARPG::ClassLearning_id;
-VALUE ARGSS::ARPG::Skill_id;
-VALUE ARGSS::ARPG::Item_id;
-VALUE ARGSS::ARPG::Weapon_id;
-VALUE ARGSS::ARPG::Armor_id;
-VALUE ARGSS::ARPG::Enemy_id;
-VALUE ARGSS::ARPG::EnemyAction_id;
-VALUE ARGSS::ARPG::Troop_id;
-VALUE ARGSS::ARPG::TroopMember_id;
-VALUE ARGSS::ARPG::TroopPage_id;
-VALUE ARGSS::ARPG::TroopPageCondition_id;
-VALUE ARGSS::ARPG::State_id;
-VALUE ARGSS::ARPG::Animation_id;
-VALUE ARGSS::ARPG::AnimationFrame_id;
-VALUE ARGSS::ARPG::AnimationTiming_id;
-VALUE ARGSS::ARPG::Tileset_id;
-VALUE ARGSS::ARPG::CommonEvent_id;
-VALUE ARGSS::ARPG::System_id;
-VALUE ARGSS::ARPG::SystemWords_id;
-VALUE ARGSS::ARPG::SystemTestBattler_id;
-VALUE ARGSS::ARPG::AudioFile_id;
+VALUE ARGSS::ARPG::id = Qnil;
+VALUE ARGSS::ARPG::Map_id = Qnil;
+VALUE ARGSS::ARPG::MapInfo_id = Qnil;
+VALUE ARGSS::ARPG::Event_id = Qnil;
+VALUE ARGSS::ARPG::EventPage_id = Qnil;
+VALUE ARGSS::ARPG::EventPageCondition_id = Qnil;
+VALUE ARGSS::ARPG::EventPageGraphic_id = Qnil;
+VALUE ARGSS::ARPG::EventCommand_id = Qnil;
+VALUE ARGSS::ARPG::MoveRoute_id = Qnil;
+VALUE ARGSS::ARPG::MoveCommand_id = Qnil;
+VALUE ARGSS::ARPG::Actor_id = Qnil;
+VALUE ARGSS::ARPG::Class_id = Qnil;
+VALUE ARGSS::ARPG::ClassLearning_id = Qnil;
+VALUE ARGSS::ARPG::Skill_id = Qnil;
+VALUE ARGSS::ARPG::Item_id = Qnil;
+VALUE ARGSS::ARPG::Weapon_id = Qnil;
+VALUE ARGSS::ARPG::Armor_id = Qnil;
+VALUE ARGSS::ARPG::Enemy_id = Qnil;
+VALUE ARGSS::ARPG::EnemyAction_id = Qnil;
+VALUE ARGSS::ARPG::Troop_id = Qnil;
+VALUE ARGSS::ARPG::TroopMember_id = Qnil;
+VALUE ARGSS::ARPG::TroopPage_id = Qnil;
+VALUE ARGSS::ARPG::TroopPageCondition_id = Qnil;
+VALUE ARGSS::ARPG::State_id = Qnil;
+VALUE ARGSS::ARPG::Animation_id = Qnil;
+VALUE ARGSS::ARPG::AnimationFrame_id = Qnil;
+VALUE ARGSS::ARPG::AnimationTiming_id = Qnil;
+VALUE ARGSS::ARPG::Tileset_id = Qnil;
+VALUE ARGSS::ARPG::CommonEvent_id = Qnil;
+VALUE ARGSS::ARPG::System_id = Qnil;
+VALUE ARGSS::ARPG::SystemWords_id = Qnil;
+VALUE ARGSS::ARPG::SystemTestBattler_id = Qnil;
+VALUE ARGSS::ARPG::AudioFile_id = Qnil;
 
 ///////////////////////////////////////////////////////////
 // ARGSS RPG subclasses methods
@@ -82,7 +84,7 @@ VALUE ARGSS::ARPG::rmap_initialize(VALUE self, VALUE width, VALUE height) {
   rb_iv_set(self, "@bgs", rb_class_new_instance(2, args, ARGSS::ARPG::AudioFile_id));
   rb_iv_set(self, "@encounter_list", rb_ary_new());
   rb_iv_set(self, "@encounter_step", INT2NUM(30));
-  rb_iv_set(self, "@data", ARGSS::ATable::New(width, height, INT2NUM(3)));
+  rb_iv_set(self, "@data", create(boost::make_shared<Table>(NUM2INT(width), NUM2INT(height), 3)));
   rb_iv_set(self, "@events", rb_hash_new());
   return self;
 }
@@ -172,7 +174,7 @@ VALUE ARGSS::ARPG::ractor_initialize(VALUE self) {
   rb_iv_set(self, "@character_hue", INT2NUM(0));
   rb_iv_set(self, "@battler_name", rb_str_new2(""));
   rb_iv_set(self, "@battler_hue", INT2NUM(0));
-  VALUE table = ARGSS::ATable::New(INT2NUM(6), INT2NUM(100));
+  VALUE table = create(boost::make_shared<Table>(6, 100));
   VALUE table_data = rb_ary_new();
   for (int i = 1; i < 100; i++) {
     rb_ary_push(table_data, INT2NUM(500 + i * 50));
@@ -202,8 +204,8 @@ VALUE ARGSS::ARPG::rclass_initialize(VALUE self) {
   rb_iv_set(self, "@position", INT2NUM(0));
   rb_iv_set(self, "@weapon_set", rb_ary_new());
   rb_iv_set(self, "@armor_set", rb_ary_new());
-  rb_iv_set(self, "@element_ranks", ARGSS::ATable::New(1));
-  rb_iv_set(self, "@state_ranks", ARGSS::ATable::New(1));
+  rb_iv_set(self, "@element_ranks", create(boost::make_shared<Table>(1)));
+  rb_iv_set(self, "@state_ranks", create(boost::make_shared<Table>(1)));
   rb_iv_set(self, "@learnings", rb_ary_new());
   return self;
 }
@@ -326,8 +328,8 @@ VALUE ARGSS::ARPG::renemy_initialize(VALUE self) {
   rb_iv_set(self, "@eva", INT2NUM(0));
   rb_iv_set(self, "@animation1_id", INT2NUM(0));
   rb_iv_set(self, "@animation2_id", INT2NUM(0));
-  rb_iv_set(self, "@element_ranks", ARGSS::ATable::New(1));
-  rb_iv_set(self, "@state_ranks", ARGSS::ATable::New(1));
+  rb_iv_set(self, "@element_ranks", create(boost::make_shared<Table>(1)));
+  rb_iv_set(self, "@state_ranks", create(boost::make_shared<Table>(1)));
   rb_iv_set(self, "@actions", rb_ary_new3(1, rb_class_new_instance(0, 0, ARGSS::ARPG::EnemyAction_id)));
   rb_iv_set(self, "@exp", INT2NUM(0));
   rb_iv_set(self, "@gold", INT2NUM(0));
@@ -428,7 +430,7 @@ VALUE ARGSS::ARPG::ranimation_initialize(VALUE self) {
 }
 VALUE ARGSS::ARPG::ranimationframe_initialize(VALUE self) {
   rb_iv_set(self, "@cell_max", INT2NUM(0));
-  rb_iv_set(self, "@cell_data", ARGSS::ATable::New(INT2NUM(0), INT2NUM(0)));
+  rb_iv_set(self, "@cell_data", create(boost::make_shared<Table>(0, 0)));
   return self;
 }
 VALUE ARGSS::ARPG::ranimationtiming_initialize(VALUE self) {
@@ -436,7 +438,7 @@ VALUE ARGSS::ARPG::ranimationtiming_initialize(VALUE self) {
   VALUE args[2] = {rb_str_new2(""), INT2NUM(80)};
   rb_iv_set(self, "@se", rb_class_new_instance(2, args, ARGSS::ARPG::AudioFile_id));
   rb_iv_set(self, "@flash_scope", INT2NUM(0));
-  rb_iv_set(self, "@flash_color", ARGSS::AColor::New(255, 255, 255, 255));
+  rb_iv_set(self, "@flash_color", create(boost::make_shared<Color>(255, 255, 255, 255)));
   rb_iv_set(self, "@flash_duration", INT2NUM(5));
   rb_iv_set(self, "@condition", INT2NUM(0));
   return self;
@@ -460,11 +462,10 @@ VALUE ARGSS::ARPG::rtileset_initialize(VALUE self) {
   rb_iv_set(self, "@fog_sx", INT2NUM(0));
   rb_iv_set(self, "@fog_sy", INT2NUM(0));
   rb_iv_set(self, "@battleback_name", rb_str_new2(""));
-  rb_iv_set(self, "@passages", ARGSS::ATable::New(384));
-  VALUE table = ARGSS::ATable::New(384);
-  rb_ary_store(rb_iv_get(table, "@data"), 0, INT2NUM(5));
-  rb_iv_set(self, "@priorities", table);
-  rb_iv_set(self, "@terrain_tags", ARGSS::ATable::New(384));
+  rb_iv_set(self, "@passages", create(boost::make_shared<Table>(384)));
+  rb_iv_set(self, "@priorities", create(boost::make_shared<Table>(384)));
+  get<Table>(rb_iv_get(self, "@priorities"))(0) = 5;
+  rb_iv_set(self, "@terrain_tags", create(boost::make_shared<Table>(384)));
   return self;
 }
 VALUE ARGSS::ARPG::rcommonevent_initialize(VALUE self) {

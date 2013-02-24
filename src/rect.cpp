@@ -28,7 +28,6 @@
 // Headers
 ///////////////////////////////////////////////////////////
 #include "rect.h"
-#include "binding/arect.h"
 
 ///////////////////////////////////////////////////////////
 /// Constructor
@@ -38,12 +37,6 @@ Rect::Rect() {
   y = 0;
   width = 0;
   height = 0;
-}
-Rect::Rect(VALUE rect) {
-  x = NUM2INT(rb_iv_get(rect, "@x"));
-  y = NUM2INT(rb_iv_get(rect, "@y"));
-  width = NUM2INT(rb_iv_get(rect, "@width"));
-  height = NUM2INT(rb_iv_get(rect, "@height"));
 }
 Rect::Rect(int ix, int iy, int iwidth, int iheight) {
   x = ix;
@@ -69,13 +62,6 @@ void Rect::Set(int nx, int ny, int nwidth, int nheight) {
   height = nheight;
 }
 
-///////////////////////////////////////////////////////////
-/// Get ARGSS rect
-///////////////////////////////////////////////////////////
-VALUE Rect::GetARGSS() {
-  VALUE args[4] = {INT2NUM(x), INT2NUM(y), INT2NUM(width), INT2NUM(height)};
-  return rb_class_new_instance(4, args, ARGSS::ARect::id);
-}
 ///////////////////////////////////////////////////////////
 /// Adjust Rect
 ///////////////////////////////////////////////////////////

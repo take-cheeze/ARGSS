@@ -88,10 +88,10 @@ namespace ARuby {
 ///////////////////////////////////////////////////////////
 
 /// C++ bool to Ruby boolean
-#define BOOL2NUM(x) (x ? Qtrue : Qfalse)
+#define BOOL2NUM(x) ((x) ? Qtrue : Qfalse)
 
 /// Ruby boolean to C++ bool
-#define NUM2BOOL(x) (x == Qtrue)
+#define NUM2BOOL(x) ((x) == Qtrue)
 
 /// Quick form for raising wrong number of argument error
 #define raise_argn(a, n) (rb_raise(rb_eArgError, "wrong number of arguments(%i for %i)", a, n))
@@ -113,5 +113,7 @@ void Check_Classes_N(VALUE obj, VALUE _class);
 
 /// Typedef for creating ruby methods
 typedef VALUE (*rubyfunc)(...);
+
+#include "aruby_cxx.h"
 
 #endif

@@ -32,8 +32,9 @@
 ///////////////////////////////////////////////////////////
 #include <string>
 
+#include "bitmap_fwd.h"
+
 class Color;
-class Bitmap;
 class Rect;
 
 ///////////////////////////////////////////////////////////
@@ -41,7 +42,7 @@ class Rect;
 ///////////////////////////////////////////////////////////
 namespace Text {
   void Init();
-  Bitmap* Draw(std::string const& text, std::string const& font, Color const& color, int size, bool bold, bool italic, bool shadow);
+  BitmapRef Draw(std::string const& text, std::string const& font, Color const& color, int size, bool bold, bool italic, bool shadow);
   Rect RectSize(std::string const& text, std::string const& font, int size);
 }
 

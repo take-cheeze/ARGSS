@@ -33,23 +33,19 @@
 #include <string>
 #include <map>
 #include <vector>
-#include "drawable.h"
+#include <boost/array.hpp>
+#include <boost/cstdint.hpp>
 
-class Bitmap;
+#include "drawable.h"
+#include "bitmap_fwd.h"
 
 ///////////////////////////////////////////////////////////
 /// Tilemap class
 ///////////////////////////////////////////////////////////
 class Tilemap : public Drawable {
 public:
-  Tilemap(unsigned long iid);
+  Tilemap();
   ~Tilemap();
-
-  static void Init();
-  static bool IsDisposed(unsigned long id);
-  static void New(unsigned long id);
-  static Tilemap* Get(unsigned long id);
-  static void Dispose(unsigned long id);
 
   void RefreshBitmaps();
   void Draw(long z);
@@ -57,39 +53,28 @@ public:
   void RefreshData();
 
   void Update();
-  unsigned long GetViewport();
-  void SetViewport(unsigned long nviewport);
-  unsigned long GetTileset();
-  void SetTileset(unsigned long ntileset);
-  unsigned long GetMapData();
-  void SetMapData(unsigned long nmap_data);
-  unsigned long GetFlashData();
-  void SetFlashData(unsigned long nflash_data);
-  unsigned long GetPriorities();
-  void SetPriorities(unsigned long npriorities);
-  bool GetVisible();
-  void SetVisible(bool nvisible);
-  int GetOx();
-  void SetOx(int nox);
-  int GetOy();
-  void SetOy(int noy);
 
-private:
-  unsigned long id;
-  unsigned long viewport;
-  unsigned long tileset;
-  unsigned long autotiles;
-  unsigned long map_data;
-  unsigned long flash_data;
-  unsigned long priorities;
+  BitmapRef tileset;
+  boost::array<BitmapRef, 8> autotiles;
+  TableRef flash_data, priorities;
   bool visible;
   int ox;
   int oy;
+
+  TableRef const& map_data() const { return map_data_; }
+  void map_data(TableRef const& ref);
+  ViewportRef const& viewport() const { return viewport_; }
+  void viewport(ViewportRef const& ref);
+
+ private:
+  TableRef map_data_;
+  ViewportRef viewport_;
+
   int autotile_frame;
   int autotile_time;
 
-  std::map<unsigned long, std::map<int, std::map<int, Bitmap*> > > autotiles_cache;
-  static int autotiles_id[6][8][4];
+  std::map<Bitmap*, std::map<int, std::map<int, BitmapRef> > > autotiles_cache;
+  static const uint8_t autotiles_id[6][8][4];
 
   struct TileData {
     int id;

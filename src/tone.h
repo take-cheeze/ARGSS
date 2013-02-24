@@ -32,15 +32,22 @@
 ///////////////////////////////////////////////////////////
 class Tone {
 public:
-  Tone();
-  Tone(unsigned long tone);
-
-  void Set(unsigned long tone);
+  Tone(int r, int g, int b, int gr = 0)
+      : red(r), green(g), blue(b), gray(gr) {}
 
   double red;
   double green;
   double blue;
   double gray;
 };
+
+inline bool operator==(Tone const& l, Tone const& r) {
+  return l.red == r.red and l.green == r.green
+      and l.blue == r.blue and l.gray == r.gray;
+}
+
+inline bool operator !=(Tone const& l, Tone const& r) {
+  return not(l == r);
+}
 
 #endif

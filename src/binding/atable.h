@@ -42,19 +42,7 @@ namespace ARGSS {
     ///////////////////////////////////////////////////
     void Init();
 
-    ///////////////////////////////////////////////////
-    /// Create Table instance.
-    ///////////////////////////////////////////////////
-    //@{
-
-    VALUE New(int xsize);
-    VALUE New(int xsize, int ysize);
-    VALUE New(int xsize, int ysize, int zsize);
-
-    //@}
-
     /// Table class id.
-    extern VALUE id;
 
     ///////////////////////////////////////////////////
     /// Table instance methods.

@@ -44,7 +44,6 @@ namespace ARGSS {
       void Init();
 
       /// Weather class id.
-      extern VALUE id;
 
       ///////////////////////////////////////////////
       /// Weather instance methods.

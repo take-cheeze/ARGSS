@@ -42,6 +42,10 @@
 #include "msgbox.h"
 #include "graphics.h"
 
+void Output::raise(boost::format const& f) {
+  raise(f.str());
+}
+
 ///////////////////////////////////////////////////////////
 // Global Variables
 ///////////////////////////////////////////////////////////
@@ -69,7 +73,7 @@ void Output::Error(const char* fmt, ...) {
 
   va_end(args);
 }
-void Output::ErrorStr(std::string err){
+void Output::ErrorStr(std::string const& err){
   PostStr(err);
   if (Console::Active()) {
     Post("\nARGSS will close now. Press any key...");
@@ -98,7 +102,7 @@ void Output::Warning(const char* fmt, ...) {
 
   va_end(args);
 }
-void Output::WarningStr(std::string warn) {
+void Output::WarningStr(std::string const& warn) {
   PostStr(warn);
 }
 
@@ -115,7 +119,7 @@ void Output::Post(const char* fmt, ...) {
 
   va_end(args);
 }
-void Output::PostStr(std::string msg) {
+void Output::PostStr(std::string const& msg) {
   Graphics::TimerWait();
   switch (output_type) {
   case 1:
@@ -145,7 +149,7 @@ void Output::PostStr(std::string msg) {
 ///////////////////////////////////////////////////////////
 /// Output File
 ///////////////////////////////////////////////////////////
-void Output::PostFile(std::string msg) {
+void Output::PostFile(std::string const& msg) {
   std::ofstream file;
   file.open(filename.c_str(), std::ios::out | std::ios::app);
   file << msg;
@@ -207,4 +211,27 @@ std::string Output::Getc() {
   }
 #endif
   return chr;
+}
+
+///////////////////////////////////////////////////////////
+// AudioNotLoad
+///////////////////////////////////////////////////////////
+void Output::AudioNotLoad(std::string const& type, std::string const& file) {
+
+  raise(boost::format("couldn't load %s %s.\n") % file % type);
+}
+
+void Output::AudioNotLoad(std::string const& type, std::string const& file, std::string const& description) {
+  raise(boost::format("couldn't load %s %s.\n%s\n") % file % type % description);
+}
+
+///////////////////////////////////////////////////////////
+// AudioNotPlay
+///////////////////////////////////////////////////////////
+void Output::AudioNotPlay(std::string const& type, std::string const& file) {
+  raise(boost::format("couldn't play %s %s.\n") % file % type);
+}
+
+void Output::AudioNotPlay(std::string const& type, std::string const& file, std::string const& description) {
+  raise(boost::format("couldn't play %s %s.\n%s\n") % file % type % description);
 }

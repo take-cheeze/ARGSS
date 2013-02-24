@@ -4,7 +4,7 @@
 #include <string>
 
 namespace Registry {
-inline std::string ReadStrValue(std::string const& section, std::string const& key, std::string const&) { return ""; }
+inline std::string ReadStrValue(std::string const& /* section */, std::string const& /* key */, std::string const&) { return ""; }
 }
 
 #endif

@@ -28,14 +28,12 @@
 // Headers
 ///////////////////////////////////////////////////////////
 #include "binding/rpg.h"
-#include "binding/rpg_cache.h"
 #include "binding/abitmap.h"
-#include "binding/arect.h"
+#include "binding/rpg_cache.h"
+#include "bitmap.h"
+#include "rect.h"
 
-///////////////////////////////////////////////////////////
-// Global Variables
-///////////////////////////////////////////////////////////
-VALUE ARGSS::ARPG::ACache::id;
+VALUE ARGSS::ARPG::ACache::id = Qnil;
 
 ///////////////////////////////////////////////////////////
 // ARGSS RPG::Cache module methods
@@ -46,15 +44,15 @@ VALUE ARGSS::ARPG::ACache::rload_bitmap(int argc, VALUE* argv, VALUE self) {
   VALUE hue = argv[2];
   if (argc == 2) hue = INT2NUM(0);
   VALUE path = rb_str_concat(rb_str_dup(argv[0]), argv[1]);
-  VALUE cache = rb_iv_get(ARGSS::ARPG::ACache::id, "@cache");
+  VALUE cache = rb_iv_get(self, "@cache");
   VALUE cache_path;
   if ((rb_funcall(cache, rb_intern("include?"), 1, path) == Qfalse) ||
     (ARGSS::ABitmap::rdisposedQ(rb_hash_aref(cache, path)) == Qtrue)) {
     if (RSTRING(argv[0])->len > 0) {
-      cache_path = rb_hash_aset(cache, path, rb_class_new_instance(1, &path, ARGSS::ABitmap::id));
+      cache_path = rb_hash_aset(cache, path, rb_class_new_instance(1, &path, ruby_class<Bitmap>()));
     } else {
       VALUE args[2] = {INT2NUM(32), INT2NUM(32)};
-      cache_path = rb_hash_aset(cache, path, rb_class_new_instance(2, args, ARGSS::ABitmap::id));
+      cache_path = rb_hash_aset(cache, path, rb_class_new_instance(2, args, ruby_class<Bitmap>()));
     }
   } else {
     cache_path = rb_hash_aref(cache, path);
@@ -128,15 +126,15 @@ VALUE ARGSS::ARPG::ACache::rwindowskin(VALUE self, VALUE filename) {
 }
 VALUE ARGSS::ARPG::ACache::rtile(VALUE self, VALUE filename, VALUE tile_id, VALUE hue) {
   VALUE key = rb_ary_new3(3, filename, tile_id, hue);
-  VALUE cache = rb_iv_get(ARGSS::ARPG::ACache::id, "@cache");
+  VALUE cache = rb_iv_get(self, "@cache");
   VALUE cache_key;
   if ((rb_funcall(cache, rb_intern("include?"), 1, key) == Qfalse) ||
     (ARGSS::ABitmap::rdisposedQ(rb_hash_aref(cache, key)) == Qtrue)) {
     VALUE args[2] = {INT2NUM(32), INT2NUM(32)};
-    cache_key = rb_hash_aset(cache, key, rb_class_new_instance(2, args, ARGSS::ABitmap::id));
+    cache_key = rb_hash_aset(cache, key, rb_class_new_instance(2, args, ruby_class<Bitmap>()));
     double x = (NUM2INT(tile_id) - 384) % 8 * 32;
     double y = (NUM2INT(tile_id) - 384) / 8 * 32;
-    VALUE rect = ARGSS::ARect::New(x, y, 32, 32);
+    VALUE rect = create(boost::make_shared<Rect>(x, y, 32, 32));
     VALUE values[4] = {INT2NUM(0), INT2NUM(0), rtileset(self, filename), rect};
     ARGSS::ABitmap::rblt(4, values, cache_key);
     ARGSS::ABitmap::rhue_change(cache_key, hue);
@@ -146,14 +144,14 @@ VALUE ARGSS::ARPG::ACache::rtile(VALUE self, VALUE filename, VALUE tile_id, VALU
   return cache_key;
 }
 VALUE ARGSS::ARPG::ACache::rclear(VALUE self) {
-  VALUE cache = rb_iv_get(ARGSS::ARPG::ACache::id, "@cache");
+  VALUE cache = rb_iv_get(self, "@cache");
   VALUE values = rb_funcall(cache, rb_intern("values"), 0);
   for (int i = 0; i < RARRAY(values)->len; i++) {
     if (ARGSS::ABitmap::rdisposedQ(rb_ary_entry(values, i)) == Qfalse) {
       ARGSS::ABitmap::rdispose(rb_ary_entry(values, i));
     }
   }
-  rb_iv_set(ARGSS::ARPG::ACache::id, "@cache", rb_hash_new());
+  rb_iv_set(self, "@cache", rb_hash_new());
   return rb_gc_start();
 }
 
@@ -161,22 +159,24 @@ VALUE ARGSS::ARPG::ACache::rclear(VALUE self) {
 // ARGSS RPG::Cache initialize
 ///////////////////////////////////////////////////////////
 void ARGSS::ARPG::ACache::Init() {
-  id = rb_define_module_under(ARGSS::ARPG::id, "Cache");
-  rb_define_singleton_method(id, "load_bitmap", (rubyfunc)rload_bitmap, -1);
-  rb_define_singleton_method(id, "animation", (rubyfunc)ranimation, 2);
-  rb_define_singleton_method(id, "autotile", (rubyfunc)rautotile, 1);
-  rb_define_singleton_method(id, "battleback", (rubyfunc)rbattleback, 1);
-  rb_define_singleton_method(id, "battler", (rubyfunc)rbattler, 2);
-  rb_define_singleton_method(id, "character", (rubyfunc)rcharacter, 2);
-  rb_define_singleton_method(id, "fog", (rubyfunc)rfog, 2);
-  rb_define_singleton_method(id, "gameover", (rubyfunc)rgameover, 1);
-  rb_define_singleton_method(id, "icon", (rubyfunc)ricon, 1);
-  rb_define_singleton_method(id, "panorama", (rubyfunc)rpanorama, 2);
-  rb_define_singleton_method(id, "picture", (rubyfunc)rpicture, 1);
-  rb_define_singleton_method(id, "tileset", (rubyfunc)rtileset, 1);
-  rb_define_singleton_method(id, "title", (rubyfunc)rtitle, 1);
-  rb_define_singleton_method(id, "windowskin", (rubyfunc)rwindowskin, 1);
-  rb_define_singleton_method(id, "tile", (rubyfunc)rtile, 3);
-  rb_define_singleton_method(id, "clear", (rubyfunc)rclear, 0);
+  rb_method const methods[] = {
+    rb_method("load_bitmap", rload_bitmap, true),
+    rb_method("animation", ranimation, true),
+    rb_method("autotile", rautotile, true),
+    rb_method("battleback", rbattleback, true),
+    rb_method("battler", rbattler, true),
+    rb_method("character", rcharacter, true),
+    rb_method("fog", rfog, true),
+    rb_method("gameover", rgameover, true),
+    rb_method("icon", ricon, true),
+    rb_method("panorama", rpanorama, true),
+    rb_method("picture", rpicture, true),
+    rb_method("tileset", rtileset, true),
+    rb_method("title", rtitle, true),
+    rb_method("windowskin", rwindowskin, true),
+    rb_method("tile", rtile, true),
+    rb_method("clear", rclear, true),
+    rb_method() };
+  id = define_module_under(ARGSS::ARPG::id, "Cache", methods);
   rb_iv_set(id, "@cache", rb_hash_new());
 }

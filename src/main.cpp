@@ -30,21 +30,18 @@
 #include "output.h"
 #include "player.h"
 #include "config.h"
-#include "aruby.h"
+#include "binding/aruby.h"
 #include "audio.h"
 #include "graphics.h"
 #include "input.h"
 #include "filefinder.h"
+#include "SDL.h"
 
 ///////////////////////////////////////////////////////////
 /// Main
 ///////////////////////////////////////////////////////////
-#ifdef WIN32
-int WINAPI WinMain(HINSTANCE /*hInstance*/, HINSTANCE /*hPrevInstance*/, LPSTR /*lpCmdLine*/, int /*nCmdShow*/) {
-#else
-int main(int argc, char** argv) {
-#endif
-
+extern "C" int main(int argc, char* argv[]) {
+  (void)argc; (void)argv;
   Output::Init();
   Config::Init();
   FileFinder::Init();

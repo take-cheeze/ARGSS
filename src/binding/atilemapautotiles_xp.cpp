@@ -28,26 +28,19 @@
 // Headers
 ///////////////////////////////////////////////////////////
 #include "binding/atilemapautotiles_xp.h"
-#include "binding/abitmap.h"
+#include "tilemap_xp.h"
 
-///////////////////////////////////////////////////////////
-// Global Variables
-///////////////////////////////////////////////////////////
-VALUE ARGSS::ATilemapAutotiles::id;
+static VALUE id = Qnil;
 
 ///////////////////////////////////////////////////////////
 // ARGSS TilemapAutotiles instance methods
 ///////////////////////////////////////////////////////////
-VALUE ARGSS::ATilemapAutotiles::rinitialize(VALUE self) {
-  rb_iv_set(self, "@autotiles", rb_ary_new2(8));
-  return self;
-}
 VALUE ARGSS::ATilemapAutotiles::raref(VALUE self, VALUE index) {
-  return rb_ary_entry(rb_iv_get(self, "@autotiles"), NUM2INT(index));
+  return create(get<Tilemap>(rb_iv_get(self, "@tilemap")).autotiles[NUM2INT(index)]);
 }
 VALUE ARGSS::ATilemapAutotiles::raset(VALUE self, VALUE index, VALUE bitmap) {
-  Check_Classes_N(bitmap, ARGSS::ABitmap::id);
-  rb_ary_store(rb_iv_get(self, "@autotiles"), NUM2INT(index), bitmap);
+  Check_Classes_N(bitmap, ruby_class<Bitmap>());
+  get<Tilemap>(rb_iv_get(self, "@tilemap")).autotiles[NUM2INT(index)] = get_ptr<Bitmap>(bitmap);
   return bitmap;
 }
 
@@ -56,7 +49,6 @@ VALUE ARGSS::ATilemapAutotiles::raset(VALUE self, VALUE index, VALUE bitmap) {
 ///////////////////////////////////////////////////////////
 void ARGSS::ATilemapAutotiles::Init() {
   id = rb_define_class("TilemapAutotiles", rb_cObject);
-  rb_define_method(id, "initialize", (rubyfunc)rinitialize, 0);
   rb_define_method(id, "[]", (rubyfunc)raref, 1);
   rb_define_method(id, "[]=", (rubyfunc)raset, 2);
 }
@@ -64,6 +56,8 @@ void ARGSS::ATilemapAutotiles::Init() {
 ///////////////////////////////////////////////////////////
 // ARGSS TilemapAutotiles create instance
 ///////////////////////////////////////////////////////////
-VALUE ARGSS::ATilemapAutotiles::New() {
-  return rb_class_new_instance(0, 0, id);
+VALUE ARGSS::ATilemapAutotiles::New(boost::shared_ptr<Tilemap> const& ref) {
+  VALUE const ret = rb_class_new_instance(0, 0, id);
+  rb_iv_set(ret, "@tilemap", create(ref));
+  return ret;
 }

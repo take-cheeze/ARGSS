@@ -174,8 +174,13 @@ namespace Input {
     };
   };
 
-  Keys::InputKey NUM2KEY(unsigned long num);
-  unsigned long KEY2NUM(int key);
+  struct rgss_key {
+    rgss_key(int k);
+    int const value;
+  };
+
+  Keys::InputKey NUM2KEY(rgss_key num);
+  rgss_key KEY2NUM(int key);
 };
 
 #endif

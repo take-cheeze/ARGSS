@@ -28,7 +28,6 @@
 // Headers
 ///////////////////////////////////////////////////////////
 #include "audio_sdl.h"
-#include "binding/aerror.h"
 #include "filefinder.h"
 #include "output.h"
 
@@ -94,14 +93,14 @@ void Audio::ME_finish() {
 ///////////////////////////////////////////////////////////
 // BGM play
 ///////////////////////////////////////////////////////////
-void Audio::BGM_Play(std::string file, int volume, int pitch) {
+void Audio::BGM_Play(std::string file, int volume, int /* pitch */) {
   std::string path = FileFinder::FindMusic(file);
-  if (path.empty()) ARGSS::AError::FileNotFound(file);
+  if (path.empty()) Output::FileNotFound(file);
 
   if (bgm != NULL) Mix_FreeMusic(bgm);
 
   bgm = Mix_LoadMUS(path.c_str());
-  if (!bgm) ARGSS::AError::AudioNotLoad("BGM", file, Mix_GetError());
+  if (!bgm) Output::AudioNotLoad("BGM", file, Mix_GetError());
 
   bgm_volume = volume * MIX_MAX_VOLUME / 100;
   if (me_playing) {
@@ -109,7 +108,7 @@ void Audio::BGM_Play(std::string file, int volume, int pitch) {
   } else {
     bgm_playing = true;
     Mix_VolumeMusic(bgm_volume);
-    if (Mix_PlayMusic(bgm, -1) == -1) ARGSS::AError::AudioNotPlay("BGM", file, Mix_GetError());
+    if (Mix_PlayMusic(bgm, -1) == -1) Output::AudioNotPlay("BGM", file, Mix_GetError());
 
     Mix_HookMusicFinished(NULL);
   }
@@ -140,18 +139,18 @@ void Audio::BGM_Fade(int fade) {
 ///////////////////////////////////////////////////////////
 // BGS play
 ///////////////////////////////////////////////////////////
-void Audio::BGS_Play(std::string file, int volume, int pitch) {
+void Audio::BGS_Play(std::string file, int volume, int /* pitch */) {
   std::string path = FileFinder::FindMusic(file);
-  if (path.empty()) ARGSS::AError::FileNotFound(file);
+  if (path.empty()) Output::FileNotFound(file);
 
   if (bgs != NULL) Mix_FreeChunk(bgs);
 
   bgs = Mix_LoadWAV(path.c_str());
-  if (!bgs) ARGSS::AError::AudioNotLoad("BGS", file, Mix_GetError());
+  if (!bgs) Output::AudioNotLoad("BGS", file, Mix_GetError());
 
   bgs_channel = Mix_PlayChannel(-1, bgs, -1);
   Mix_Volume(bgs_channel, volume * MIX_MAX_VOLUME / 100);
-  if (bgs_channel == -1) ARGSS::AError::AudioNotPlay("BGS", file, Mix_GetError());
+  if (bgs_channel == -1) Output::AudioNotPlay("BGS", file, Mix_GetError());
 }
 
 ///////////////////////////////////////////////////////////
@@ -171,16 +170,16 @@ void Audio::BGS_Fade(int fade) {
 ///////////////////////////////////////////////////////////
 // ME play
 ///////////////////////////////////////////////////////////
-void Audio::ME_Play(std::string file, int volume, int pitch) {
+void Audio::ME_Play(std::string file, int volume, int /* pitch */) {
   std::string path = FileFinder::FindMusic(file);
-  if (path.empty()) ARGSS::AError::FileNotFound(file);
+  if (path.empty()) Output::FileNotFound(file);
 
   if (me != NULL) Mix_FreeMusic(me);
   me = Mix_LoadMUS(path.c_str());
-  if (!me) ARGSS::AError::AudioNotLoad("ME", file, Mix_GetError());
+  if (!me) Output::AudioNotLoad("ME", file, Mix_GetError());
 
   Mix_VolumeMusic(volume * MIX_MAX_VOLUME / 100);
-  if (Mix_PlayMusic(me, 1) == -1) ARGSS::AError::AudioNotPlay("ME", file, Mix_GetError());
+  if (Mix_PlayMusic(me, 1) == -1) Output::AudioNotPlay("ME", file, Mix_GetError());
 
   me_playing = true;
   if (bgm_playing) {
@@ -212,7 +211,7 @@ void Audio::ME_Fade(int fade) {
 ///////////////////////////////////////////////////////////
 // SE play
 ///////////////////////////////////////////////////////////
-void Audio::SE_Play(std::string file, int volume, int pitch) {
+void Audio::SE_Play(std::string file, int volume, int /* pitch */) {
   it_sounds = sounds.begin();
   while (it_sounds != sounds.end()) {
     if (!Mix_Playing(it_sounds->first)) {
@@ -225,14 +224,14 @@ void Audio::SE_Play(std::string file, int volume, int pitch) {
   if (sounds.size() >= 7) return;
 
   std::string path = FileFinder::FindMusic(file);
-  if (path.empty()) ARGSS::AError::FileNotFound(file);
+  if (path.empty()) Output::FileNotFound(file);
 
   Mix_Chunk* sound = Mix_LoadWAV(path.c_str());
-  if (!sound) ARGSS::AError::AudioNotLoad("SE", file, Mix_GetError());
+  if (!sound) Output::AudioNotLoad("SE", file, Mix_GetError());
 
   int channel = Mix_PlayChannel(-1, sound, 0);
   Mix_Volume(channel, volume * MIX_MAX_VOLUME / 100);
-  if (channel == -1) ARGSS::AError::AudioNotPlay("SE", file, Mix_GetError());
+  if (channel == -1) Output::AudioNotPlay("SE", file, Mix_GetError());
 
   sounds[channel] = sound;
 }

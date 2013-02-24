@@ -28,10 +28,9 @@
 // Headers
 ///////////////////////////////////////////////////////////
 #include <string>
+#include <deque>
 #include "time.hpp"
 #include "graphics.h"
-#include "aruby.h"
-#include "binding/aerror.h"
 #include "config.h"
 #include "player.h"
 #include "output.h"
@@ -41,24 +40,59 @@
 #include "opengl.h"
 #include "zobj.h"
 #include "bitmap.h"
+#include "texture.h"
 
 ///////////////////////////////////////////////////////////
 // Global Variables
 ///////////////////////////////////////////////////////////
-int Graphics::fps;
-int Graphics::framerate;
-int Graphics::framecount;
-Color Graphics::backcolor;
-int Graphics::brightness;
-double Graphics::framerate_interval;
-std::map<unsigned long, Drawable*> Graphics::drawable_map;
-std::map<unsigned long, Drawable*>::iterator Graphics::it_drawable_map;
-std::list<ZObj> Graphics::zlist;
-std::list<ZObj>::iterator Graphics::it_zlist;
-long Graphics::creation;
-long Graphics::last_tics;
-long Graphics::last_tics_wait;
-long Graphics::next_tics_fps;
+namespace {
+int fps;
+int framerate;
+int framecount;
+ColorRef backcolor;
+int brightness;
+double framerate_interval;
+std::list<ZObj> zlist;
+long creation;
+long last_tics;
+long last_tics_wait;
+long next_tics_fps;
+typedef std::map<Bitmap*, boost::shared_ptr<Texture> > texture_pool_type;
+texture_pool_type texture_pool_;
+}
+
+int Graphics::GetFPS() {
+  return fps;
+}
+
+int Graphics::get_creation_id() {
+  creation += 1;
+  return creation;
+}
+
+size_t UpdateTextures() {
+  std::deque<Bitmap*> removing;
+  size_t updated_count = 0;
+
+  for(texture_pool_type::iterator i = texture_pool_.begin(); i != texture_pool_.end(); ++i) {
+    if(i->second->expired()) { removing.push_back(i->first); }
+    else if(i->second->Update()) { updated_count++; }
+  }
+
+  for(size_t i = 0; i < removing.size(); ++i) {
+    texture_pool_.erase(removing[i]);
+  }
+
+  return updated_count;
+}
+
+Texture const& Graphics::GetTexture(BitmapRef const& bmp) {
+  texture_pool_type::const_iterator it = texture_pool_.find(bmp.get());
+  if(it == texture_pool_.end()) {
+    return *texture_pool_.insert
+             (std::make_pair(bmp.get(), boost::make_shared<Texture>(bmp))).first->second;
+  } else { return *(it->second); }
+}
 
 ///////////////////////////////////////////////////////////
 /// Initialize
@@ -67,7 +101,7 @@ void Graphics::Init() {
   fps = 0;
   framerate = 40;
   framecount = 0;
-  backcolor = Color(0, 0, 0, 0);
+  backcolor = boost::make_shared<Color>(0, 0, 0, 0);
   brightness = 255;
   creation = 0;
   framerate_interval = 1000.0 / framerate;
@@ -77,7 +111,6 @@ void Graphics::Init() {
   InitOpenGL();
 
   Text::Init();
-  Tilemap::Init();
 }
 
 ///////////////////////////////////////////////////////////
@@ -97,10 +130,10 @@ void Graphics::InitOpenGL() {
   glEnable(GL_BLEND);
 
   glClearColor(
-        (GLclampf)(backcolor.red / 255.0f),
-        (GLclampf)(backcolor.green / 255.0f),
-        (GLclampf)(backcolor.blue / 255.0f),
-        (GLclampf)(backcolor.alpha / 255.0f)
+        (GLclampf)(backcolor->red / 255.0f),
+        (GLclampf)(backcolor->green / 255.0f),
+        (GLclampf)(backcolor->blue / 255.0f),
+        (GLclampf)(backcolor->alpha / 255.0f)
   );
   glClearDepth(1.0);
   glClear(GL_COLOR_BUFFER_BIT);
@@ -111,21 +144,18 @@ void Graphics::InitOpenGL() {
 /// Exit
 ///////////////////////////////////////////////////////////
 void Graphics::Exit() {
-  for (it_drawable_map = drawable_map.begin(); it_drawable_map != drawable_map.end(); it_drawable_map++) {
-    delete it_drawable_map->second;
-  }
-  drawable_map.clear();
-  Bitmap::DisposeBitmaps();
+  zlist.clear();
+  // Bitmap::DisposeBitmaps();
 }
 
 ///////////////////////////////////////////////////////////
 /// Refresh all graphic objects
 ///////////////////////////////////////////////////////////
 void Graphics::RefreshAll() {
-  for (it_drawable_map = drawable_map.begin(); it_drawable_map != drawable_map.end(); it_drawable_map++) {
-    it_drawable_map->second->RefreshBitmaps();
+  for (std::list<ZObj>::iterator i = zlist.begin(); i != zlist.end(); i++) {
+    // i->GetId()->RefreshBitmaps();
   }
-  Bitmap::RefreshBitmaps();
+  // Bitmap::RefreshBitmaps();
 }
 
 ///////////////////////////////////////////////////////////
@@ -148,10 +178,10 @@ void Graphics::TimerContinue() {
 ///////////////////////////////////////////////////////////
 void Graphics::Update() {
   static long tics;
-  static long tics_fps = Time::GetTime();
+  // static long tics_fps = Time::GetTime();
   static long frames = 0;
-  static double waitframes = 0;
-  static double cyclesleftover;
+  // static double waitframes = 0;
+  // static double cyclesleftover;
 
   Player::Update();
   /*if (waitframes >= 1) {
@@ -191,8 +221,8 @@ void Graphics::Update() {
 void Graphics::DrawFrame() {
   glClear(GL_COLOR_BUFFER_BIT);
 
-  for (it_zlist = zlist.begin(); it_zlist != zlist.end(); it_zlist++) {
-    Graphics::drawable_map[it_zlist->GetId()]->Draw(it_zlist->GetZ());
+  for (std::list<ZObj>::iterator i = zlist.begin(); i != zlist.end(); i++) {
+    i->GetId()->Draw(i->GetZ());
   }
 
   if (brightness < 255) {
@@ -221,7 +251,7 @@ void Graphics::Freeze() {
 ///////////////////////////////////////////////////////////
 /// Transition effect
 ///////////////////////////////////////////////////////////
-void Graphics::Transition(int duration, std::string const& filename, int vague) {
+void Graphics::Transition(int /* duration */, std::string const& /* filename */, int /* vague */) {
   // TODO
 }
 
@@ -266,8 +296,8 @@ void Graphics::ResizeScreen(int width, int height) {
 ///////////////////////////////////////////////////////////
 /// Snap scree to bitmap
 ///////////////////////////////////////////////////////////
-VALUE Graphics::SnapToBitmap() {
-  return Qnil;
+BitmapRef Graphics::SnapToBitmap() {
+  return BitmapRef();
 }
 
 ///////////////////////////////////////////////////////////
@@ -317,16 +347,16 @@ int Graphics::GetFrameCount() {
 void Graphics::SetFrameCount(int nframecount) {
   framecount = nframecount;
 }
-VALUE Graphics::GetBackColor() {
-  return backcolor.GetARGSS();
+ColorRef const& Graphics::GetBackColor() {
+  return backcolor;
 }
-void Graphics::SetBackColor(VALUE nbackcolor) {
-  backcolor = Color(nbackcolor);
+void Graphics::SetBackColor(ColorRef const& nbackcolor) {
+  backcolor = nbackcolor;
   glClearColor(
-        (GLclampf)(backcolor.red / 255.0f),
-        (GLclampf)(backcolor.green / 255.0f),
-        (GLclampf)(backcolor.blue / 255.0f),
-        (GLclampf)(backcolor.alpha / 255.0f)
+        (GLclampf)(backcolor->red / 255.0f),
+        (GLclampf)(backcolor->green / 255.0f),
+        (GLclampf)(backcolor->blue / 255.0f),
+        (GLclampf)(backcolor->alpha / 255.0f)
   );
 }
 int Graphics::GetBrightness() {
@@ -340,22 +370,21 @@ void Graphics::SetBrightness(int nbrightness) {
 /// Sort ZObj
 ///////////////////////////////////////////////////////////
 bool Graphics::SortZObj(ZObj &first, ZObj &second) {
-  if (first.GetZ() < second.GetZ()) return true;
-  else if (first.GetZ() > second.GetZ()) return false;
-  else return first.GetCreation() < second.GetCreation();
+  return (first.GetZ() == second.GetZ())
+      ? first.GetCreation() < second.GetCreation()
+      : (first.GetZ() < second.GetZ());
 }
 
 ///////////////////////////////////////////////////////////
 /// Register ZObj
 ///////////////////////////////////////////////////////////
-void Graphics::RegisterZObj(long z, unsigned long id) {
-  creation += 1;
-  ZObj zobj(z, creation, id);
+void Graphics::RegisterZObj(long z, Drawable& id) {
+  ZObj zobj(z, get_creation_id(), id);
 
   zlist.push_back(zobj);
   zlist.sort(SortZObj);
 }
-void Graphics::RegisterZObj(long z, unsigned long id, bool multiz) {
+void Graphics::RegisterZObj(long z, Drawable& id, bool /* multiz */) {
   ZObj zobj(z, 999999, id);
   zlist.push_back(zobj);
   zlist.sort(SortZObj);
@@ -365,21 +394,21 @@ void Graphics::RegisterZObj(long z, unsigned long id, bool multiz) {
 /// Remove ZObj
 ///////////////////////////////////////////////////////////
 struct remove_zobj_id : public std::binary_function<ZObj, ZObj, bool> {
-  remove_zobj_id(VALUE val) : id(val) {}
+  remove_zobj_id(Drawable& val) : id(&val) {}
   bool operator () (ZObj &obj) const {return obj.GetId() == id;}
-  unsigned long id;
+  Drawable* const id;
 };
-void Graphics::RemoveZObj(unsigned long id) {
+void Graphics::RemoveZObj(Drawable& id) {
   zlist.remove_if (remove_zobj_id(id));
 }
 
 ///////////////////////////////////////////////////////////
 /// Update ZObj Z
 ///////////////////////////////////////////////////////////
-void Graphics::UpdateZObj(unsigned long id, long z) {
-  for (it_zlist = zlist.begin(); it_zlist != zlist.end(); it_zlist++) {
-    if (it_zlist->GetId() == id) {
-      it_zlist->SetZ(z);
+void Graphics::UpdateZObj(Drawable& id, long z) {
+  for (std::list<ZObj>::iterator i = zlist.begin(); i != zlist.end(); i++) {
+    if (i->GetId() == &id) {
+      i->SetZ(z);
       break;
     }
   }

@@ -33,70 +33,42 @@
 #include <string>
 #include "tone.h"
 #include "drawable.h"
-
-class Bitmap;
+#include "bitmap_fwd.h"
 
 ///////////////////////////////////////////////////////////
 /// Plane class
 ///////////////////////////////////////////////////////////
 class Plane : public Drawable {
 public:
-  Plane(unsigned long iid);
-
-  static bool IsDisposed(unsigned long id);
-  static void New(unsigned long id);
-  static Plane* Get(unsigned long id);
-  static void Dispose(unsigned long id);
+  Plane();
 
   void RefreshBitmaps();
   void Draw(long z);
-  void Draw(long z, Bitmap* dst_bitmap);
 
-  unsigned long GetViewport();
-  void SetViewport(unsigned long nviewport);
-  unsigned long GetBitmap();
-  void SetBitmap(unsigned long nbitmap);
-  bool GetVisible();
-  void SetVisible(bool nvisible);
-  int GetZ();
-  void SetZ(int nz);
-  int GetOx();
-  void SetOx(int nox);
-  int GetOy();
-  void SetOy(int noy);
-  float GetZoomX();
-  void SetZoomX(float nzoom_x);
-  float GetZoomY();
-  void SetZoomY(float nzoom_y);
-  int GetOpacity();
-  void SetOpacity(int nopacity);
-  int GetBlendType();
-  void SetBlendType(int nblend_type);
-  unsigned long GetColor();
-  void SetColor(unsigned long ncolor);
-  unsigned long GetTone();
-  void SetTone(unsigned long ntone);
-
-private:
-  void Refresh();
-  void ApplyTone();
-  void ApplyZoom();
-  bool needs_refresh;
-  Tone tone_last;
-
-  unsigned long id;
-  unsigned long viewport;
-  unsigned long bitmap;
+  BitmapRef bitmap;
   bool visible;
-  int z;
   int ox;
   int oy;
   float zoom_x;
   float zoom_y;
   int opacity;
   int blend_type;
-  unsigned long color;
-  unsigned long tone;
+  ColorRef color;
+  ToneRef tone;
+
+  int z() const;
+  void z(int nz);
+
+  ViewportRef const& viewport() const;
+  void viewport(ViewportRef const& ref);
+
+private:
+  void Refresh();
+  void ApplyTone();
+  void ApplyZoom();
+
+  int z_;
+  ViewportRef viewport_;
 };
 
 #endif

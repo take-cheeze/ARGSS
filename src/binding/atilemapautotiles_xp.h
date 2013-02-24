@@ -32,6 +32,8 @@
 ///////////////////////////////////////////////////////////
 #include "aruby.h"
 
+class Tilemap;
+
 namespace ARGSS {
   ///////////////////////////////////////////////////////
   /// ARGSS::TilemapAutotiles namespace
@@ -47,19 +49,13 @@ namespace ARGSS {
     ///////////////////////////////////////////////////
     //@{
 
-    VALUE New();
-
-    //@}
-
-    /// TilemapAutotiles class id.
-    extern VALUE id;
+    VALUE New(boost::shared_ptr<Tilemap> const& ref);
 
     ///////////////////////////////////////////////////
     /// TilemapAutotiles instance methods.
     ///////////////////////////////////////////////////
     //@{
 
-    VALUE rinitialize(VALUE self);
     VALUE raref(VALUE self, VALUE index);
     VALUE raset(VALUE self, VALUE index, VALUE bitmap);
 
