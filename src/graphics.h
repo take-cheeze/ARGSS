@@ -36,6 +36,7 @@
 
 #include "bitmap_fwd.h"
 
+class Rect;
 class Color;
 class ZObj;
 class Drawable;
@@ -45,6 +46,11 @@ struct Texture;
 /// Graphics namespace
 ///////////////////////////////////////////////////////////
 namespace Graphics {
+  struct Clipper {
+    Clipper(Rect const& r);
+    ~Clipper();
+  };
+
   void Init();
   void InitOpenGL();
   void Exit();
@@ -70,6 +76,9 @@ namespace Graphics {
   void SetBackColor(ColorRef const& nbackcolor);
   int GetBrightness();
   void SetBrightness(int nbrightness);
+
+  void Clip(Rect const& r);
+  void Unclip();
 
   bool SortZObj(ZObj &first, ZObj &second);
   void RegisterZObj(long z, Drawable& d);

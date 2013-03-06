@@ -100,7 +100,7 @@ VALUE ARGSS::ASprite::rbitmapE(VALUE self, VALUE bitmap) {
   check_disposed<Sprite>(self);
   Check_Classes_N(bitmap, ruby_class<Bitmap>());
   if (bitmap != Qnil) {
-    bool const disp = get_ptr<Bitmap>(bitmap);
+    bool const disp = bool(get_ptr<Bitmap>(bitmap));
     get<Sprite>(self).src_rect =
         boost::make_shared<Rect>(0, 0, disp? 0 : get<Bitmap>(bitmap).GetWidth(),
                                  disp? 0 : get<Bitmap>(bitmap).GetHeight());

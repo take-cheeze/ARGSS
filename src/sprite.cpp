@@ -31,6 +31,8 @@
 #include <algorithm>
 #include <utility>
 
+#include <boost/scoped_ptr.hpp>
+
 #include "sprite.h"
 #include "viewport.h"
 #include "player.h"
@@ -48,7 +50,6 @@ Sprite::Sprite() {
   visible = true;
   x = 0;
   y = 0;
-  z_ = 0;
   ox = 0;
   oy = 0;
   zoom_x = 1.0;
@@ -63,12 +64,6 @@ Sprite::Sprite() {
   tone_ = boost::make_shared<Tone>(0, 0, 0, 0);
   flash_duration = 0;
   flash_needs_refresh = false;
-
-  if (viewport_) {
-    viewport_->RegisterZObj(0, *this);
-  } else {
-    Graphics::RegisterZObj(0, *this);
-  }
 }
 
 ///////////////////////////////////////////////////////////
@@ -101,7 +96,7 @@ void Sprite::Dispose(VALUE id) {
 /// Refresh Bitmaps
 ///////////////////////////////////////////////////////////
 void Sprite::RefreshBitmaps() {
-  if (sprite != NULL) sprite->Changed();
+  if (sprite) sprite->Changed();
 }
 
 ///////////////////////////////////////////////////////////
@@ -129,13 +124,9 @@ void Sprite::Draw(long /* z */) {
 
   glTranslatef((float)x, (float)y, 0.0f);
 
-  if (viewport_) {
-    Rect rect = viewport_->GetViewportRect();
-
-    glEnable(GL_SCISSOR_TEST);
-    glScissor(rect.x, Player::GetHeight() - (rect.y + rect.height), rect.width, rect.height);
-
-    glTranslatef((float)rect.x, (float)rect.y, 0.0f);
+  boost::scoped_ptr<Graphics::Clipper> clip;
+  if (viewport()) {
+    clip.reset(new Graphics::Clipper(viewport()->GetViewportRect()));
   }
 
   glRotatef((float)angle, 0.0f, 0.0f, 1.0f);
@@ -235,112 +226,6 @@ void Sprite::Draw(long /* z */) {
       glTexCoord2f(corners[3][0], corners[3][1]); glVertex2f(0.0f, height * zoom_y);
     glEnd();
   }
-
-  glDisable(GL_SCISSOR_TEST);
-  /*if (!visible) return;
-  if (bitmap == Qnil) return;
-
-  src_rect_sprite = Rect(src_rect);
-
-  int width = src_rect_sprite.width;
-  int height = src_rect_sprite.height;
-  if (width <= 0 || height <= 0)
-  if (x < -width || x > Player::GetWidth() || y < -height || y > Player::GetHeight()) return;
-  if (zoom_x == 0 || zoom_y == 0 || opacity == 0) return;
-  if (flash_duration > 0 && flash_color.red == -1) return;
-
-  Refresh();
-
-  glEnable(GL_TEXTURE_2D);
-
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
-
-  sprite->BindBitmap();
-
-  glTranslatef((float)x, (float)y, 0.0f);
-
-  if (viewport != Qnil) {
-    Rect rect = Viewport::Get(viewport)->GetViewportRect();
-
-    glEnable(GL_SCISSOR_TEST);
-    glScissor(rect.x, Player::GetHeight() - (rect.y + rect.height), rect.width, rect.height);
-
-    glTranslatef((float)rect.x, (float)rect.y, 0.0f);
-  }
-
-  glRotatef((float)angle, 0.0f, 0.0f, 1.0f);
-  glTranslatef((float)-ox * zoom_x, (float)-oy * zoom_y, 0.0f);
-
-  glColor4f(1.0f, 1.0f, 1.0f, opacity / 255.0f);
-
-  float corners[4][2] = {0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f};
-  if (flipx && flipy) {
-    corners[0][0] = 1.0f; corners[0][1] = 1.0f;
-    corners[1][0] = 0.0f; corners[1][1] = 1.0f;
-    corners[2][0] = 0.0f; corners[2][1] = 0.0f;
-    corners[3][0] = 1.0f; corners[3][1] = 0.0f;
-  } else if (flipx) {
-    corners[0][0] = 1.0f; corners[0][1] = 0.0f;
-    corners[1][0] = 0.0f; corners[1][1] = 0.0f;
-    corners[2][0] = 0.0f; corners[2][1] = 1.0f;
-    corners[3][0] = 1.0f; corners[3][1] = 1.0f;
-  } else if (flipy) {
-    corners[0][0] = 0.0f; corners[0][1] = 1.0f;
-    corners[1][0] = 1.0f; corners[1][1] = 1.0f;
-    corners[2][0] = 1.0f; corners[2][1] = 0.0f;
-    corners[3][0] = 0.0f; corners[3][1] = 0.0f;
-  }
-
-  glEnable(GL_BLEND);
-  switch (blend_type) {
-  case 1:
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-    break;
-  case 2:
-    glBlendFunc(GL_SRC_ALPHA_SATURATE, GL_ONE_MINUS_SRC_COLOR);
-    break;
-  default:
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  }
-
-  if (bush_depth == 0) {
-    glBegin(GL_QUADS);
-      glTexCoord2f(corners[0][0], corners[0][1]); glVertex2f(0.0f, 0.0f);
-      glTexCoord2f(corners[1][0], corners[1][1]); glVertex2f(width * zoom_x, 0.0f);
-      glTexCoord2f(corners[2][0], corners[2][1]); glVertex2f(width * zoom_x, height * zoom_y);
-      glTexCoord2f(corners[3][0], corners[3][1]); glVertex2f(0.0f, height * zoom_y);
-    glEnd();
-  } else {
-    glBegin(GL_QUADS);
-      glTexCoord2f(0.0f, 0.0f);                glVertex2f(0.0f, 0.0f);
-      glTexCoord2f(1.0f, 0.0f);                glVertex2f(width * zoom_x, 0.0f);
-      glTexCoord2f(1.0f, 1.0f - bush_depth / (float)height);  glVertex2f(width * zoom_x, (height - bush_depth) * zoom_y);
-      glTexCoord2f(0.0f, 1.0f - bush_depth / (float)height);  glVertex2f(0.0f, (height - bush_depth) * zoom_y);
-    glEnd();
-
-    glColor4f(1.0f, 1.0f, 1.0f, 0.5f * (opacity / 255.0f));
-    glBegin(GL_QUADS);
-      glTexCoord2f(0.0f, (1.0f - bush_depth / (float)height));  glVertex2f(0.0f, (height - bush_depth) * zoom_y);
-      glTexCoord2f(1.0f, (1.0f - bush_depth / (float)height));  glVertex2f(width * zoom_x, (height - bush_depth) * zoom_y);
-      glTexCoord2f(1.0f, 1.0f);                  glVertex2f(width * zoom_x, height * zoom_y);
-      glTexCoord2f(0.0f, 1.0f);                  glVertex2f(0.0f, height * zoom_y);
-    glEnd();
-  }
-
-  if (flash_duration > 0) {
-    glBindTexture(GL_TEXTURE_2D, flash_texture);
-    GLfloat alpha = ((float)flash_color.alpha / 255.0f) * (1.0f - flash_frame / (float)flash_duration);
-    glColor4f((float)flash_color.red / 255.0f, (GLfloat)flash_color.green / 255.0f, (float)flash_color.blue / 255.0f, alpha);
-    glBegin(GL_QUADS);
-      glTexCoord2f(corners[0][0], corners[0][1]); glVertex2f(0.0f, 0.0f);
-      glTexCoord2f(corners[1][0], corners[1][1]); glVertex2f(width * zoom_x, 0.0f);
-      glTexCoord2f(corners[2][0], corners[2][1]); glVertex2f(width * zoom_x, height * zoom_y);
-      glTexCoord2f(corners[3][0], corners[3][1]); glVertex2f(0.0f, height * zoom_y);
-    glEnd();
-  }
-
-  glDisable(GL_SCISSOR_TEST);*/
 }
 
 ///////////////////////////////////////////////////////////
@@ -443,18 +328,6 @@ void Sprite::RefreshFlash() {
 ///////////////////////////////////////////////////////////
 /// Properties
 ///////////////////////////////////////////////////////////
-void Sprite::viewport(ViewportRef const& v) {
-  if (viewport_ != v) {
-    if (v) {
-      Graphics::RemoveZObj(*this);
-      v->RegisterZObj(0, *this);
-    } else {
-      if (viewport_) viewport_->RemoveZObj(*this);
-      Graphics::RegisterZObj(0, *this);
-    }
-  }
-  viewport_ = v;
-}
 
 void Sprite::bitmap(BitmapRef const& bmp) {
   if (bitmap_ != bmp) {
@@ -464,16 +337,6 @@ void Sprite::bitmap(BitmapRef const& bmp) {
   bitmap_ = bmp;
 }
 
-void Sprite::z(int nz) {
-  if (z_ != nz) {
-    if (viewport_) {
-      viewport_->UpdateZObj(*this, nz);
-    } else {
-      Graphics::UpdateZObj(*this, nz);
-    }
-  }
-  z_ = nz;
-}
 void Sprite::tone(ToneRef const& ntone) {
   if (*tone_ != *ntone) needs_refresh = true;
   tone_ = ntone;

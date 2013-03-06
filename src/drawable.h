@@ -27,16 +27,32 @@
 #ifndef _DRAWABLE_H_
 #define _DRAWABLE_H_
 
+#include "bitmap_fwd.h"
+
 ///////////////////////////////////////////////////////////
 /// Drawable virtual
 ///////////////////////////////////////////////////////////
 class Drawable {
 public:
-  virtual ~Drawable() {}
+  Drawable(ViewportRef const& v = ViewportRef());
+  virtual ~Drawable();
 
   virtual void Draw(long z) = 0;
 
-  // virtual void RefreshBitmaps() = 0;
+  ViewportRef const& viewport() const { return viewport_; }
+  void viewport(ViewportRef const& v);
+
+  int z() const;
+  void z(int nz);
+
+ protected:
+  void set_viewport_raw(ViewportRef const& v) {
+    viewport_ = v;
+  }
+
+ private:
+  ViewportRef viewport_;
+  int z_;
 };
 
 #endif

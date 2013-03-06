@@ -30,6 +30,7 @@
 #include <string>
 #include <map>
 #include <math.h>
+#include <boost/scoped_ptr.hpp>
 #include "tilemap_xp.h"
 #include "graphics.h"
 #include "viewport.h"
@@ -65,14 +66,6 @@ Tilemap::Tilemap() {
   oy = 0;
   autotile_time = 0;
   autotile_frame = 0;
-}
-
-Tilemap::~Tilemap() {
-  if (viewport_) {
-    viewport_->RemoveZObj(*this);
-  } else {
-    Graphics::RemoveZObj(*this);
-  }
 }
 
 ///////////////////////////////////////////////////////////
@@ -124,13 +117,9 @@ void Tilemap::Draw(long z_level) {
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 
-  if (viewport_) {
-    Rect rect = viewport_->GetViewportRect();
-
-    glEnable(GL_SCISSOR_TEST);
-    glScissor(rect.x, Player::GetHeight() - (rect.y + rect.height), rect.width, rect.height);
-
-    glTranslatef((float)rect.x, (float)rect.y, 0.0f);
+  boost::scoped_ptr<Graphics::Clipper> clip;
+  if (viewport()) {
+    clip.reset(new Graphics::Clipper(viewport()->GetViewportRect()));
   }
 
   glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
@@ -210,8 +199,6 @@ void Tilemap::Draw(long z_level) {
       }
     }
   }
-
-  glDisable(GL_SCISSOR_TEST);
 }
 
 ///////////////////////////////////////////////////////////
@@ -241,9 +228,9 @@ void Tilemap::RefreshData() {
 /// Properties
 ///////////////////////////////////////////////////////////
 void Tilemap::viewport(ViewportRef const& nviewport) {
-  if (viewport_ != nviewport) {
-    if (viewport_) {
-      viewport_->RemoveZObj(*this);
+  if (viewport() != nviewport) {
+    if (viewport()) {
+      viewport()->RemoveZObj(*this);
     } else {
       Graphics::RemoveZObj(*this);
     }
@@ -258,20 +245,20 @@ void Tilemap::viewport(ViewportRef const& nviewport) {
       }
     }
   }
-  viewport_ = nviewport;
+  set_viewport_raw(nviewport);
 }
 void Tilemap::map_data(TableRef const& nmap_data) {
   if (map_data_ != nmap_data) {
-    if (viewport_) {
-      viewport_->RemoveZObj(*this);
+    if (viewport()) {
+      viewport()->RemoveZObj(*this);
     } else {
       Graphics::RemoveZObj(*this);
     }
     if (nmap_data) {
       int height = nmap_data->ysize();
-      if (viewport_) {
+      if (viewport()) {
         for (int i = 0; i < height + 8; i++) {
-          viewport_->RegisterZObj(i * 32, *this, true);
+          viewport()->RegisterZObj(i * 32, *this, true);
         }
       } else {
         for (int i = 0; i < height + 8; i++) {

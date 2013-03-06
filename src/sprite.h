@@ -71,19 +71,13 @@ public:
   bool flipy;
 
   ToneRef const& tone() const { return tone_; }
-  int z() const { return z_; }
-  ViewportRef const& viewport() const { return viewport_; }
   BitmapRef const& bitmap() const { return bitmap_; }
 
   void tone(ToneRef const& t);
-  void z(int nz);
-  void viewport(ViewportRef const& v);
   void bitmap(BitmapRef const& bmp);
 
  private:
   ToneRef tone_;
-  int z_;
-  ViewportRef viewport_;
   BitmapRef bitmap_;
 
   GLuint flash_texture;

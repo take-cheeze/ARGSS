@@ -45,7 +45,6 @@
 class Tilemap : public Drawable {
 public:
   Tilemap();
-  ~Tilemap();
 
   void RefreshBitmaps();
   void Draw(long z);
@@ -63,12 +62,12 @@ public:
 
   TableRef const& map_data() const { return map_data_; }
   void map_data(TableRef const& ref);
-  ViewportRef const& viewport() const { return viewport_; }
-  void viewport(ViewportRef const& ref);
+
+  using Drawable::viewport;
+  void viewport(ViewportRef const& v);
 
  private:
   TableRef map_data_;
-  ViewportRef viewport_;
 
   int autotile_frame;
   int autotile_time;

@@ -42,7 +42,6 @@ class Plane : public Drawable {
 public:
   Plane();
 
-  void RefreshBitmaps();
   void Draw(long z);
 
   BitmapRef bitmap;
@@ -56,19 +55,10 @@ public:
   ColorRef color;
   ToneRef tone;
 
-  int z() const;
-  void z(int nz);
-
-  ViewportRef const& viewport() const;
-  void viewport(ViewportRef const& ref);
-
 private:
   void Refresh();
   void ApplyTone();
   void ApplyZoom();
-
-  int z_;
-  ViewportRef viewport_;
 };
 
 #endif

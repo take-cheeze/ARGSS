@@ -40,7 +40,6 @@
 class Window : public Drawable {
 public:
   Window();
-  ~Window();
 
   void Draw(long z);
 
@@ -62,15 +61,7 @@ public:
   int back_opacity;
   int contents_opacity;
 
-  ViewportRef const& viewport() const { return viewport_; }
-  void viewport(ViewportRef const& ref);
-  int z() const { return z_; }
-  void z(int z);
-
  private:
-  ViewportRef viewport_;
-  int z_;
-
   int cursor_frame;
   int pause_frame;
   int pause_id;

@@ -29,6 +29,9 @@
 ///////////////////////////////////////////////////////////
 #include <string>
 #include <cmath>
+
+#include <boost/scoped_ptr.hpp>
+
 #include "plane.h"
 #include "graphics.h"
 #include "viewport.h"
@@ -43,7 +46,6 @@
 ///////////////////////////////////////////////////////////
 Plane::Plane() {
   visible = true;
-  z_ = 0;
   ox = 0;
   oy = 0;
   zoom_x = 1.0;
@@ -52,35 +54,6 @@ Plane::Plane() {
   blend_type = 0;
   color = boost::make_shared<Color>(0, 0, 0, 255);
   tone = boost::make_shared<Tone>(0, 0, 0, 0);
-
-  if (viewport_) {
-    viewport_->RegisterZObj(0, *this);
-  } else {
-    Graphics::RegisterZObj(0, *this);
-  }
-}
-
-/*
-///////////////////////////////////////////////////////////
-/// Class Dispose Plane
-///////////////////////////////////////////////////////////
-void Plane::Dispose(VALUE id) {
-  if (Plane::Get(id)->viewport != Qnil) {
-    Viewport::Get(Plane::Get(id)->viewport)->RemoveZObj(id);
-  } else {
-    Graphics::RemoveZObj(id);
-  }
-  delete Graphics::drawable_map[id];
-  std::map<VALUE, Drawable*>::iterator it = Graphics::drawable_map.find(id);
-  Graphics::drawable_map.erase(it);
-}
-*/
-
-///////////////////////////////////////////////////////////
-/// Refresh Bitmaps
-///////////////////////////////////////////////////////////
-void Plane::RefreshBitmaps() {
-
 }
 
 ///////////////////////////////////////////////////////////
@@ -100,16 +73,12 @@ void Plane::Draw(long /* z */) {
 
   float rectw, recth;
 
-  if (viewport_) {
-    Rect rect = viewport_->GetViewportRect();
-
-    glEnable(GL_SCISSOR_TEST);
-    glScissor(rect.x, Player::GetHeight() - (rect.y + rect.height), rect.width, rect.height);
-
-    rectw = (float)rect.width;
-    recth = (float)rect.height;
-
-    glTranslatef((float)rect.x, (float)rect.y, 0.0f);
+  boost::scoped_ptr<Graphics::Clipper> clip;
+  if (viewport()) {
+    clip.reset(new Graphics::Clipper(viewport()->GetViewportRect()));
+    Rect rect = viewport()->GetViewportRect();
+    rectw = rect.width;
+    recth = rect.height;
   } else {
     rectw = (float)Player::GetWidth();
     recth = (float)Player::GetHeight();
@@ -128,7 +97,7 @@ void Plane::Draw(long /* z */) {
   default:
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   }
-  float bmpw = bitmap->GetWidth() * zoom_x;
+  float bmpw = bitmap->GetWidth() * zoom_x;
   float bmph = bitmap->GetHeight() * zoom_y;
   int r_ox = -ox % (int)bmpw;
   int r_oy = -oy % (int)bmph;
@@ -146,36 +115,4 @@ void Plane::Draw(long /* z */) {
       }
     }
   glEnd();
-
-  glDisable(GL_SCISSOR_TEST);
-}
-
-///////////////////////////////////////////////////////////
-/// Properties
-///////////////////////////////////////////////////////////
-ViewportRef const& Plane::viewport() const { return viewport_; }
-void Plane::viewport(ViewportRef const& nviewport) {
-  if (viewport_ != nviewport) {
-    if (nviewport) {
-      Graphics::RemoveZObj(*this);
-      nviewport->RegisterZObj(0, *this);
-    } else {
-      if (viewport_) viewport_->RemoveZObj(*this);
-      Graphics::RegisterZObj(0, *this);
-    }
-  }
-  viewport_ = nviewport;
-}
-int Plane::z() const {
-  return z_;
-}
-void Plane::z(int nz) {
-  if (z_ != nz) {
-    if (viewport_) {
-      viewport_->UpdateZObj(*this, nz);
-    } else {
-      Graphics::UpdateZObj(*this, nz);
-    }
-  }
-  z_ = nz;
 }

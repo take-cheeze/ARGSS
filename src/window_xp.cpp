@@ -54,7 +54,6 @@ Window::Window() {
   y = 0;
   width = 0;
   height = 0;
-  z_ = 0;
   ox = 0;
   oy = 0;
   opacity = 255;
@@ -63,23 +62,6 @@ Window::Window() {
   cursor_frame = 0;
   pause_frame = 0;
   pause_id = 0;
-
-  if (viewport_) {
-    viewport_->RegisterZObj(0, *this);
-  } else {
-    Graphics::RegisterZObj(0, *this);
-  }
-}
-
-///////////////////////////////////////////////////////////
-/// Class Dispose Window
-///////////////////////////////////////////////////////////
-Window::~Window() {
-  if (viewport_) {
-    viewport_->RemoveZObj(*this);
-  } else {
-    Graphics::RemoveZObj(*this);
-  }
 }
 
 ///////////////////////////////////////////////////////////
@@ -98,8 +80,8 @@ void Window::Draw(long /* z */) {
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 
-  if (viewport_) {
-    Rect rect = viewport_->GetViewportRect();
+  if (viewport()) {
+    Rect rect = viewport()->GetViewportRect();
 
     glEnable(GL_SCISSOR_TEST);
     glScissor(rect.x, Player::GetHeight() - (rect.y + rect.height), rect.width, rect.height);
@@ -139,8 +121,8 @@ void Window::Draw(long /* z */) {
 
         Rect dstrect(x + 2, y + 2, width - 4, height - 4);
 
-        if (viewport_) {
-          Rect rect = viewport_->GetViewportRect();
+        if (viewport()) {
+          Rect rect = viewport()->GetViewportRect();
 
           dstrect.x -= rect.x;
           dstrect.y -= rect.y;
@@ -162,7 +144,7 @@ void Window::Draw(long /* z */) {
             glEnd();
           }
         }
-        if (viewport_) glDisable(GL_SCISSOR_TEST);
+        if (viewport()) glDisable(GL_SCISSOR_TEST);
       }
     }
 
@@ -330,8 +312,8 @@ void Window::Draw(long /* z */) {
       Rect dstrect(x + 16, y + 16, width - 32, height - 32);
 
       glEnable(GL_SCISSOR_TEST);
-      if (viewport_) {
-        Rect rect = viewport_->GetViewportRect();
+      if (viewport()) {
+        Rect rect = viewport()->GetViewportRect();
 
         dstrect.x -= rect.x;
         dstrect.y -= rect.y;
@@ -352,7 +334,7 @@ void Window::Draw(long /* z */) {
 
       glViewport(0, 0, Player::GetWidth(), Player::GetHeight());
 
-      if (viewport_) glDisable(GL_SCISSOR_TEST);
+      if (viewport()) glDisable(GL_SCISSOR_TEST);
     }
 
     if (windowskin) {
@@ -419,30 +401,4 @@ void Window::Update() {
       }
     }
   }
-}
-
-///////////////////////////////////////////////////////////
-/// Properties
-///////////////////////////////////////////////////////////
-void Window::viewport(ViewportRef const& nviewport) {
-  if (viewport_ != nviewport) {
-    if (nviewport) {
-      Graphics::RemoveZObj(*this);
-      nviewport->RegisterZObj(0, *this);
-    } else {
-      if (viewport_) viewport_->RemoveZObj(*this);
-      Graphics::RegisterZObj(0, *this);
-    }
-  }
-  viewport_ = nviewport;
-}
-void Window::z(int nz) {
-  if (z_ != nz) {
-    if (viewport_) {
-      viewport_->UpdateZObj(*this, nz);
-    } else {
-      Graphics::UpdateZObj(*this, nz);
-    }
-  }
-  z_ = nz;
 }

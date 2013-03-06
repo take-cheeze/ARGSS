@@ -29,6 +29,7 @@
 ///////////////////////////////////////////////////////////
 #include <string>
 #include <deque>
+#include <stack>
 #include "time.hpp"
 #include "graphics.h"
 #include "config.h"
@@ -59,6 +60,29 @@ long last_tics_wait;
 long next_tics_fps;
 typedef std::map<Bitmap*, boost::shared_ptr<Texture> > texture_pool_type;
 texture_pool_type texture_pool_;
+std::stack<Rect> clip_stack_;
+}
+
+Graphics::Clipper::Clipper(Rect const& r) {
+  Graphics::Clip(r);
+}
+Graphics::Clipper::~Clipper() {
+  Graphics::Unclip();
+}
+
+void Graphics::Clip(Rect const& rect) {
+  if(clip_stack_.empty()) { glEnable(GL_SCISSOR_TEST); }
+  clip_stack_.push(rect);
+
+  glScissor(rect.x, Player::GetHeight() - (rect.y + rect.height), rect.width, rect.height);
+  glTranslatef(GLfloat(rect.x), GLfloat(rect.y), 0.0f);
+}
+
+void Graphics::Unclip() {
+  clip_stack_.pop();
+  if(clip_stack_.empty()) {
+    glDisable(GL_SCISSOR_TEST);
+  }
 }
 
 int Graphics::GetFPS() {
