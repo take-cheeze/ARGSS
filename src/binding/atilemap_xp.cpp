@@ -174,5 +174,5 @@ void ARGSS::ATilemap::Init() {
     rb_method("oy", roy),
     rb_method("oy=", royE),
     rb_method() };
-  define_class<Tilemap>("Tilemap", methods);
+  define_class<Tilemap, false>("Tilemap", methods);
 }

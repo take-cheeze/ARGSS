@@ -285,5 +285,5 @@ void ARGSS::ABitmap::Init() {
     rb_method("dup", rdup),
     rb_method()
   };
-  define_class<Bitmap>("Bitmap", methods);
+  define_class<Bitmap, false>("Bitmap", methods);
 }

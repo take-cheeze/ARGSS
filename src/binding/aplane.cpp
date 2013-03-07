@@ -196,5 +196,5 @@ void ARGSS::APlane::Init() {
     rb_method("tone", rtone),
     rb_method("tone=", rtoneE),
     rb_method() };
-  define_class<Plane>("Plane", methods);
+  define_class<Plane, false>("Plane", methods);
 }

@@ -279,5 +279,5 @@ void ARGSS::AWindow::Init() {
     rb_method("contents_opacity", rcontents_opacity),
     rb_method("contents_opacity=", rcontents_opacityE),
     rb_method() };
-  define_class<Window>("Window", methods);
+  define_class<Window, false>("Window", methods);
 }

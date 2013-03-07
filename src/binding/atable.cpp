@@ -178,5 +178,5 @@ void ARGSS::ATable::Init() {
     rb_method("_dump", rdump),
     rb_method("_load", rload, true),
     rb_method() };
-  define_class<Table>("Table", methods);
+  define_class<Table, false>("Table", methods);
 }

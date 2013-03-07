@@ -333,5 +333,5 @@ void ARGSS::ASprite::Init() {
     rb_method("tone", rtone),
     rb_method("tone=", rtoneE),
     rb_method() };
-  define_class<Sprite>("Sprite", methods);
+  define_class<Sprite, false>("Sprite", methods);
 }

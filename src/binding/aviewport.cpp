@@ -156,5 +156,5 @@ void ARGSS::AViewport::Init() {
     rb_method("tone", rtone),
     rb_method("tone=", rtoneE),
     rb_method() };
-  define_class<Viewport>("Viewport", methods);
+  define_class<Viewport, false>("Viewport", methods);
 }

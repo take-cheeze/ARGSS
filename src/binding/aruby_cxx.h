@@ -140,25 +140,25 @@ struct Compare;
 
 template<class T>
 struct Compare<T, true> {
-  VALUE eq_(VALUE self, VALUE rhs) {
+  static VALUE eq_(VALUE self, VALUE rhs) {
     return get<T>(self) == get<T>(rhs)? Qtrue : Qfalse;
   }
-  VALUE not_eq_(VALUE self, VALUE rhs) {
+  static VALUE not_eq_(VALUE self, VALUE rhs) {
     return get<T>(self) != get<T>(rhs)? Qtrue : Qfalse;
   }
 };
 
 template<class T>
 struct Compare<T, false> {
-  VALUE eq_(VALUE self, VALUE rhs) {
+  static VALUE eq_(VALUE self, VALUE rhs) {
     return get_ptr<T>(self) == get_ptr<T>(rhs)? Qtrue : Qfalse;
   }
-  VALUE not_eq_(VALUE self, VALUE rhs) {
+  static VALUE not_eq_(VALUE self, VALUE rhs) {
     return get_ptr<T>(self) != get_ptr<T>(rhs)? Qtrue : Qfalse;
   }
 };
 
-template<class T, bool Deep = false>
+template<class T, bool Deep>
 VALUE define_class(char const* name, rb_method const* meth, VALUE const super = rb_cObject) {
   VALUE const c = rb_define_class(name, super);
   RubyClass<T>::value = c;
@@ -167,12 +167,12 @@ VALUE define_class(char const* name, rb_method const* meth, VALUE const super = 
     (i->is_singletone? rb_define_singleton_method : rb_define_method)
         (c, i->name, i->function, i->arg_num);
   }
-  rb_define_method(c, "!=", (rubyfunc)Compare<T, Deep>::not_eq_, 1);
-  rb_define_method(c, "==", (rubyfunc)Compare<T, Deep>::eq_, 1);
+  rb_define_method(c, "!=", (rubyfunc)&Compare<T, Deep>::not_eq_, 1);
+  rb_define_method(c, "==", (rubyfunc)&Compare<T, Deep>::eq_, 1);
   rb_define_alloc_func(c, &alloc_func<T>);
   return c;
 }
-template<class T, bool Deep = false>
+template<class T, bool Deep>
 VALUE define_class_under(VALUE const parent, char const* name, rb_method const* meth, VALUE const super = rb_cObject) {
   VALUE const c = rb_define_class_under(parent, name, super);
   RubyClass<T>::value = c;
@@ -181,8 +181,8 @@ VALUE define_class_under(VALUE const parent, char const* name, rb_method const* 
     (i->is_singletone? rb_define_singleton_method : rb_define_method)
         (c, i->name, i->function, i->arg_num);
   }
-  rb_define_method(c, "!=", (rubyfunc)Compare<T, Deep>::not_eq_, 1);
-  rb_define_method(c, "==", (rubyfunc)Compare<T, Deep>::eq_, 1);
+  rb_define_method(c, "!=", (rubyfunc)&Compare<T, Deep>::not_eq_, 1);
+  rb_define_method(c, "==", (rubyfunc)&Compare<T, Deep>::eq_, 1);
   rb_define_alloc_func(c, &alloc_func<T>);
   return c;
 }

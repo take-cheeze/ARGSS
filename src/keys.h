@@ -176,7 +176,7 @@ namespace Input {
 
   struct rgss_key {
     rgss_key(int k);
-    int const value;
+    int value;
   };
 
   Keys::InputKey NUM2KEY(rgss_key num);
