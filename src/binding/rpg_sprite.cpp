@@ -226,7 +226,7 @@ VALUE ARGSS::ARPG::ASprite::rdispose_animation(VALUE self) {
         rb_funcall(bitmap, rb_intern("dispose"), 0);
       }
     }
-    for (int i = 0; i < RARRAY(animation_sprites)->len; i++) {
+    for (int i = 0; i < RARRAY_LEN(animation_sprites); i++) {
       rb_funcall(rb_ary_entry(animation_sprites, i), rb_intern("dispose"), 0);
     }
     rb_iv_set(self, "@_animation_sprites", Qnil);
@@ -246,7 +246,7 @@ VALUE ARGSS::ARPG::ASprite::rdispose_loop_animation(VALUE self) {
         rb_funcall(bitmap, rb_intern("dispose"), 0);
       }
     }
-    for (int i = 0; i < RARRAY(loop_animation_sprites)->len; i++) {
+    for (int i = 0; i < RARRAY_LEN(loop_animation_sprites); i++) {
       rb_funcall(rb_ary_entry(loop_animation_sprites, i), rb_intern("dispose"), 0);
     }
     rb_iv_set(self, "@_loop_animation_sprites", Qnil);
@@ -352,7 +352,7 @@ VALUE ARGSS::ARPG::ASprite::rupdate_animation(VALUE self) {
     VALUE position = rb_iv_get(animation, "@position");
     rb_funcall(self, rb_intern("animation_set_sprites"), 3, rb_iv_get(self, "@_animation_sprites"), cell_data, position);
     VALUE timings = rb_iv_get(rb_iv_get(self, "@_animation"), "@timings");
-    for (int i = 0; i < RARRAY(timings)->len; i++) {
+    for (int i = 0; i < RARRAY_LEN(timings); i++) {
       VALUE timing = rb_ary_entry(timings, i);
       if (rb_iv_get(timing, "@frame") == frame_index) {
         rb_funcall(self, rb_intern("animation_process_timing"), 2, timing, rb_iv_get(self, "@_animation_hit"));
@@ -370,7 +370,7 @@ VALUE ARGSS::ARPG::ASprite::rupdate_loop_animation(VALUE self) {
   VALUE position = rb_iv_get(loop_animation, "@position");
   rb_funcall(self, rb_intern("animation_set_sprites"), 3, rb_iv_get(self, "@_loop_animation_sprites"), cell_data, position);
   VALUE timings = rb_iv_get(loop_animation, "@timings");
-  for (int i = 0; i < RARRAY(timings)->len; i++) {
+  for (int i = 0; i < RARRAY_LEN(timings); i++) {
     VALUE timing = rb_ary_entry(timings, i);
     if (rb_iv_get(timing, "@frame") == frame_index) {
       rb_funcall(self, rb_intern("animation_process_timing"), 2, timing, rb_iv_get(self, "@_animation_hit"));
@@ -442,7 +442,7 @@ VALUE ARGSS::ARPG::ASprite::ranimation_process_timing(VALUE self, VALUE timing, 
     (val_condition == 1 && hit == Qtrue) ||
     (val_condition == 2 && hit == Qfalse)) {
     VALUE se = rb_iv_get(timing, "@se");
-    if (RSTRING(rb_iv_get(se, "@name"))->len > 0) {
+    if (RSTRING_LEN(rb_iv_get(se, "@name")) > 0) {
       VALUE name = rb_str_new2("Audio/SE/");
       rb_str_concat(name, rb_iv_get(se, "@name"));
       rb_funcall(AAudio::id, rb_intern("se_play"), 3, name, rb_iv_get(se, "@volume"), rb_iv_get(se, "@pitch"));

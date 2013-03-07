@@ -63,15 +63,15 @@ VALUE ARGSS::AOutput::rnone(VALUE /* self */) {
 ///////////////////////////////////////////////////////////
 VALUE ARGSS::AOutput::rstdout_write(VALUE /* self */, VALUE str) {
   if (TYPE(str) != T_STRING) str = rb_obj_as_string(str);
-  if (RSTRING(str)->len == 0) return INT2FIX(0);
+  if (RSTRING_LEN(str) == 0) return INT2FIX(0);
   Output::PostStr(StringValuePtr(str));
-  return INT2FIX(RSTRING(str)->len);
+  return INT2FIX(RSTRING_LEN(str));
 }
 VALUE ARGSS::AOutput::rstderr_write(VALUE /* self */, VALUE str) {
   if (TYPE(str) != T_STRING) str = rb_obj_as_string(str);
-  if (RSTRING(str)->len == 0) return INT2FIX(0);
+  if (RSTRING_LEN(str) == 0) return INT2FIX(0);
   //Output::Error(StringValuePtr(str));
-  return INT2FIX(RSTRING(str)->len);
+  return INT2FIX(RSTRING_LEN(str));
 }
 VALUE ARGSS::AOutput::stdin_gets(int /* argc */, VALUE* /* argv */, VALUE /* self */) {
   std::string str = Output::Gets();

@@ -123,7 +123,7 @@ VALUE ARGSS::AWindow::ractiveE(VALUE self, VALUE active) {
 }
 VALUE ARGSS::AWindow::rvisible(VALUE self) {
   check_disposed<Window>(self);
-  return NUM2BOOL(get<Window>(self).visible);
+  return BOOL2NUM(get<Window>(self).visible);
 }
 VALUE ARGSS::AWindow::rvisibleE(VALUE self, VALUE visible) {
   check_disposed<Window>(self);

@@ -48,7 +48,7 @@ VALUE ARGSS::ARPG::ACache::rload_bitmap(int argc, VALUE* argv, VALUE self) {
   VALUE cache_path;
   if ((rb_funcall(cache, rb_intern("include?"), 1, path) == Qfalse) ||
     (ARGSS::ABitmap::rdisposedQ(rb_hash_aref(cache, path)) == Qtrue)) {
-    if (RSTRING(argv[0])->len > 0) {
+    if (RSTRING_LEN(argv[0]) > 0) {
       cache_path = rb_hash_aset(cache, path, rb_class_new_instance(1, &path, ruby_class<Bitmap>()));
     } else {
       VALUE args[2] = {INT2NUM(32), INT2NUM(32)};
@@ -146,7 +146,7 @@ VALUE ARGSS::ARPG::ACache::rtile(VALUE self, VALUE filename, VALUE tile_id, VALU
 VALUE ARGSS::ARPG::ACache::rclear(VALUE self) {
   VALUE cache = rb_iv_get(self, "@cache");
   VALUE values = rb_funcall(cache, rb_intern("values"), 0);
-  for (int i = 0; i < RARRAY(values)->len; i++) {
+  for (int i = 0; i < RARRAY_LEN(values); i++) {
     if (ARGSS::ABitmap::rdisposedQ(rb_ary_entry(values, i)) == Qfalse) {
       ARGSS::ABitmap::rdispose(rb_ary_entry(values, i));
     }

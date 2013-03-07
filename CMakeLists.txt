@@ -42,9 +42,8 @@ foreach(i OpenGL SDL Freetype SDL_mixer Boost)
   find_package(${i} REQUIRED)
 endforeach()
 
-message(STATUS "${CMAKE_INSTALL_PREFIX}")
-find_package(Ruby 1.8 REQUIRED)
-message(STATUS "ruby version: ${RUBY_VERSION}")
+find_package(Ruby REQUIRED)
+add_definitions(${RUBY_DEFINITIONS})
 
 list(APPEND ARGSS_LIBRARIES
   ${RUBY_LIBRARY} ${OPENGL_LIBRARIES}

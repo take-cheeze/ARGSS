@@ -91,7 +91,7 @@ VALUE ARGSS::ARPG::AWeather::rinitialize(int argc, VALUE* argv, VALUE self) {
 }
 VALUE ARGSS::ARPG::AWeather::rdispose(VALUE self) {
   VALUE sprites = rb_iv_get(self, "@sprites");
-  for (int i = 0; i < RARRAY(sprites)->len; i++) {
+  for (int i = 0; i < RARRAY_LEN(sprites); i++) {
     ARGSS::ASprite::rdispose(rb_ary_entry(sprites, i));
   }
   ARGSS::ABitmap::rdispose(rb_iv_get(self, "@rain_bitmap"));

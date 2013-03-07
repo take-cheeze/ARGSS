@@ -38,6 +38,10 @@
 
 #include "binding/argss.h"
 
+#ifdef HAVE_RUBY_VERSION_H
+#define ruby_errinfo rb_errinfo()
+#endif
+
 ///////////////////////////////////////////////////////////
 // Global Variables
 ///////////////////////////////////////////////////////////
@@ -66,8 +70,8 @@ static struct types {
   {T_NIL, "nil"}, {T_OBJECT, "Object"}, {T_CLASS, "Class"}, {T_ICLASS, "iClass"}, {T_MODULE, "Module"},
   {T_FLOAT, "Float"}, {T_STRING, "String"}, {T_REGEXP, "Regexp"}, {T_ARRAY, "Array"}, {T_FIXNUM, "Fixnum"},
   {T_HASH, "Hash"}, {T_STRUCT, "Struct"}, {T_BIGNUM, "Bignum"}, {T_FILE, "File"}, {T_TRUE, "true"},
-  {T_FALSE, "false"}, {T_SYMBOL, "Symbol"}, {T_DATA, "Data"}, {T_MATCH, "MatchData"}, {T_VARMAP, "Varmap"},
-  {T_SCOPE, "Scope"}, {T_NODE, "Node"}, {T_UNDEF, "undef"}, {-1, 0}
+  {T_FALSE, "false"}, {T_SYMBOL, "Symbol"}, {T_DATA, "Data"}, {T_MATCH, "MatchData"},
+  {T_NODE, "Node"}, {T_UNDEF, "undef"}, {-1, 0}
 };
 
 ///////////////////////////////////////////////////////////
@@ -130,14 +134,14 @@ void ARuby::Run() {
     // Avoid normal ruby exit
     if (CLASS_OF(lasterr) != rb_eSystemExit) {
       std::string report = "RUBY ERROR\n";
-      report += (std::string)RSTRING(klass)->ptr;
+      report += std::string(RSTRING_PTR(klass));
       report += " - ";
-      report += (std::string)RSTRING(message)->ptr;
+      report += std::string(RSTRING_PTR(message));
       if (!NIL_P(ruby_errinfo)) {
         VALUE ary = rb_funcall(ruby_errinfo, rb_intern("backtrace"), 0);
-        for (int i = 0; i < RARRAY(ary)->len; i++) {
+        for (int i = 0; i < RARRAY_LEN(ary); i++) {
           report += "\n from ";
-          report += RSTRING(RARRAY(ary)->ptr[i])->ptr;
+          report += RSTRING_PTR(RARRAY_PTR(ary)[i]);
         }
       }
       Output::ErrorStr(report);
@@ -205,7 +209,7 @@ void Check_Types2(VALUE x, VALUE t1, VALUE t2) {
         if (NIL_P(x)) etype = (char*)"nil";
         else if (FIXNUM_P(x)) etype = (char*)"Fixnum";
         else if (SYMBOL_P(x)) etype = (char*)"Symbol";
-        else if (rb_special_const_p(x)) etype = RSTRING(rb_obj_as_string(x))->ptr;
+        else if (rb_special_const_p(x)) etype = RSTRING_PTR(rb_obj_as_string(x));
         else etype = rb_class2name(x);
         rb_raise(rb_eTypeError, "wrong argument type %s (expected %s)", etype, type->name);
       }
@@ -225,7 +229,7 @@ void Check_Bool(VALUE x) {
     if (NIL_P(x)) etype = (char*)"nil";
     else if (FIXNUM_P(x)) etype = (char*)"Fixnum";
     else if (SYMBOL_P(x)) etype = (char*)"Symbol";
-    else if (rb_special_const_p(x)) etype = RSTRING(rb_obj_as_string(x))->ptr;
+    else if (rb_special_const_p(x)) etype = RSTRING_PTR(rb_obj_as_string(x));
     else etype = rb_class2name(x);
     rb_raise(rb_eTypeError, "wrong argument type %s (expected boolean)", etype);
   }
@@ -244,7 +248,7 @@ void Check_Class(VALUE x, VALUE c) {
         if (NIL_P(x)) etype = (char*)"nil";
         else if (FIXNUM_P(x)) etype = (char*)"Fixnum";
         else if (SYMBOL_P(x)) etype = (char*)"Symbol";
-        else if (rb_special_const_p(x)) etype = RSTRING(rb_obj_as_string(x))->ptr;
+        else if (rb_special_const_p(x)) etype = RSTRING_PTR(rb_obj_as_string(x));
         else etype = rb_class2name(x);
         rb_raise(rb_eTypeError, "wrong argument type %s (expected %s)", etype, type->name);
       }
